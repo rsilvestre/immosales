@@ -1,8 +1,6 @@
 package product;
 
 import net.sf.jeasyorm.EntityManager;
-import net.sf.jeasyorm.PostgreSQLEntityManager;
-import net.sf.jeasyorm.annotation.Transient;
 
 /**
  * Created with IntelliJ IDEA.
