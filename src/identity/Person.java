@@ -20,6 +20,7 @@ public class Person {
 	private EntityManager em;
 
 	private Long id;
+	private String titre;
 	private String firstName;
 	private String lastName;
 
@@ -40,7 +41,8 @@ public class Person {
 		this.em = em;
 	}
 
-	public Person(String firstName, String lastName) {
+	public Person(String titre, String firstName, String lastName) {
+		this.titre = titre;
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
@@ -51,6 +53,14 @@ public class Person {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getTitre() {
+		return titre;
+	}
+
+	public void setTitre(String titre) {
+		this.titre = titre;
 	}
 
 	public String getFirstName() {
