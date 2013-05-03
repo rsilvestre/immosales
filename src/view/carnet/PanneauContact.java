@@ -32,13 +32,13 @@ public class PanneauContact extends JPanel {
 	private JComboBox saisieTitre = new JComboBox(TITRES);
 	private JTextField saisieNom = new JTextField(10);
 	private JTextField saisiePrenom = new JTextField(10);
-	private JTextField saisieAddressStreetName = new JTextField(60);
+	private JTextField saisieAddressStreetName = new JTextField(20);
 	private JTextField saisieAddressStreetNumber = new JTextField(10);
 	private JTextField saisieAddressStreetBox = new JTextField(10);
 	private JTextField saisieAddressPosteCode = new JTextField(10);
-	private JTextField saisieAddressCity = new JTextField(50);
+	private JTextField saisieAddressCity = new JTextField(20);
 	private JComboBox saisieAddressLocality = new JComboBox(LOCALITY);
-	private JTextField saisieAddressCountry = new JTextField(40);
+	private JTextField saisieAddressCountry = new JTextField(20);
 
 	public PanneauContact() {
 		this.createPanneau();
