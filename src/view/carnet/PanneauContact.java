@@ -1,5 +1,8 @@
 package view.carnet;
 
+import identity.Address;
+import identity.Person;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -38,6 +41,26 @@ public class PanneauContact extends JPanel {
 	private JTextField saisieAddressCountry = new JTextField(40);
 
 	public PanneauContact() {
+		this.createPanneau();
+	}
+
+	public PanneauContact(Person person, Address address) {
+		this.setSaisieTitre(person.getTitre());
+		this.setSaisiePrenom(person.getFirstName());
+		this.setSaisieNom(person.getLastName());
+		this.setSaisieAddressStreetName(address.getStreetName());
+		this.setSaisieAddressStreetNumber(address.getStreetNumber());
+		this.setSaisieAddressStreetBox(address.getStreetBox());
+		this.setSaisieAddressCity(address.getCity());
+		this.setSaisieAddressLocality(address.getLocality());
+		this.setSaisieAddressPosteCode(address.getPosteCode());
+		this.setSaisieAddressCountry(address.getCountry());
+
+		this.createPanneau();
+	}
+
+	private void createPanneau() {
+
 		JPanel panneauLabels = new JPanel(new GridLayout(10, 1, 5, 5));
 		panneauLabels.add(new JLabel("Titre :"));
 		panneauLabels.add(new JLabel("Nom :"));
@@ -105,5 +128,45 @@ public class PanneauContact extends JPanel {
 
 	public String getAddressCountry() {
 		return saisieAddressCountry.getText();
+	}
+
+	public void setSaisieTitre(String saisieTitre) {
+		this.saisieTitre.setSelectedItem(saisieTitre);
+	}
+
+	public void setSaisieNom(String saisieNom) {
+		this.saisieNom.setText(saisieNom);
+	}
+
+	public void setSaisiePrenom(String saisiePrenom) {
+		this.saisiePrenom.setText(saisiePrenom);
+	}
+
+	public void setSaisieAddressStreetName(String saisieAddressStreetName) {
+		this.saisieAddressStreetName.setText(saisieAddressStreetName);
+	}
+
+	public void setSaisieAddressStreetNumber(String saisieAddressStreetNumber) {
+		this.saisieAddressStreetNumber.setText(saisieAddressStreetNumber);
+	}
+
+	public void setSaisieAddressStreetBox(String saisieAddressStreetBox) {
+		this.saisieAddressStreetBox.setText(saisieAddressStreetBox);
+	}
+
+	public void setSaisieAddressPosteCode(String saisieAddressPosteCode) {
+		this.saisieAddressPosteCode.setText(saisieAddressPosteCode);
+	}
+
+	public void setSaisieAddressCity(String saisieAddressCity) {
+		this.saisieAddressCity.setText(saisieAddressCity);
+	}
+
+	public void setSaisieAddressLocality(String saisieAddressLocality) {
+		this.saisieAddressLocality.setSelectedItem(saisieAddressLocality);
+	}
+
+	public void setSaisieAddressCountry(String saisieAddressCountry) {
+		this.saisieAddressCountry.setText(saisieAddressCountry);
 	}
 }
