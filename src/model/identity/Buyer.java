@@ -1,9 +1,10 @@
-package identity;
+package model.identity;
 
+import model.immo.Offer;
 import net.sf.jeasyorm.EntityManager;
 import net.sf.jeasyorm.annotation.Transient;
-import product.Bien;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,19 +14,22 @@ import java.util.List;
  * Time: 12:16
  * To change this template use File | Settings | File Templates.
  */
-public class Owner extends APerson {
+public class Buyer extends APerson {
 
 	private Long id;
 	private Long personId;
-
 	@Transient
-	private List<Bien> biens;
+	private List<Offer> offers;
 
-	public Owner(EntityManager em) {
+	public Buyer() {
+		this.offers = new ArrayList<Offer>();
+	}
+
+	public Buyer(EntityManager em) {
 		super(em);
 	}
 
-	public Owner(Person person) {
+	public Buyer(Person person) {
 		super(person);
 		this.personId = person.getId();
 	}
@@ -47,15 +51,15 @@ public class Owner extends APerson {
 	}
 
 
-	public List<Bien> getBiens() {
-		if (biens == null && getEm() != null) {
-			setBiens(getEm().find(Bien.class, "where owner_id = ?", id));
+	public List<Offer> getOffers() {
+		if (offers == null && getEm() != null) {
+			setOffers(getEm().find(Offer.class, "where buyer_id = ?", id));
 		}
-		return biens;
+		return offers;
 	}
 
-	public void setBiens(List<Bien> biens) {
-		this.biens = biens;
-		for (Bien bien : biens) bien.setOwner(this);
+	public void setOffers(List<Offer> offers) {
+		this.offers = offers;
+		for (Offer offer : offers) offer.setBuyer(this);
 	}
 }

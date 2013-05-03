@@ -1,8 +1,8 @@
 package JMVC;
 
-import be.wilthard.essais.JMVC.model.FooModelLocator;
-import be.wilthard.essais.JMVC.model.main.MainModel;
-import be.wilthard.essais.JMVC.view.main.MainWindow;
+import JMVC.model.FooModelLocator;
+import JMVC.model.main.MainModel;
+import JMVC.view.main.MainWindow;
 import com.dmurph.mvc.IGlobalEventMonitor;
 import com.dmurph.mvc.MVC;
 import com.dmurph.mvc.monitor.EventMonitor;

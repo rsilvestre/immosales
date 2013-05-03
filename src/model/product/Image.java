@@ -1,4 +1,4 @@
-package product;
+package model.product;
 
 import net.sf.jeasyorm.EntityManager;
 

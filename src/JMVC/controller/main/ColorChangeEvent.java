@@ -1,6 +1,6 @@
 package JMVC.controller.main;
 
-import be.wilthard.essais.JMVC.model.main.MainModel;
+import JMVC.model.main.MainModel;
 import com.dmurph.mvc.MVCEvent;
 
 import java.awt.*;

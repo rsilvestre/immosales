@@ -1,6 +1,6 @@
 package JMVC.command.main;
 
-import be.wilthard.essais.JMVC.controller.main.ColorChangeEvent;
+import JMVC.controller.main.ColorChangeEvent;
 import com.dmurph.mvc.MVCEvent;
 import com.dmurph.mvc.control.ICommand;
 

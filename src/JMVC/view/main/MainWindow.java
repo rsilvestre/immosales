@@ -1,9 +1,8 @@
 package JMVC.view.main;
 
-import be.wilthard.essais.JMVC.controller.main.ColorChangeEvent;
-import be.wilthard.essais.JMVC.controller.main.DisplayTextChangeEvent;
-import be.wilthard.essais.JMVC.model.main.MainModel;
-import be.wilthard.essais.TestForm.test1;
+import JMVC.controller.main.ColorChangeEvent;
+import JMVC.controller.main.DisplayTextChangeEvent;
+import JMVC.model.main.MainModel;
 
 import javax.swing.*;
 import java.awt.*;

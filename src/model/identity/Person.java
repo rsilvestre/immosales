@@ -1,7 +1,6 @@
-package identity;
+package model.identity;
 
 import net.sf.jeasyorm.EntityManager;
-import net.sf.jeasyorm.PostgreSQLEntityManager;
 import net.sf.jeasyorm.annotation.Transient;
 
 import java.sql.Timestamp;

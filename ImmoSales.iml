@@ -18,6 +18,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="postgresql-9.2-1002.jdbc4" level="project" />
     <orderEntry type="library" name="jeasyorm-0.9" level="project" />
+    <orderEntry type="library" name="java-simple-mvc-1.4.2-jar-with-dependencies" level="project" />
   </component>
 </module>
 
