@@ -1,7 +1,8 @@
 package JMVC.model;
 
-import be.wilthard.essais.JMVC.controller.main.MainController;
-import be.wilthard.essais.JMVC.view.main.MainWindow;
+
+import JMVC.controller.main.MainController;
+import JMVC.view.main.MainWindow;
 
 /**
  * Created with IntelliJ IDEA.

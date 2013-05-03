@@ -1,9 +1,8 @@
-package product;
+package model.product;
 
-import identity.Owner;
-import immo.Offer;
+import model.identity.Owner;
+import model.immo.Offer;
 import net.sf.jeasyorm.EntityManager;
-import net.sf.jeasyorm.PostgreSQLEntityManager;
 import net.sf.jeasyorm.annotation.Transient;
 
 import java.sql.Timestamp;

@@ -8,8 +8,8 @@
 
 package main.CustomerGui;
 
-import identity.Customer;
-import identity.Person;
+import model.identity.Customer;
+import model.identity.Person;
 import util.Observer;
 
 import java.util.ArrayList;

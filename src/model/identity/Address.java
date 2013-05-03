@@ -1,4 +1,4 @@
-package identity;
+package model.identity;
 
 import net.sf.jeasyorm.EntityManager;
 import net.sf.jeasyorm.annotation.Transient;

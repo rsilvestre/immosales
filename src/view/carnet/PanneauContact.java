@@ -1,7 +1,7 @@
 package view.carnet;
 
-import identity.Address;
-import identity.Person;
+import model.identity.Address;
+import model.identity.Person;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,7 +1,7 @@
 package JMVC.controller.main;
 
-import be.wilthard.essais.JMVC.command.main.ChangeColorCommand;
-import be.wilthard.essais.JMVC.command.main.DisplayTextChangeCommand;
+import JMVC.command.main.ChangeColorCommand;
+import JMVC.command.main.DisplayTextChangeCommand;
 import com.dmurph.mvc.control.FrontController;
 
 /**

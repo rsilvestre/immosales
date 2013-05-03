@@ -1,6 +1,6 @@
 package JMVC.command.main;
 
-import be.wilthard.essais.JMVC.controller.main.DisplayTextChangeEvent;
+import JMVC.controller.main.DisplayTextChangeEvent;
 import com.dmurph.mvc.MVCEvent;
 import com.dmurph.mvc.control.ICommand;
 

@@ -1,30 +1,26 @@
-package identity;
+package model.identity;
 
 import net.sf.jeasyorm.EntityManager;
-import net.sf.jeasyorm.PostgreSQLEntityManager;
-import net.sf.jeasyorm.annotation.Transient;
 
 /**
  * Created with IntelliJ IDEA.
  * User: michaelsilvestre
- * Date: 3/04/13
- * Time: 17:41
+ * Date: 7/04/13
+ * Time: 12:07
  * To change this template use File | Settings | File Templates.
  */
-public class Customer extends APerson {
+public class Saler extends APerson {
 
 	private Long id;
-	private String phonenumber;
 	private Long personId;
 
-	public Customer(EntityManager em) {
+	public Saler(EntityManager em) {
 		super(em);
 	}
 
-	public Customer(Person person, String phonenumber) {
+	public Saler(Person person) {
 		super(person);
 		this.personId = person.getId();
-		this.phonenumber = phonenumber;
 	}
 
 	public Long getId() {
@@ -33,14 +29,6 @@ public class Customer extends APerson {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getPhonenumber() {
-		return phonenumber;
-	}
-
-	public void setPhonenumber(String phonenumber) {
-		this.phonenumber = phonenumber;
 	}
 
 	public Long getPersonId() {
