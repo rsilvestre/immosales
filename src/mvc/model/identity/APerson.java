@@ -46,6 +46,10 @@ public abstract class APerson {
 		this.personId = person != null ? person.getId() : null;
 	}
 
+	protected void setPersonId(Long personId) {
+		this.personId = personId;
+	}
+
 	protected EntityManager getEm() {
 		return em;
 	}

@@ -1,6 +1,11 @@
 package mvc.view.main;
 
+import core.Session;
+import mvc.controller.main.ConnexionEvent;
+import mvc.model.FooModelLocator;
 import mvc.model.main.MainModel;
+import mvc.model.user.UserModel;
+import mvc.view.user.UserWindow;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +33,7 @@ public class MainWindow extends JFrame {
 	public MainWindow(MainModel mainModel) {
 		this.mainModel = mainModel;
 		initComponents();
-		addListener();
+		addListeners();
 	}
 
 	private void initComponents() {
@@ -54,7 +59,7 @@ public class MainWindow extends JFrame {
 		add(box);
 	}
 
-	private void addListener() {
+	private void addListeners() {
 		int toucheRaccourcis = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
 		menuConnexion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, toucheRaccourcis));
@@ -62,6 +67,16 @@ public class MainWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				//To change body of implemented methods use File | Settings | File Templates.
+
+				FooModelLocator locator = FooModelLocator.getInstance();
+				UserModel userModel = new UserModel();
+				UserWindow userWindow = new UserWindow(userModel);
+				locator.setUserWindow(userWindow);
+				userWindow.setSize(590, 300);
+				userWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				userWindow.setVisible(true);
+				//ConnexionEvent event = new ConnexionEvent(Session.getInstance(), mainModel);
+				//event.dispatch();
 			}
 		});
 

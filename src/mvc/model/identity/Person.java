@@ -1,5 +1,6 @@
 package mvc.model.identity;
 
+import com.dmurph.mvc.model.AbstractModel;
 import net.sf.jeasyorm.EntityManager;
 import net.sf.jeasyorm.annotation.Transient;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * Time: 17:42
  * To change this template use File | Settings | File Templates.
  */
-public class Person {
+public class Person extends AbstractModel {
 
 	private EntityManager em;
 
@@ -50,48 +51,60 @@ public class Person {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setId(Long argId) {
+		Long oldId = this.id;
+		this.id = argId;
+		firePropertyChange("id", oldId, id);
 	}
 
 	public String getTitre() {
 		return titre;
 	}
 
-	public void setTitre(String titre) {
-		this.titre = titre;
+	public void setTitre(String argTitre) {
+		String oldTitre = titre;
+		this.titre = argTitre;
+		firePropertyChange("titre", oldTitre, titre);
 	}
 
 	public String getFirstName() {
 		return firstName;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setFirstName(String argFirstName) {
+		String oldFirstName = firstName;
+		this.firstName = argFirstName;
+		firePropertyChange("firstName", oldFirstName, firstName);
 	}
 
 	public String getLastName() {
 		return lastName;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setLastName(String argLastName) {
+		String oldLastName = lastName;
+		this.lastName = argLastName;
+		firePropertyChange("lastName", oldLastName, lastName);
 	}
 
 	public Timestamp getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(Timestamp createdAt) {
-		this.createdAt = createdAt;
+	public void setCreatedAt(Timestamp argCreatedAt) {
+		Timestamp oldCreateAt = createdAt;
+		this.createdAt = argCreatedAt;
+		firePropertyChange("createAt", oldCreateAt, createdAt);
 	}
 
 	public Timestamp getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public void setUpdatedAt(Timestamp updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setUpdatedAt(Timestamp argUpdatedAt) {
+		Timestamp oldUpdateAt = updatedAt;
+		this.updatedAt = argUpdatedAt;
+		firePropertyChange("updateAt", oldUpdateAt, updatedAt);
 	}
 
 	public List<Address> getAddresses() {
@@ -101,9 +114,11 @@ public class Person {
 		return addresses;
 	}
 
-	public void setAddresses(List<Address> addresses) {
-		this.addresses = addresses;
+	public void setAddresses(List<Address> argAddresses) {
+		List<Address> oldAddresses = addresses;
+		this.addresses = argAddresses;
 		for (Address address : addresses) address.setPerson(this);
+		firePropertyChange("addresses", oldAddresses, addresses);
 	}
 
 	public Customer getCustomer() {
@@ -113,9 +128,11 @@ public class Person {
 		return customer;
 	}
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
+	public void setCustomer(Customer argCustomer) {
+		Customer oldCustomer = customer;
+		this.customer = argCustomer;
 		this.customer.setPerson(this);
+		firePropertyChange("customer", oldCustomer, customer);
 	}
 
 	public Saler getSaler() {
@@ -125,9 +142,11 @@ public class Person {
 		return saler;
 	}
 
-	public void setSaler(Saler saler) {
-		this.saler = saler;
+	public void setSaler(Saler argSaler) {
+		Saler oldSaler = saler;
+		this.saler = argSaler;
 		this.saler.setPerson(this);
+		firePropertyChange("saler", oldSaler, saler);
 	}
 
 	public Owner getOwner() {
@@ -137,9 +156,11 @@ public class Person {
 		return owner;
 	}
 
-	public void setOwner(Owner owner) {
-		this.owner = owner;
+	public void setOwner(Owner argOwner) {
+		Owner oldOwner = owner;
+		this.owner = argOwner;
 		this.owner.setPerson(this);
+		firePropertyChange("owner", oldOwner, owner);
 	}
 
 	public Buyer getBuyer() {
@@ -149,8 +170,10 @@ public class Person {
 		return buyer;
 	}
 
-	public void setBuyer(Buyer buyer) {
-		this.buyer = buyer;
+	public void setBuyer(Buyer argBuyer) {
+		Buyer oldBuyer = buyer;
+		this.buyer = argBuyer;
 		this.buyer.setPerson(this);
+		firePropertyChange("buyer", oldBuyer, buyer);
 	}
 }
