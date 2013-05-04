@@ -1,6 +1,7 @@
 package mvc.model;
 
 import mvc.view.main.MainWindow;
+import mvc.view.user.UserWindow;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,6 +14,7 @@ public class FooModelLocator {
 	private static FooModelLocator instance = null;
 
 	private MainWindow mainWindow = null;
+	private UserWindow userWindow = null;
 
 	private FooModelLocator() {}
 
@@ -22,6 +24,14 @@ public class FooModelLocator {
 
 	public MainWindow getMainWindow() {
 		return mainWindow;
+	}
+
+	public void setUserWindow(UserWindow argUserWindow) {
+		this.userWindow = argUserWindow;
+	}
+
+	public UserWindow getUserWindow() {
+		return userWindow;
 	}
 
 	public static FooModelLocator getInstance() {
