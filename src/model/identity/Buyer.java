@@ -18,6 +18,9 @@ public class Buyer extends APerson {
 
 	private Long id;
 	private Long personId;
+	private String phoneNumber;
+	private String email;
+
 	@Transient
 	private List<Offer> offers;
 
@@ -29,9 +32,11 @@ public class Buyer extends APerson {
 		super(em);
 	}
 
-	public Buyer(Person person) {
+	public Buyer(Person person, String phoneNumber, String email) {
 		super(person);
 		this.personId = person.getId();
+		this.phoneNumber = phoneNumber;
+		this.email = email;
 	}
 
 	public Long getId() {
@@ -48,6 +53,22 @@ public class Buyer extends APerson {
 
 	public void setPersonId(Long personId) {
 		this.personId = personId;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 
