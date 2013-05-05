@@ -27,6 +27,7 @@ public class MainWindow extends JFrame {
 	private JMenuBar jMenuBar;
 	private JMenuItem menuConnexion;
 	private JMenuItem menuLeave;
+	private JTextArea textArea;
 
 	private final MainWindow fenetre = this;
 
@@ -41,13 +42,20 @@ public class MainWindow extends JFrame {
 
 	private void initComponents() {
 		this.setTitle("ImmoSales");
-		mainScreen = new JPanel(new BorderLayout(5,5));
+		mainScreen = new JPanel();
 
 		jMenuBar = new JMenuBar();
 		menuConnexion = new JMenuItem("Connexion", 'C');
 		menuLeave = new JMenuItem("Quitter", 'Q');
 
+		textArea = new JTextArea(20, 40);
+
 		setLayout(new BorderLayout(5,5));
+
+		add(mainScreen, BorderLayout.CENTER);
+
+		//mainScreen.setLayout(new BorderLayout(5,5));
+
 
 		setJMenuBar(jMenuBar);
 		JMenu fileMenu = new JMenu("Fichier");
@@ -55,16 +63,18 @@ public class MainWindow extends JFrame {
 		fileMenu.add(menuConnexion);
 		fileMenu.add(menuLeave);
 
-		add(mainScreen);
+		//add(mainScreen);
 
 		Box box = Box.createHorizontalBox();
 
-		add(box);
+		add(box, BorderLayout.SOUTH);
 	}
 
 	private void linkModel() {
 		//text.setText(model.getText());
 		//text.setForeground(model.getColor());
+		textArea.setText(mainModel.getText());
+		mainScreen.add(new JScrollPane(textArea));
 
 		mainModel.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -73,7 +83,7 @@ public class MainWindow extends JFrame {
 
 				if (name.equals("text")) {
 					String value = (String) evt.getNewValue();
-					//text.setText(value);
+					textArea.setText(value);
 				} else if (name.equals("color")) {
 					Color value = (Color) evt.getNewValue();
 					//text.setForeground(value);
@@ -104,8 +114,8 @@ public class MainWindow extends JFrame {
 						Session.getInstance().setAPerson(userWindow.getSelectedPerson());
 					}
 				}
-				//ConnexionEvent event = new ConnexionEvent(Session.getInstance(), mainModel);
-				//event.dispatch();
+				ConnexionEvent event = new ConnexionEvent(Session.getInstance(), mainModel);
+				event.dispatch();
 			}
 		});
 

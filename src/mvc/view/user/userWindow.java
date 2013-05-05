@@ -290,7 +290,7 @@ public class UserWindow extends JPanel {
 
 	private void refreshTable() {
 		// Erase all previous row
-		for (int i = 0, rowcount = ((DefaultTableModel)jTable.getModel()).getRowCount();i<rowcount;i++) {
+		for (int i = ((DefaultTableModel)jTable.getModel()).getRowCount()-1;i>=0;i--) {
 			((DefaultTableModel)jTable.getModel()).removeRow(i);
 		}
 
