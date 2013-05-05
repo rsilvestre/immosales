@@ -8,6 +8,8 @@
 
 package core;
 
+import mvc.model.identity.APerson;
+
 import java.util.UUID;
 
 /**
@@ -19,19 +21,21 @@ import java.util.UUID;
  */
 public class Session {
 	private UUID sessionId;
+	private boolean isConnected;
 
 	/**
 	 * Singleton container
 	 */
 	private static Session sessionInstance;
+	private APerson aPerson;
 
 	/**
 	 * Singelton
 	 * @return Session
 	 */
 	public static Session getInstance() {
-		if (!(sessionInstance instanceof Session)) {
-			Session sessionInstance = new Session();
+		if (sessionInstance == null) {
+			sessionInstance = new Session();
 		}
 		return sessionInstance;
 	}
@@ -46,5 +50,21 @@ public class Session {
 
 	public UUID getSessionId() {
 		return sessionId;
+	}
+
+	public boolean isConnected() {
+		return isConnected;
+	}
+
+	public void setConnected(boolean connected) {
+		isConnected = connected;
+	}
+
+	public APerson getaPerson() {
+		return aPerson;
+	}
+
+	public void setAPerson(APerson aPerson) {
+		this.aPerson = aPerson;
 	}
 }

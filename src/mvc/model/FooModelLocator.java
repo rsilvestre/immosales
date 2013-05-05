@@ -1,6 +1,9 @@
 package mvc.model;
 
+import mvc.controller.main.MainController;
+import mvc.controller.user.UserController;
 import mvc.view.main.MainWindow;
+import mvc.view.user.UserPanelWindow;
 import mvc.view.user.UserWindow;
 
 /**
@@ -13,8 +16,12 @@ import mvc.view.user.UserWindow;
 public class FooModelLocator {
 	private static FooModelLocator instance = null;
 
+	private MainController mainController = new MainController();
+	private UserController userController = new UserController();
+
 	private MainWindow mainWindow = null;
 	private UserWindow userWindow = null;
+	private UserPanelWindow userPanelWindow = null;
 
 	private FooModelLocator() {}
 
@@ -32,6 +39,14 @@ public class FooModelLocator {
 
 	public UserWindow getUserWindow() {
 		return userWindow;
+	}
+
+	public UserPanelWindow getUserPanelWindow() {
+		return userPanelWindow;
+	}
+
+	public void setUserPanelWindow(UserPanelWindow userPanelWindow) {
+		this.userPanelWindow = userPanelWindow;
 	}
 
 	public static FooModelLocator getInstance() {

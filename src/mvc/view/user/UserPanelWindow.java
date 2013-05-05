@@ -8,8 +8,9 @@
 
 package mvc.view.user;
 
-import model.identity.Address;
-import model.identity.Person;
+import mvc.model.identity.APerson;
+import mvc.model.identity.Address;
+import mvc.model.identity.Person;
 import mvc.model.user.UserPanelModel;
 
 import javax.swing.*;
@@ -58,8 +59,9 @@ public class UserPanelWindow extends JPanel {
 		initComponents();
 	}
 
-	public UserPanelWindow(UserPanelModel userPanelModel, Person person, Address address) {
-		setComponents(person, address);
+	public UserPanelWindow(UserPanelModel userPanelModel, APerson aPerson) {
+		this.userPanelModel = userPanelModel;
+		setComponents(aPerson);
 		this.initComponents();
 	}
 
@@ -98,10 +100,14 @@ public class UserPanelWindow extends JPanel {
 		add(panneauSaisie, BorderLayout.CENTER);
 	}
 
-	private void setComponents(Person person, Address address) {
+	private void setComponents(APerson aPerson) {
+		Person person = aPerson.getPerson();
+		Address address = person.getAddresses().get(0);
 		this.setSaisieTitre(person.getTitre());
 		this.setSaisiePrenom(person.getFirstName());
 		this.setSaisieNom(person.getLastName());
+		this.setSaisieTelephone(aPerson.getPhoneNumber());
+		this.setSaisieEmail(aPerson.getEmail());
 		this.setSaisieAddressStreetName(address.getStreetName());
 		this.setSaisieAddressStreetNumber(address.getStreetNumber());
 		this.setSaisieAddressStreetBox(address.getStreetBox());

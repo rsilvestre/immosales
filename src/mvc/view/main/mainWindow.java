@@ -12,6 +12,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,6 +35,7 @@ public class MainWindow extends JFrame {
 	public MainWindow(MainModel mainModel) {
 		this.mainModel = mainModel;
 		initComponents();
+		linkModel();
 		addListeners();
 	}
 
@@ -59,6 +62,26 @@ public class MainWindow extends JFrame {
 		add(box);
 	}
 
+	private void linkModel() {
+		//text.setText(model.getText());
+		//text.setForeground(model.getColor());
+
+		mainModel.addPropertyChangeListener(new PropertyChangeListener() {
+
+			public void propertyChange(PropertyChangeEvent evt) {
+				String name = evt.getPropertyName();
+
+				if (name.equals("text")) {
+					String value = (String) evt.getNewValue();
+					//text.setText(value);
+				} else if (name.equals("color")) {
+					Color value = (Color) evt.getNewValue();
+					//text.setForeground(value);
+				}
+			}
+		});
+	}
+
 	private void addListeners() {
 		int toucheRaccourcis = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
@@ -72,9 +95,15 @@ public class MainWindow extends JFrame {
 				UserModel userModel = new UserModel();
 				UserWindow userWindow = new UserWindow(userModel);
 				locator.setUserWindow(userWindow);
-				userWindow.setSize(590, 300);
-				userWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				userWindow.setVisible(true);
+				userWindow.setSize(650, 300);
+
+				int connexionDialog = JOptionPane.showConfirmDialog(fenetre, userWindow, "Connexion", JOptionPane.OK_CANCEL_OPTION);
+				if (connexionDialog == JOptionPane.OK_OPTION) {
+					if (userWindow.getSelectedPerson() != null) {
+						Session.getInstance().setConnected(true);
+						Session.getInstance().setAPerson(userWindow.getSelectedPerson());
+					}
+				}
 				//ConnexionEvent event = new ConnexionEvent(Session.getInstance(), mainModel);
 				//event.dispatch();
 			}
