@@ -32,6 +32,12 @@ public abstract class APerson {
 		this.personId = person.getId();
 	}
 
+	abstract public Long getId();
+	abstract public void setPhoneNumber(String phoneNumber);
+	abstract public String getPhoneNumber();
+	abstract public void setEmail(String email);
+	abstract public String getEmail();
+
 	public Person getPerson() {
 		if (personId == null) {
 			return (person = null);

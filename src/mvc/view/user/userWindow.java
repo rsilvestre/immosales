@@ -8,6 +8,7 @@
 
 package mvc.view.user;
 
+import core.Session;
 import mvc.App;
 import mvc.model.FooModelLocator;
 import mvc.model.identity.*;
@@ -19,6 +20,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 
@@ -29,7 +32,7 @@ import java.util.List;
  * Time: 18:14
  * To change this template use File | Settings | File Templates.
  */
-public class UserWindow extends JFrame {
+public class UserWindow extends JPanel {
 	private static enum userTypeEnum {
 		Buyer("Acheteur"), Owner("Vendeur"), Saler("Commercial");
 
@@ -70,6 +73,9 @@ public class UserWindow extends JFrame {
 	private JTable jTable;
 	private DefaultTableModel tableModel;
 
+	private APerson selectedPerson = null;
+	private List<APerson> aPersons = null;
+
 	private UserModel userModel;
 
 	public UserWindow(UserModel argUserModel) {
@@ -81,18 +87,26 @@ public class UserWindow extends JFrame {
 	}
 
 	private void initComponents() {
-		this.setTitle("Contact");
+		//this.setTitle("Contact");
 		userType = new JComboBox(USER_TYPE);
 		login = new JButton();
 		logout = new JButton();
 		create = new JButton();
+		aPersons = new ArrayList<APerson>();
 
 		setLayout(new BorderLayout(3,1));
 
-		add(userType, BorderLayout.NORTH);
+		JPanel northUserType = new JPanel();
+		northUserType.add(userType);
+		add(northUserType, BorderLayout.NORTH);
 
-		String [] colonnes = {"Titre", "Nom", "Prénom", "Adresse"};
-		tableModel = new DefaultTableModel(colonnes,0);
+		String [] colonnes = {"Titre", "Nom", "Prénom", "Adresse", "Edit", "Connect"};
+		tableModel = new DefaultTableModel(colonnes,0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
 		jTable = new JTable(tableModel);
 		jTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 
@@ -114,49 +128,155 @@ public class UserWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				//To change body of implemented methods use File | Settings | File Templates.
-				FooModelLocator locator = FooModelLocator.getInstance();
-				UserPanelModel userPanelModel = new UserPanelModel();
-				UserPanelWindow userPanelWindow = new UserPanelWindow(userPanelModel);
-
-				int response = JOptionPane.showConfirmDialog(userWindow, userPanelWindow, "Nouveau contact", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-				if (response == JOptionPane.OK_OPTION) {
-					tableModel.addRow(new String[] {
-						userPanelWindow.getTitre(),
-						userPanelWindow.getNom(),
-						userPanelWindow.getPrenom(),
-						getAddress(userPanelWindow)
-					});
-					Person person = new Person(userPanelWindow.getTitre(), userPanelWindow.getPrenom(), userPanelWindow.getNom());
-
-
-					App.em.insert(person);
-					Address address = new Address(
-						person,
-						userPanelWindow.getAddressStreetName(),
-						userPanelWindow.getAddressStreetNumber(),
-						userPanelWindow.getAddressStreetBox(),
-						userPanelWindow.getAddressCity(),
-						userPanelWindow.getAddressLocality(),
-						userPanelWindow.getAddressPosteCode(),
-						userPanelWindow.getAddressCountry()
-					);
-					App.em.insert(address);
-
-					String typeUtilisateur = (getCurrentUserType());
-					if (userTypeEnum.fromString(typeUtilisateur) == userTypeEnum.Buyer) {
-						Buyer buyer = new Buyer(person, userPanelWindow.getTelephone(), userPanelWindow.getEmail());
-						App.em.insert(buyer);
-					} else if (userTypeEnum.fromString(typeUtilisateur) == userTypeEnum.Owner) {
-						Owner owner = new Owner(person, userPanelWindow.getTelephone(), userPanelWindow.getEmail());
-						App.em.insert(owner);
-					} else if (userTypeEnum.fromString(typeUtilisateur) == userTypeEnum.Saler) {
-						Saler saler = new Saler(person, userPanelWindow.getTelephone(), userPanelWindow.getEmail());
-						App.em.insert(saler);
+				createUser(Session.getInstance().getaPerson());
+			}
+		});
+		jTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 1) {
+					JTable target = (JTable) e.getSource();
+					setSelectedPerson(getAPerson(target.getSelectedRow()));
+					if (target.getSelectedColumn()== 4) {
+						editRow(target);
 					}
 				}
 			}
 		});
+		userType.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				//To change body of implemented methods use File | Settings | File Templates.
+
+				refreshTable();
+			}
+		});
+	}
+
+	private void editRow(JTable target) {
+		int row = target.getSelectedRow();
+
+		/*String prenom = (String)target.getModel().getValueAt(row, 2);
+		String nom = (String)target.getModel().getValueAt(row, 1);
+		Person person1 = App.em.findUnique(Person.class, "where firstname = ? and lastname = ?", prenom, nom);
+		Address address = person1.getAddresses().get(0);
+
+		String test = getCurrentUserType();
+		APerson aPerson = null;
+		if (userTypeEnum.fromString(test) == userTypeEnum.Buyer) {
+			aPerson = person1.getBuyer();
+		} else if (userTypeEnum.fromString(test) == userTypeEnum.Owner) {
+			aPerson = person1.getOwner();
+		} else if (userTypeEnum.fromString(test) == userTypeEnum.Saler) {
+			aPerson = person1.getSaler();
+		}*/
+		APerson aPerson = getAPerson(target.getSelectedRow());
+
+		FooModelLocator locator = FooModelLocator.getInstance();
+		UserPanelModel userPanelModel = new UserPanelModel();
+		UserPanelWindow userPanelWindow = new UserPanelWindow(userPanelModel, aPerson);
+		locator.setUserPanelWindow(userPanelWindow);
+
+		int reponse = JOptionPane.showConfirmDialog(userWindow, userPanelWindow, "Nouveau contact", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+		if (reponse == JOptionPane.OK_OPTION) {
+			//modele.addRow(new String [] {userPanelWindow.getTitre(), userPanelWindow.getNom(), userPanelWindow.getPrenom(), getAddress(userPanelWindow)});
+			Person person = aPerson.getPerson();
+			Address address = person.getAddresses().get(0);
+			person.setTitre(userPanelWindow.getTitre());
+			person.setFirstName(userPanelWindow.getPrenom());
+			person.setLastName(userPanelWindow.getNom());
+			App.em.update(person);
+
+			address.setStreetName(userPanelWindow.getAddressStreetName());
+			address.setStreetNumber(userPanelWindow.getAddressStreetNumber());
+			address.setStreetBox(userPanelWindow.getAddressStreetBox());
+			address.setCity(userPanelWindow.getAddressCity());
+			address.setLocality(userPanelWindow.getAddressLocality());
+			address.setPosteCode(userPanelWindow.getAddressPosteCode());
+			address.setCountry(userPanelWindow.getAddressCountry());
+			App.em.update(address);
+
+			aPerson.setPhoneNumber(userPanelWindow.getTelephone());
+			aPerson.setEmail(userPanelWindow.getEmail());
+			String currentUserType = getCurrentUserType();
+			if (userTypeEnum.fromString(currentUserType) == userTypeEnum.Buyer) {
+				App.em.update((Buyer)aPerson);
+			} else if (userTypeEnum.fromString(currentUserType) == userTypeEnum.Owner) {
+				App.em.update((Owner)aPerson);
+			} else if (userTypeEnum.fromString(currentUserType) == userTypeEnum.Saler) {
+				App.em.update((Saler)aPerson);
+			}
+
+			target.getModel().setValueAt(userPanelWindow.getTitre(), row, 0);
+			target.getModel().setValueAt(userPanelWindow.getNom(), row, 1);
+			target.getModel().setValueAt(userPanelWindow.getPrenom(), row, 2);
+			target.getModel().setValueAt(getAddress(userPanelWindow), row, 3);
+			target.repaint();
+		}
+	}
+
+	private void createUser(APerson aPerson) {
+		FooModelLocator locator = FooModelLocator.getInstance();
+		UserPanelModel userPanelModel = new UserPanelModel();
+		UserPanelWindow userPanelWindow = null;
+		if (aPerson != null) {
+			if (Session.getInstance().getaPerson() != null) {
+				if (JOptionPane.showConfirmDialog(userWindow, "Voulez-vous utiliser les mêmes données que pour votre connexion actuelle ?", "Oui", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					userPanelWindow = new UserPanelWindow(userPanelModel, aPerson);
+				} else {
+					userPanelWindow = new UserPanelWindow(userPanelModel);
+				}
+			} else {
+				userPanelWindow = new UserPanelWindow(userPanelModel);
+			}
+		} else {
+			userPanelWindow = new UserPanelWindow(userPanelModel);
+		}
+
+		locator.setUserPanelWindow(userPanelWindow);
+
+		int response = JOptionPane.showConfirmDialog(userWindow, userPanelWindow, "Nouveau contact", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+		if (response == JOptionPane.OK_OPTION) {
+			tableModel.addRow(new String[] {
+				userPanelWindow.getTitre(),
+				userPanelWindow.getNom(),
+				userPanelWindow.getPrenom(),
+				getAddress(userPanelWindow),
+				"Edit",
+				""
+			});
+
+			Person person = new Person(userPanelWindow.getTitre(), userPanelWindow.getPrenom(), userPanelWindow.getNom());
+			App.em.insert(person);
+
+			Address address = new Address(
+				person,
+				userPanelWindow.getAddressStreetName(),
+				userPanelWindow.getAddressStreetNumber(),
+				userPanelWindow.getAddressStreetBox(),
+				userPanelWindow.getAddressCity(),
+				userPanelWindow.getAddressLocality(),
+				userPanelWindow.getAddressPosteCode(),
+				userPanelWindow.getAddressCountry()
+			);
+			App.em.insert(address);
+
+			String typeUtilisateur = (getCurrentUserType());
+			if (userTypeEnum.fromString(typeUtilisateur) == userTypeEnum.Buyer) {
+				Buyer buyer = new Buyer(person, userPanelWindow.getTelephone(), userPanelWindow.getEmail());
+				App.em.insert(buyer);
+				addAPersons(buyer);
+			} else if (userTypeEnum.fromString(typeUtilisateur) == userTypeEnum.Owner) {
+				Owner owner = new Owner(person, userPanelWindow.getTelephone(), userPanelWindow.getEmail());
+				App.em.insert(owner);
+				addAPersons(owner);
+			} else if (userTypeEnum.fromString(typeUtilisateur) == userTypeEnum.Saler) {
+				Saler saler = new Saler(person, userPanelWindow.getTelephone(), userPanelWindow.getEmail());
+				App.em.insert(saler);
+				addAPersons(saler);
+			}
+		}
 	}
 
 	private void populateLocale() {
@@ -169,30 +289,50 @@ public class UserWindow extends JFrame {
 	}
 
 	private void refreshTable() {
+		// Erase all previous row
+		for (int i = 0, rowcount = ((DefaultTableModel)jTable.getModel()).getRowCount();i<rowcount;i++) {
+			((DefaultTableModel)jTable.getModel()).removeRow(i);
+		}
 
-		String test = getCurrentUserType();
+		// Efface aPersons list
+		clearAPersons();
 
-		if (userTypeEnum.fromString(test) == userTypeEnum.Buyer) {
+		// Select new user type
+		String currentUserType = getCurrentUserType();
+
+		if (userTypeEnum.fromString(currentUserType) == userTypeEnum.Buyer) {
 			List<Buyer> buyers = App.em.find(Buyer.class, "order by id");
 			for (Buyer buyer : buyers) {
-				Person personRow = buyer.getPerson();
-				tableModel.addRow(new String [] {personRow.getTitre(), personRow.getLastName(), personRow.getFirstName(), getAddressString(personRow.getAddresses())});
+				addAPersons(buyer);
+				tableAddRow(buyer);
 			}
 		}
-		if (userTypeEnum.fromString(test) == userTypeEnum.Owner) {
+		if (userTypeEnum.fromString(currentUserType) == userTypeEnum.Owner) {
 			List<Owner> owners = App.em.find(Owner.class, "order by id");
 			for (Owner owner : owners) {
-				Person personRow = owner.getPerson();
-				tableModel.addRow(new String [] {personRow.getTitre(), personRow.getLastName(), personRow.getFirstName(), getAddressString(personRow.getAddresses())});
+				addAPersons(owner);
+				tableAddRow(owner);
 			}
 		}
-		if (userTypeEnum.fromString(test) == userTypeEnum.Saler) {
+		if (userTypeEnum.fromString(currentUserType) == userTypeEnum.Saler) {
 			List<Saler> salers = App.em.find(Saler.class, "order by id");
 			for (Saler saler : salers) {
-				Person personRow = saler.getPerson();
-				tableModel.addRow(new String [] {personRow.getTitre(), personRow.getLastName(), personRow.getFirstName(), getAddressString(personRow.getAddresses())});
+				addAPersons(saler);
+				tableAddRow(saler);
 			}
 		}
+	}
+
+	private void tableAddRow(APerson aPersonRow) {
+		Person personRow = aPersonRow.getPerson();
+		tableModel.addRow(new String [] {
+			personRow.getTitre(),
+			personRow.getLastName(),
+			personRow.getFirstName(),
+			getAddressString(personRow.getAddresses()),
+			"Edit",
+			(Session.getInstance().getaPerson() != null && aPersonRow.getId() == Session.getInstance().getaPerson().getId()) ? "Connected":""
+		});
 	}
 
 	private String getCurrentUserType() {
@@ -200,14 +340,13 @@ public class UserWindow extends JFrame {
 	}
 
 	private static String getAddress(UserPanelWindow userPanelWindow) {
-		String addressRow = userPanelWindow.getAddressStreetName() + " " +
+		return userPanelWindow.getAddressStreetName() + " " +
 			userPanelWindow.getAddressStreetNumber() + "/" +
 			userPanelWindow.getAddressStreetBox() + "\n" +
 			userPanelWindow.getAddressPosteCode() + " " +
 			userPanelWindow.getAddressCity() + " - " +
 			userPanelWindow.getAddressLocality() + "\n" +
 			userPanelWindow.getAddressCountry();
-		return addressRow;
 	}
 
 	private static String getAddressString(List<Address> addresses) {
@@ -226,5 +365,29 @@ public class UserWindow extends JFrame {
 		return addressRow.substring(0, addressRow.length()-1);
 	}
 
+	public APerson getSelectedPerson() {
+		return selectedPerson;
+	}
 
+	private void setSelectedPerson(APerson selectedPerson) {
+		this.selectedPerson = selectedPerson;
+	}
+
+	private List<APerson> getAPersons() {
+		return aPersons;
+	}
+
+	private APerson getAPerson(int index) {
+		return getAPersons().get(index);
+	}
+
+	private void addAPersons(APerson aPersons) {
+		this.aPersons.add(aPersons);
+	}
+
+	private void clearAPersons() {
+		if (aPersons != null) {
+			aPersons.clear();
+		}
+	}
 }
