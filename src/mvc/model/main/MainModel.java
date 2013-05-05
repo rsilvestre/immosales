@@ -12,6 +12,7 @@ import core.Session;
  */
 public class MainModel extends AbstractModel {
 	private Session session;
+	private String text = "test";
 
 	public Session getSession() {
 		return session;
@@ -19,5 +20,13 @@ public class MainModel extends AbstractModel {
 
 	public void setSession(Session session) {
 		this.session = session;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
 	}
 }
