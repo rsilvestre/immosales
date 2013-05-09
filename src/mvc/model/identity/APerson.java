@@ -11,6 +11,32 @@ import net.sf.jeasyorm.annotation.Transient;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class APerson {
+	@Transient
+	public static enum userTypeEnum {
+		Buyer("Acheteur"), Owner("Vendeur"), Saler("Commercial");
+
+		private String converteur;
+
+		userTypeEnum(String value) {
+			converteur = value;
+		}
+
+		@Override
+		public String toString() {
+			return converteur;
+		}
+		public static userTypeEnum fromString(String text) {
+			if (text != null) {
+				for (userTypeEnum b : userTypeEnum.values()) {
+					if (text.equalsIgnoreCase(b.converteur)) {
+						return b;
+					}
+				}
+			}
+			return null;
+		}
+
+	}
 
 	private EntityManager em;
 
@@ -58,5 +84,17 @@ public abstract class APerson {
 
 	protected EntityManager getEm() {
 		return em;
+	}
+
+	public userTypeEnum getUserType() {
+		userTypeEnum userType = null;
+		if (this instanceof Buyer) {
+			userType = userTypeEnum.Buyer;
+		} else if (this instanceof Owner) {
+			userType = userTypeEnum.Owner;
+		} else if (this instanceof Saler) {
+			userType = userTypeEnum.Saler;
+		}
+		return userType;
 	}
 }

@@ -2,6 +2,7 @@ package mvc.model.main;
 
 import com.dmurph.mvc.model.AbstractModel;
 import core.Session;
+import mvc.model.identity.APerson;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,15 +12,17 @@ import core.Session;
  * To change this template use File | Settings | File Templates.
  */
 public class MainModel extends AbstractModel {
-	private Session session;
+	private APerson aPerson;
 	private String text = "test";
 
-	public Session getSession() {
-		return session;
+	public APerson getaPerson() {
+		return aPerson;
 	}
 
-	public void setSession(Session session) {
-		this.session = session;
+	public void setAPerson(APerson argAPerson) {
+		APerson oldAPerson = aPerson;
+		aPerson = argAPerson;
+		firePropertyChange("aPerson", oldAPerson, aPerson);
 	}
 
 	public String getText() {

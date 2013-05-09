@@ -3,6 +3,7 @@ package mvc.view.main;
 import core.Session;
 import mvc.controller.main.ConnexionEvent;
 import mvc.model.FooModelLocator;
+import mvc.model.identity.*;
 import mvc.model.main.MainModel;
 import mvc.model.user.UserModel;
 import mvc.view.user.UserWindow;
@@ -24,10 +25,12 @@ import java.beans.PropertyChangeListener;
  */
 public class MainWindow extends JFrame {
 	private JPanel mainScreen;
+	private Box box;
 	private JMenuBar jMenuBar;
 	private JMenuItem menuConnexion;
 	private JMenuItem menuLeave;
 	private JTextArea textArea;
+	private JButton createAdvertising;
 
 	private final MainWindow fenetre = this;
 
@@ -42,7 +45,10 @@ public class MainWindow extends JFrame {
 
 	private void initComponents() {
 		this.setTitle("ImmoSales");
+		this.setMinimumSize(new Dimension(640, 480));
 		mainScreen = new JPanel();
+		box = Box.createHorizontalBox();
+
 
 		jMenuBar = new JMenuBar();
 		menuConnexion = new JMenuItem("Connexion", 'C');
@@ -54,20 +60,7 @@ public class MainWindow extends JFrame {
 
 		add(mainScreen, BorderLayout.CENTER);
 
-		//mainScreen.setLayout(new BorderLayout(5,5));
-
-
 		setJMenuBar(jMenuBar);
-		JMenu fileMenu = new JMenu("Fichier");
-		jMenuBar.add(fileMenu);
-		fileMenu.add(menuConnexion);
-		fileMenu.add(menuLeave);
-
-		//add(mainScreen);
-
-		Box box = Box.createHorizontalBox();
-
-		add(box, BorderLayout.SOUTH);
 	}
 
 	private void linkModel() {
@@ -75,6 +68,11 @@ public class MainWindow extends JFrame {
 		//text.setForeground(model.getColor());
 		textArea.setText(mainModel.getText());
 		mainScreen.add(new JScrollPane(textArea));
+
+		JMenu fileMenu = new JMenu("Fichier");
+		jMenuBar.add(fileMenu);
+		fileMenu.add(menuConnexion);
+		fileMenu.add(menuLeave);
 
 		mainModel.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -84,18 +82,43 @@ public class MainWindow extends JFrame {
 				if (name.equals("text")) {
 					String value = (String) evt.getNewValue();
 					textArea.setText(value);
-				} else if (name.equals("color")) {
-					Color value = (Color) evt.getNewValue();
-					//text.setForeground(value);
+				} else if (name.equals("aPerson")) {
+					if (Session.getInstance().isConnected()) {
+						connectionRespone((APerson)evt.getNewValue());
+						textArea.append(" Connected!\n");
+						Person person = ((APerson)evt.getNewValue()).getPerson();
+						textArea.append("Bienvenu " + person.getFirstName() + " " + person.getLastName() + "\n");
+
+						textArea.append("Connecté en tant que : " + ((APerson) evt.getNewValue()).getUserType().toString());
+					}
 				}
 			}
 		});
 	}
 
+	private void connectionRespone(APerson aPerson) {
+		Person person = aPerson.getPerson();
+		JTextField connectionLabel = new JTextField(
+				"Bienvenu " + person.getTitre() + " " + person.getLastName() +
+				" Connecté en tant que : " + aPerson.getUserType().toString()
+		);
+		createAdvertising = new JButton("Nouveau bien");
+
+		fenetre.remove(box);
+		box = Box.createHorizontalBox();
+		box.add(createAdvertising);
+		box.add(Box.createRigidArea(new Dimension(31,1)));
+		box.add(Box.createHorizontalGlue());
+		box.add(connectionLabel);
+
+		fenetre.add(box, BorderLayout.SOUTH);
+		mainScreen.revalidate();
+	}
+
 	private void addListeners() {
 		int toucheRaccourcis = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
-		menuConnexion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, toucheRaccourcis));
+		menuConnexion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, toucheRaccourcis));
 		menuConnexion.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -114,7 +137,7 @@ public class MainWindow extends JFrame {
 						Session.getInstance().setAPerson(userWindow.getSelectedPerson());
 					}
 				}
-				ConnexionEvent event = new ConnexionEvent(Session.getInstance(), mainModel);
+				ConnexionEvent event = new ConnexionEvent(Session.getInstance().getaPerson(), mainModel);
 				event.dispatch();
 			}
 		});
