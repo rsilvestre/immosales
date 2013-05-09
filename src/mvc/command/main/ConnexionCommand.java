@@ -25,6 +25,6 @@ public class ConnexionCommand implements ICommand {
 	public void execute(MVCEvent mvcEvent) {
 		//To change body of implemented methods use File | Settings | File Templates.
 		ConnexionEvent event = (ConnexionEvent) mvcEvent;
-		event.model.setSession(event.session);
+		event.model.setAPerson(event.aPerson);
 	}
 }

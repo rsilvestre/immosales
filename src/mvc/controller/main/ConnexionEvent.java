@@ -10,6 +10,7 @@ package mvc.controller.main;
 
 import com.dmurph.mvc.MVCEvent;
 import core.Session;
+import mvc.model.identity.APerson;
 import mvc.model.main.MainModel;
 
 /**
@@ -21,12 +22,12 @@ import mvc.model.main.MainModel;
  */
 public class ConnexionEvent extends MVCEvent {
 
-	public final Session session;
+	public final APerson aPerson;
 	public final MainModel model;
 
-	public ConnexionEvent(Session argSession, MainModel argModel) {
+	public ConnexionEvent(APerson argAPerson, MainModel argModel) {
 		super(MainController.CONNEXION);
 		model = argModel;
-		session = argSession;
+		aPerson = argAPerson;
 	}
 }

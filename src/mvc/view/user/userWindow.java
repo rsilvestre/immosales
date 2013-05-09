@@ -33,37 +33,13 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class UserWindow extends JPanel {
-	private static enum userTypeEnum {
-		Buyer("Acheteur"), Owner("Vendeur"), Saler("Commercial");
 
-		private String converteur;
-
-		userTypeEnum(String value) {
-			converteur = value;
-		}
-
-		@Override
-		public String toString() {
-			return converteur;
-		}
-		public static userTypeEnum fromString(String text) {
-			if (text != null) {
-				for (userTypeEnum b : userTypeEnum.values()) {
-					if (text.equalsIgnoreCase(b.converteur)) {
-						return b;
-					}
-				}
-			}
-			return null;
-		}
-
-	}
 	private final UserWindow userWindow = this;
 	//private final static String[] USER_TYPE = {"Acheteur", "Vendeur", "Commercial"};
 	private final static String[] USER_TYPE = {
-		userTypeEnum.Buyer.toString(),
-		userTypeEnum.Owner.toString(),
-		userTypeEnum.Saler.toString()
+		APerson.userTypeEnum.Buyer.toString(),
+		APerson.userTypeEnum.Owner.toString(),
+		APerson.userTypeEnum.Saler.toString()
 	};
 
 	private JComboBox userType;
@@ -199,11 +175,11 @@ public class UserWindow extends JPanel {
 			aPerson.setPhoneNumber(userPanelWindow.getTelephone());
 			aPerson.setEmail(userPanelWindow.getEmail());
 			String currentUserType = getCurrentUserType();
-			if (userTypeEnum.fromString(currentUserType) == userTypeEnum.Buyer) {
+			if (APerson.userTypeEnum.fromString(currentUserType) == APerson.userTypeEnum.Buyer) {
 				App.em.update((Buyer)aPerson);
-			} else if (userTypeEnum.fromString(currentUserType) == userTypeEnum.Owner) {
+			} else if (APerson.userTypeEnum.fromString(currentUserType) == APerson.userTypeEnum.Owner) {
 				App.em.update((Owner)aPerson);
-			} else if (userTypeEnum.fromString(currentUserType) == userTypeEnum.Saler) {
+			} else if (APerson.userTypeEnum.fromString(currentUserType) == APerson.userTypeEnum.Saler) {
 				App.em.update((Saler)aPerson);
 			}
 
@@ -263,15 +239,15 @@ public class UserWindow extends JPanel {
 			App.em.insert(address);
 
 			String typeUtilisateur = (getCurrentUserType());
-			if (userTypeEnum.fromString(typeUtilisateur) == userTypeEnum.Buyer) {
+			if (APerson.userTypeEnum.fromString(typeUtilisateur) == APerson.userTypeEnum.Buyer) {
 				Buyer buyer = new Buyer(person, userPanelWindow.getTelephone(), userPanelWindow.getEmail());
 				App.em.insert(buyer);
 				addAPersons(buyer);
-			} else if (userTypeEnum.fromString(typeUtilisateur) == userTypeEnum.Owner) {
+			} else if (APerson.userTypeEnum.fromString(typeUtilisateur) == APerson.userTypeEnum.Owner) {
 				Owner owner = new Owner(person, userPanelWindow.getTelephone(), userPanelWindow.getEmail());
 				App.em.insert(owner);
 				addAPersons(owner);
-			} else if (userTypeEnum.fromString(typeUtilisateur) == userTypeEnum.Saler) {
+			} else if (APerson.userTypeEnum.fromString(typeUtilisateur) == APerson.userTypeEnum.Saler) {
 				Saler saler = new Saler(person, userPanelWindow.getTelephone(), userPanelWindow.getEmail());
 				App.em.insert(saler);
 				addAPersons(saler);
@@ -300,21 +276,21 @@ public class UserWindow extends JPanel {
 		// Select new user type
 		String currentUserType = getCurrentUserType();
 
-		if (userTypeEnum.fromString(currentUserType) == userTypeEnum.Buyer) {
+		if (APerson.userTypeEnum.fromString(currentUserType) == APerson.userTypeEnum.Buyer) {
 			List<Buyer> buyers = App.em.find(Buyer.class, "order by id");
 			for (Buyer buyer : buyers) {
 				addAPersons(buyer);
 				tableAddRow(buyer);
 			}
 		}
-		if (userTypeEnum.fromString(currentUserType) == userTypeEnum.Owner) {
+		if (APerson.userTypeEnum.fromString(currentUserType) == APerson.userTypeEnum.Owner) {
 			List<Owner> owners = App.em.find(Owner.class, "order by id");
 			for (Owner owner : owners) {
 				addAPersons(owner);
 				tableAddRow(owner);
 			}
 		}
-		if (userTypeEnum.fromString(currentUserType) == userTypeEnum.Saler) {
+		if (APerson.userTypeEnum.fromString(currentUserType) == APerson.userTypeEnum.Saler) {
 			List<Saler> salers = App.em.find(Saler.class, "order by id");
 			for (Saler saler : salers) {
 				addAPersons(saler);
