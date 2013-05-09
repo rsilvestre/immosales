@@ -1,8 +1,7 @@
 package mvc.model.main;
 
 import com.dmurph.mvc.model.AbstractModel;
-import core.Session;
-import mvc.model.identity.APerson;
+import mvc.model.DB.identity.APerson;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,7 +14,7 @@ public class MainModel extends AbstractModel {
 	private APerson aPerson;
 	private String text = "test";
 
-	public APerson getaPerson() {
+	public APerson getAPerson() {
 		return aPerson;
 	}
 

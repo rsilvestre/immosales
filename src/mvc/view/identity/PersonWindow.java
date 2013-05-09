@@ -1,6 +1,6 @@
 package mvc.view.identity;
 
-import mvc.model.identity.Person;
+import mvc.model.DB.identity.Person;
 
 import javax.swing.*;
 import java.awt.*;

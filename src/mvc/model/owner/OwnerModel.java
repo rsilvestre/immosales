@@ -1,5 +1,7 @@
 package mvc.model.owner;
 
+import com.dmurph.mvc.model.AbstractModel;
+
 /**
  * Created with IntelliJ IDEA.
  * User: michaelsilvestre
@@ -7,5 +9,6 @@ package mvc.model.owner;
  * Time: 12:05
  * To change this template use File | Settings | File Templates.
  */
-public class OwnerModel {
+public class OwnerModel extends AbstractModel {
+
 }

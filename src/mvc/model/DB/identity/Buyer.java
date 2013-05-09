@@ -1,6 +1,6 @@
 package mvc.model.DB.identity;
 
-import mvc.model.immo.Offer;
+import mvc.model.DB.immo.Offer;
 import net.sf.jeasyorm.EntityManager;
 import net.sf.jeasyorm.annotation.Transient;
 

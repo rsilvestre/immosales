@@ -8,7 +8,7 @@
 
 package core;
 
-import mvc.model.identity.APerson;
+import mvc.model.DB.identity.APerson;
 
 import java.util.UUID;
 
@@ -60,7 +60,7 @@ public class Session {
 		isConnected = connected;
 	}
 
-	public APerson getaPerson() {
+	public APerson getAPerson() {
 		return aPerson;
 	}
 
