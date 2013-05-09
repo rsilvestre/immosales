@@ -1,6 +1,6 @@
-package mvc.model.immo;
+package mvc.model.DB.immo;
 
-import mvc.model.identity.Buyer;
+import mvc.model.DB.identity.Buyer;
 import mvc.model.product.Bien;
 import net.sf.jeasyorm.EntityManager;
 import net.sf.jeasyorm.annotation.Transient;
