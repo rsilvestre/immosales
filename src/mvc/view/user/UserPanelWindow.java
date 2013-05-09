@@ -8,9 +8,9 @@
 
 package mvc.view.user;
 
-import mvc.model.identity.APerson;
-import mvc.model.identity.Address;
-import mvc.model.identity.Person;
+import mvc.model.DB.identity.APerson;
+import mvc.model.DB.identity.Address;
+import mvc.model.DB.identity.Person;
 import mvc.model.user.UserPanelModel;
 
 import javax.swing.*;

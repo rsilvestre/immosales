@@ -3,9 +3,11 @@ package mvc.view.main;
 import core.Session;
 import mvc.controller.main.ConnexionEvent;
 import mvc.model.FooModelLocator;
-import mvc.model.identity.*;
+import mvc.model.DB.identity.*;
 import mvc.model.main.MainModel;
+import mvc.model.owner.OwnerModel;
 import mvc.model.user.UserModel;
+import mvc.view.owner.OwnerWindow;
 import mvc.view.user.UserWindow;
 
 import javax.swing.*;
@@ -18,7 +20,7 @@ import java.beans.PropertyChangeListener;
 
 /**
  * Created with IntelliJ IDEA.
- * User: michaelsilvestre
+ * User: Michael Silvestre
  * Date: 4/05/13
  * Time: 09:19
  * To change this template use File | Settings | File Templates.
@@ -31,6 +33,7 @@ public class MainWindow extends JFrame {
 	private JMenuItem menuLeave;
 	private JTextArea textArea;
 	private JButton createAdvertising;
+	private OwnerWindow ownerWindow;
 
 	private final MainWindow fenetre = this;
 
@@ -104,14 +107,20 @@ public class MainWindow extends JFrame {
 		);
 		createAdvertising = new JButton("Nouveau bien");
 
-		fenetre.remove(box);
+		remove(box);
 		box = Box.createHorizontalBox();
 		box.add(createAdvertising);
 		box.add(Box.createRigidArea(new Dimension(31,1)));
 		box.add(Box.createHorizontalGlue());
 		box.add(connectionLabel);
 
-		fenetre.add(box, BorderLayout.SOUTH);
+		mainScreen.removeAll();
+
+		OwnerModel ownerModel = new OwnerModel();
+		ownerWindow = new OwnerWindow(ownerModel);
+		mainScreen.add(ownerWindow);
+
+		add(box, BorderLayout.SOUTH);
 		mainScreen.revalidate();
 	}
 
@@ -137,7 +146,7 @@ public class MainWindow extends JFrame {
 						Session.getInstance().setAPerson(userWindow.getSelectedPerson());
 					}
 				}
-				ConnexionEvent event = new ConnexionEvent(Session.getInstance().getaPerson(), mainModel);
+				ConnexionEvent event = new ConnexionEvent(Session.getInstance().getAPerson(), mainModel);
 				event.dispatch();
 			}
 		});

@@ -1,7 +1,7 @@
 package mvc.model.DB.immo;
 
 import mvc.model.DB.identity.Buyer;
-import mvc.model.product.Bien;
+import mvc.model.DB.product.Bien;
 import net.sf.jeasyorm.EntityManager;
 import net.sf.jeasyorm.annotation.Transient;
 

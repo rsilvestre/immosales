@@ -9,8 +9,7 @@
 package mvc.controller.main;
 
 import com.dmurph.mvc.MVCEvent;
-import core.Session;
-import mvc.model.identity.APerson;
+import mvc.model.DB.identity.APerson;
 import mvc.model.main.MainModel;
 
 /**

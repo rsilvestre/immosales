@@ -11,7 +11,7 @@ package mvc.view.user;
 import core.Session;
 import mvc.App;
 import mvc.model.FooModelLocator;
-import mvc.model.identity.*;
+import mvc.model.DB.identity.*;
 import mvc.model.user.UserModel;
 import mvc.model.user.UserPanelModel;
 
@@ -104,7 +104,7 @@ public class UserWindow extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				//To change body of implemented methods use File | Settings | File Templates.
-				createUser(Session.getInstance().getaPerson());
+				createUser(Session.getInstance().getAPerson());
 			}
 		});
 		jTable.addMouseListener(new MouseAdapter() {
@@ -196,7 +196,7 @@ public class UserWindow extends JPanel {
 		UserPanelModel userPanelModel = new UserPanelModel();
 		UserPanelWindow userPanelWindow = null;
 		if (aPerson != null) {
-			if (Session.getInstance().getaPerson() != null) {
+			if (Session.getInstance().getAPerson() != null) {
 				if (JOptionPane.showConfirmDialog(userWindow, "Voulez-vous utiliser les mêmes données que pour votre connexion actuelle ?", "Oui", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					userPanelWindow = new UserPanelWindow(userPanelModel, aPerson);
 				} else {
@@ -307,7 +307,7 @@ public class UserWindow extends JPanel {
 			personRow.getFirstName(),
 			getAddressString(personRow.getAddresses()),
 			"Edit",
-			(Session.getInstance().getaPerson() != null && aPersonRow.getId() == Session.getInstance().getaPerson().getId()) ? "Connected":""
+			(Session.getInstance().getAPerson() != null && aPersonRow.getId() == Session.getInstance().getAPerson().getId()) ? "Connected":""
 		});
 	}
 

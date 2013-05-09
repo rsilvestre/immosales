@@ -1,6 +1,6 @@
 package mvc.model.DB.identity;
 
-import mvc.model.product.Bien;
+import mvc.model.DB.product.Bien;
 import net.sf.jeasyorm.EntityManager;
 import net.sf.jeasyorm.annotation.Transient;
 
