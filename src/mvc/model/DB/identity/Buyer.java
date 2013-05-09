@@ -1,26 +1,38 @@
-package mvc.model.identity;
+package mvc.model.DB.identity;
 
+import mvc.model.immo.Offer;
 import net.sf.jeasyorm.EntityManager;
+import net.sf.jeasyorm.annotation.Transient;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
  * User: michaelsilvestre
  * Date: 7/04/13
- * Time: 12:07
+ * Time: 12:16
  * To change this template use File | Settings | File Templates.
  */
-public class Saler extends APerson {
+public class Buyer extends APerson {
 
 	private Long id;
 	private Long personId;
 	private String phoneNumber;
 	private String email;
 
-	public Saler(EntityManager em) {
+	@Transient
+	private List<Offer> offers;
+
+	public Buyer() {
+		this.offers = new ArrayList<Offer>();
+	}
+
+	public Buyer(EntityManager em) {
 		super(em);
 	}
 
-	public Saler(Person person, String phoneNumber, String email) {
+	public Buyer(Person person, String phoneNumber, String email) {
 		super(person);
 		this.personId = person.getId();
 		this.phoneNumber = phoneNumber;
@@ -58,5 +70,18 @@ public class Saler extends APerson {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+
+	public List<Offer> getOffers() {
+		if (offers == null && getEm() != null) {
+			setOffers(getEm().find(Offer.class, "where buyer_id = ?", id));
+		}
+		return offers;
+	}
+
+	public void setOffers(List<Offer> offers) {
+		this.offers = offers;
+		for (Offer offer : offers) offer.setBuyer(this);
 	}
 }

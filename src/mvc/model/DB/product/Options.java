@@ -1,4 +1,4 @@
-package mvc.model.product;
+package mvc.model.DB.product;
 
 import net.sf.jeasyorm.EntityManager;
 

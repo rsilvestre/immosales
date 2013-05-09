@@ -1,4 +1,4 @@
-package mvc.model.identity;
+package mvc.model.DB.identity;
 
 import mvc.model.product.Bien;
 import net.sf.jeasyorm.EntityManager;

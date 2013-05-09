@@ -1,4 +1,4 @@
-package mvc.model.identity;
+package mvc.model.DB.identity;
 
 import com.dmurph.mvc.model.AbstractModel;
 import net.sf.jeasyorm.EntityManager;

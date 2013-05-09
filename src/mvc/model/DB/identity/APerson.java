@@ -1,4 +1,4 @@
-package mvc.model.identity;
+package mvc.model.DB.identity;
 
 import net.sf.jeasyorm.EntityManager;
 import net.sf.jeasyorm.annotation.Transient;
