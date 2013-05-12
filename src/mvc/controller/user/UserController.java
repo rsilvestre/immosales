@@ -8,6 +8,8 @@
 
 package mvc.controller.user;
 
+import com.dmurph.mvc.control.FrontController;
+
 /**
  * Created with IntelliJ IDEA.
  * User: michaelsilvestre
@@ -15,5 +17,5 @@ package mvc.controller.user;
  * Time: 10:55
  * To change this template use File | Settings | File Templates.
  */
-public class UserController {
+public class UserController extends FrontController {
 }

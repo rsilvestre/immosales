@@ -1,7 +1,10 @@
 package mvc.model.DB.identity;
 
+import core.Session;
 import net.sf.jeasyorm.EntityManager;
 import net.sf.jeasyorm.annotation.Transient;
+
+import java.util.Vector;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,6 +14,7 @@ import net.sf.jeasyorm.annotation.Transient;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class APerson {
+
 	@Transient
 	public static enum userTypeEnum {
 		Buyer("Acheteur"), Owner("Vendeur"), Saler("Commercial");
@@ -96,5 +100,17 @@ public abstract class APerson {
 			userType = userTypeEnum.Saler;
 		}
 		return userType;
+	}
+
+	public String [] getTableRow(Session argSession) {
+		Person personRow = this.getPerson();
+		return new String [] {
+			personRow.getTitre(),
+			personRow.getLastName(),
+			personRow.getFirstName(),
+			personRow.getAddresses().get(0).getAddressString(),
+			"Edit",
+			(argSession.getAPerson() != null && this.getId() == argSession.getAPerson().getId()) ? "Connected":""
+		};
 	}
 }

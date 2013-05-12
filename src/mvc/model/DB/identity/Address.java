@@ -147,4 +147,14 @@ public class Address {
 		this.personId = person != null ? person.getId() : null;
 	}
 
+	public String getAddressString() {
+		return this.getStreetName() + " " +
+			this.getStreetNumber() + "/" +
+			this.getStreetBox() + "\n" +
+			this.getPosteCode() + " " +
+			this.getCity() + " - " +
+			this.getLocality() + "\n" +
+			this.getCountry() + "\n";
+	}
+
 }

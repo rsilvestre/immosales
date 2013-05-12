@@ -1,8 +1,10 @@
 package mvc.model;
 
 import mvc.controller.main.MainController;
+import mvc.controller.owner.OwnerController;
 import mvc.controller.user.UserController;
 import mvc.view.main.MainWindow;
+import mvc.view.owner.OwnerPanelWindow;
 import mvc.view.user.UserPanelWindow;
 import mvc.view.user.UserWindow;
 
@@ -18,10 +20,14 @@ public class FooModelLocator {
 
 	private MainController mainController = new MainController();
 	private UserController userController = new UserController();
+	private OwnerController ownerController = new OwnerController();
 
 	private MainWindow mainWindow = null;
+
 	private UserWindow userWindow = null;
 	private UserPanelWindow userPanelWindow = null;
+
+	private OwnerPanelWindow ownerPanelWindow = null;
 
 	private FooModelLocator() {}
 
@@ -49,11 +55,18 @@ public class FooModelLocator {
 		this.userPanelWindow = userPanelWindow;
 	}
 
+	public OwnerPanelWindow getOwnerPanelWindow() {
+		return ownerPanelWindow;
+	}
+
+	public void setOwnerPanelWindow(OwnerPanelWindow ownerPanelWindow) {
+		this.ownerPanelWindow = ownerPanelWindow;
+	}
+
 	public static FooModelLocator getInstance() {
 		if (instance == instance) {
 			instance = new FooModelLocator();
 		}
 		return instance;
 	}
-
 }

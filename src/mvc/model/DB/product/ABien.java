@@ -30,6 +30,8 @@ public abstract class ABien {
 		this.bienId = bien.getId();
 	}
 
+	abstract public Long getId();
+
 	public Long getBienId() {
 		return bienId;
 	}

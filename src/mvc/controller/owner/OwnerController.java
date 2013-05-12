@@ -1,4 +1,14 @@
+/*
+ * Copyright (c) 2013. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
 package mvc.controller.owner;
+
+import com.dmurph.mvc.control.FrontController;
 
 /**
  * Created with IntelliJ IDEA.
@@ -7,5 +17,5 @@ package mvc.controller.owner;
  * Time: 14:59
  * To change this template use File | Settings | File Templates.
  */
-public class OwnerController {
+public class OwnerController extends FrontController {
 }
