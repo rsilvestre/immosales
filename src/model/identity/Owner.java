@@ -27,9 +27,11 @@ public class Owner extends APerson {
 		super(em);
 	}
 
-	public Owner(Person person) {
+	public Owner(Person person, String phoneNumber, String email) {
 		super(person);
 		this.personId = person.getId();
+		this.phoneNumber = phoneNumber;
+		this.email = email;
 	}
 
 	public Long getId() {
