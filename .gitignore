@@ -4,3 +4,17 @@
 *.jar
 *.war
 *.ear
+
+#ignore all image
+*.png
+*.gif
+*.jpg
+*.jpeg
+
+#ignore project data
+*.iml
+*.swp
+/.idea
+
+#ignore config file
+config.properties

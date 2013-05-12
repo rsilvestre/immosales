@@ -19,20 +19,20 @@ public abstract class APerson {
 	public static enum userTypeEnum {
 		Buyer("Acheteur"), Owner("Vendeur"), Saler("Commercial");
 
-		private String converteur;
+		private String converter;
 
 		userTypeEnum(String value) {
-			converteur = value;
+			converter = value;
 		}
 
 		@Override
 		public String toString() {
-			return converteur;
+			return converter;
 		}
 		public static userTypeEnum fromString(String text) {
 			if (text != null) {
 				for (userTypeEnum b : userTypeEnum.values()) {
-					if (text.equalsIgnoreCase(b.converteur)) {
+					if (text.equalsIgnoreCase(b.converter)) {
 						return b;
 					}
 				}

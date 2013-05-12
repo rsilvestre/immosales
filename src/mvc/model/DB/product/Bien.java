@@ -28,8 +28,19 @@ public class Bien {
 		TypeProduct(String c) {
 			converter = c;
 		}
-		public String getValue() {
+		// Ne pas changer. Nécessaire pour ne pas avoir de conversion lors de l'introduction dans la base de données
+		public String toString() {
 			return converter;
+		}
+		public static TypeProduct fromString(String text) {
+			if (text != null) {
+				for (TypeProduct b : TypeProduct.values()) {
+					if (text.equalsIgnoreCase(b.converter)) {
+						return b;
+					}
+				}
+			}
+			return null;
 		}
 	}
 
@@ -53,6 +64,8 @@ public class Bien {
 	private Integer faceWide;
 	private Integer nFrontage;
 	private Integer nFloor;
+
+	private String cpeb;
 
 	private Timestamp createdAt;
 	private Timestamp updatedAt;
@@ -219,6 +232,14 @@ public class Bien {
 		this.nFloor = nFloor;
 	}
 
+	public String getCpeb() {
+		return cpeb;
+	}
+
+	public void setCpeb(String cpeb) {
+		this.cpeb = cpeb;
+	}
+
 	public Timestamp getCreatedAt() {
 		return createdAt;
 	}
@@ -289,10 +310,19 @@ public class Bien {
 	public String [] getTableRow() {
 		return new String [] {
 			this.getId().toString(),
+			this.getTypeProduct(),
 			this.getName(),
 			this.getDescription(),
 			this.getPrice().toString(),
 			"Edit"
 			};
+	}
+
+	public String getTypeProductEnumString() {
+		return TypeProduct.valueOf(this.getTypeProduct()).toString();
+	}
+
+	public TypeProduct getTypeProductEnum() {
+		return TypeProduct.valueOf(this.getTypeProduct());
 	}
 }

@@ -114,10 +114,10 @@ public class UserWindow extends JPanel {
 			}
 		});
 		jTable.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 1) {
-					JTable target = (JTable) e.getSource();
-					setSelectedPerson(getAPerson(target.getSelectedRow()));
+			public void mouseClicked(MouseEvent evt) {
+				if (evt.getClickCount() == 1) {
+					JTable target = (JTable) evt.getSource();
+					setSelectedPerson(getAPersonSelected(target.getSelectedRow()));
 					if (target.getSelectedColumn()== 4) {
 						editRow(target);
 					}
@@ -151,7 +151,7 @@ public class UserWindow extends JPanel {
 		} else if (userTypeEnum.fromString(test) == userTypeEnum.Saler) {
 			aPerson = person1.getSaler();
 		}*/
-		APerson aPerson = getAPerson(target.getSelectedRow());
+		APerson aPerson = getAPersonSelected(row);
 
 		FooModelLocator locator = FooModelLocator.getInstance();
 		UserPanelModel userPanelModel = new UserPanelModel();
@@ -345,7 +345,7 @@ public class UserWindow extends JPanel {
 		return aPersons;
 	}
 
-	private APerson getAPerson(int index) {
+	private APerson getAPersonSelected(int index) {
 		return getAPersons().get(index);
 	}
 
