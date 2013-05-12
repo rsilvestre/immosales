@@ -1,4 +1,14 @@
+/*
+ * Copyright (c) 2013. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
 package mvc.view.owner;
+
+import mvc.model.owner.OwnerPanelModel;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -8,7 +18,10 @@ public class OwnerPanelWindow extends JDialog {
 	private JButton buttonOK;
 	private JButton buttonCancel;
 
-	public OwnerPanelWindow() {
+	private OwnerPanelModel ownerPanelModel;
+
+	public OwnerPanelWindow(OwnerPanelModel argOwnerPanelModel) {
+		this.ownerPanelModel = argOwnerPanelModel;
 		setContentPane(contentPane);
 		setModal(true);
 		getRootPane().setDefaultButton(buttonOK);

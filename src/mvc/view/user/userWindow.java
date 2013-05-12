@@ -62,6 +62,9 @@ public class UserWindow extends JPanel {
 		populateLocale();
 	}
 
+	/**
+	 * Initialisation des composants de base
+	 */
 	private void initComponents() {
 		//this.setTitle("Contact");
 		userType = new JComboBox(USER_TYPE);
@@ -99,6 +102,9 @@ public class UserWindow extends JPanel {
 
 	}
 
+	/**
+	 * Ajout des écouteurs d'événement
+	 */
 	private void addListeners() {
 		create.addActionListener(new ActionListener() {
 			@Override
@@ -300,15 +306,7 @@ public class UserWindow extends JPanel {
 	}
 
 	private void tableAddRow(APerson aPersonRow) {
-		Person personRow = aPersonRow.getPerson();
-		tableModel.addRow(new String [] {
-			personRow.getTitre(),
-			personRow.getLastName(),
-			personRow.getFirstName(),
-			getAddressString(personRow.getAddresses()),
-			"Edit",
-			(Session.getInstance().getAPerson() != null && aPersonRow.getId() == Session.getInstance().getAPerson().getId()) ? "Connected":""
-		});
+		tableModel.addRow(aPersonRow.getTableRow(Session.getInstance()));
 	}
 
 	private String getCurrentUserType() {
@@ -329,13 +327,7 @@ public class UserWindow extends JPanel {
 		String addressRow = "";
 
 		for(Address address : addresses) {
-			addressRow += address.getStreetName() + " " +
-			address.getStreetNumber() + "/" +
-			address.getStreetBox() + "\n" +
-			address.getPosteCode() + " " +
-			address.getCity() + " - " +
-			address.getLocality() + "\n" +
-			address.getCountry() + "\n";
+			addressRow += address.getAddressString();
 		}
 
 		return addressRow.substring(0, addressRow.length()-1);
@@ -357,8 +349,8 @@ public class UserWindow extends JPanel {
 		return getAPersons().get(index);
 	}
 
-	private void addAPersons(APerson aPersons) {
-		this.aPersons.add(aPersons);
+	private void addAPersons(APerson aPerson) {
+		this.aPersons.add(aPerson);
 	}
 
 	private void clearAPersons() {

@@ -285,4 +285,14 @@ public class Bien {
 		this.offers = offers;
 		for (Offer offer : offers) offer.setBien(this);
 	}
+
+	public String [] getTableRow() {
+		return new String [] {
+			this.getId().toString(),
+			this.getName(),
+			this.getDescription(),
+			this.getPrice().toString(),
+			"Edit"
+			};
+	}
 }
