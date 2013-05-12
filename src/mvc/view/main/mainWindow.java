@@ -116,12 +116,19 @@ public class MainWindow extends JFrame {
 
 		mainScreen.removeAll();
 
-		OwnerModel ownerModel = new OwnerModel();
-		ownerWindow = new OwnerWindow(ownerModel);
-		mainScreen.add(ownerWindow);
+		mainScreen.add(contentSelector());
 
 		add(box, BorderLayout.SOUTH);
 		mainScreen.revalidate();
+		this.repaint();
+	}
+
+	private Component contentSelector() {
+		if (Session.getInstance().getAPerson() instanceof Owner) {
+			OwnerModel ownerModel = new OwnerModel();
+			return new OwnerWindow(ownerModel);
+		}
+		return new JLabel("No Frame for this userType now!!!");
 	}
 
 	private void addListeners() {
