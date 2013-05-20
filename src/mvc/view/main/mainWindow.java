@@ -4,9 +4,12 @@ import core.Session;
 import mvc.controller.main.ConnexionEvent;
 import mvc.model.FooModelLocator;
 import mvc.model.DB.identity.*;
+import mvc.model.buyer.BuyerModel;
 import mvc.model.main.MainModel;
 import mvc.model.owner.OwnerModel;
 import mvc.model.user.UserModel;
+import mvc.view.buyer.BuyerWindow;
+import mvc.view.buyer.Toto;
 import mvc.view.owner.OwnerWindow;
 import mvc.view.user.UserWindow;
 
@@ -127,6 +130,10 @@ public class MainWindow extends JFrame {
 		if (Session.getInstance().getAPerson() instanceof Owner) {
 			OwnerModel ownerModel = new OwnerModel();
 			return new OwnerWindow(ownerModel);
+		} else if (Session.getInstance().getAPerson() instanceof Buyer) {
+			BuyerModel buyerModel = new BuyerModel();
+			//return new BuyerWindow(buyerModel);
+			return new Toto();
 		}
 		return new JLabel("No Frame for this userType now!!!");
 	}

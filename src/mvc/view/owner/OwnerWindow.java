@@ -37,6 +37,7 @@ public class OwnerWindow extends JPanel {
 	public OwnerWindow(OwnerModel argOwnerModel) {
 		ownerModel = argOwnerModel;
 		initComponents();
+		linkModel();
 		addListeners();
 
 		populateLocale();
@@ -61,6 +62,10 @@ public class OwnerWindow extends JPanel {
 		Box box = Box.createHorizontalBox();
 		box.add(createNewOwn);
 		add(box, BorderLayout.SOUTH);
+	}
+
+	private void linkModel() {
+
 	}
 
 	private void addListeners() {
@@ -113,7 +118,6 @@ public class OwnerWindow extends JPanel {
 			target.getModel().setValueAt(bien.getPrice(), row, 4);
 			target.repaint();
 		}
-
 
 	}
 
