@@ -37,6 +37,7 @@ public class OwnerWindow extends JPanel {
 	public OwnerWindow(OwnerModel argOwnerModel) {
 		ownerModel = argOwnerModel;
 		initComponents();
+		linkModel();
 		addListeners();
 
 		populateLocale();
@@ -61,6 +62,10 @@ public class OwnerWindow extends JPanel {
 		Box box = Box.createHorizontalBox();
 		box.add(createNewOwn);
 		add(box, BorderLayout.SOUTH);
+	}
+
+	private void linkModel() {
+
 	}
 
 	private void addListeners() {
@@ -114,7 +119,6 @@ public class OwnerWindow extends JPanel {
 			target.repaint();
 		}
 
-
 	}
 
 	private void createOwn() {
@@ -135,8 +139,8 @@ public class OwnerWindow extends JPanel {
 	}
 
 	private void populateLocale() {
-		createNewOwn.setText("Créer un nouveau bien");
-		//defaultTableModel.addRow(new String [] {"1", "Maison", "Villa Etterbeek", "Grande villa à vendre à Etterbeek", "534"});
+		createNewOwn.setText("CrŽer un nouveau bien");
+		//defaultTableModel.addRow(new String [] {"1", "Maison", "Villa Etterbeek", "Grande villa ˆ vendre ˆ Etterbeek", "534"});
 		List<Bien> biens = App.em.find(Bien.class, "where owner_id = ? order by id", Session.getInstance().getAPerson().getId());
 		for (Bien bien : biens) {
 			addBien(bien);
