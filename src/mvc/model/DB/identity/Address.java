@@ -1,5 +1,7 @@
 package mvc.model.DB.identity;
 
+import mvc.model.DB.product.address.City;
+import mvc.model.DB.product.address.Locality;
 import net.sf.jeasyorm.EntityManager;
 import net.sf.jeasyorm.annotation.Transient;
 
@@ -19,14 +21,15 @@ public class Address {
 	private String streetName;
 	private String streetNumber;
 	private String streetBox;
-	private String city;
-	private String locality;
-	private String posteCode;
-	private String country;
+	private Long cityId;
 
 	private Long personId;
+
 	@Transient
 	private Person person;
+
+	@Transient
+	private City city;
 
 	public Address() {
 		// nothing to do
@@ -45,19 +48,14 @@ public class Address {
 					String streetName,
 					String streetNumber,
 					String streetBox,
-					String city,
-					String locality,
-					String posteCode,
-					String country) {
+					City city) {
 		this.person = person;
 		this.personId = person.getId();
 		this.streetName = streetName;
 		this.streetNumber = streetNumber;
 		this.streetBox = streetBox;
 		this.city = city;
-		this.locality = locality;
-		this.posteCode = posteCode;
-		this.country = country;
+		this.cityId = city.getId();
 	}
 
 	public Long getId() {
@@ -92,36 +90,27 @@ public class Address {
 		this.streetBox = streetBox;
 	}
 
-	public String getCity() {
-		return city;
+	public Long getCityId() {
+		return cityId;
 	}
 
-	public void setCity(String city) {
+	public void setCityId(Long cityId) {
+		this.cityId = cityId;
+	}
+
+	public City getCity() {
+		if (cityId == null) {
+			return (city = null);
+		} else if (city == null || !cityId.equals(city.getId())) {
+			return (city = em.load(City.class, cityId));
+		} else {
+			return city;
+		}
+	}
+
+	public void setCity(City city) {
 		this.city = city;
-	}
-
-	public String getLocality() {
-		return locality;
-	}
-
-	public void setLocality(String locality) {
-		this.locality = locality;
-	}
-
-	public String getPosteCode() {
-		return posteCode;
-	}
-
-	public void setPosteCode(String posteCode) {
-		this.posteCode = posteCode;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
+		this.cityId = city != null ? city.getId() : null;
 	}
 
 	public Long getPersonId() {
@@ -148,13 +137,14 @@ public class Address {
 	}
 
 	public String getAddressString() {
+		Locality locality = null;
 		return this.getStreetName() + " " +
 			this.getStreetNumber() + "/" +
 			this.getStreetBox() + "\n" +
-			this.getPosteCode() + " " +
+			this.getCity().getPosteCode() + " " +
 			this.getCity() + " - " +
-			this.getLocality() + "\n" +
-			this.getCountry() + "\n";
+				(locality = this.getCity().getLocality()) + "\n" +
+			locality.getRegion().getCountry() + "\n";
 	}
 
 }

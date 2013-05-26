@@ -8,6 +8,8 @@
 
 package mvc.model.user;
 
+import com.dmurph.mvc.model.AbstractModel;
+
 /**
  * Created with IntelliJ IDEA.
  * User: michaelsilvestre
@@ -15,6 +17,35 @@ package mvc.model.user;
  * Time: 23:13
  * To change this template use File | Settings | File Templates.
  */
-public class UserPanelModel {
+public class UserPanelModel extends AbstractModel {
+	private String city;
+	private String cpValue;
 
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String argCity) {
+		String oldCity = city;
+		city = argCity;
+		firePropertyChange("newCity", oldCity, city);
+	}
+
+	public void setDefaultCity(String argCity) {
+		city = argCity;
+	}
+
+	public String getCpValue() {
+		return cpValue;
+	}
+
+	public void setCpValue(String argCpValue) {
+		String oldCpValue = cpValue;
+		cpValue = argCpValue;
+		firePropertyChange("newCp", oldCpValue, cpValue);
+	}
+
+	public void setDefaultCpValue(String argCpValue) {
+		cpValue = argCpValue;
+	}
 }

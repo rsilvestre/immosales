@@ -135,11 +135,12 @@ public class OwnerWindow extends JPanel {
 			Bien bienToSave = ownerPanelWindowMappingInsert.getBienMapping();
 			App.em.insert(bienToSave);
 			defaultTableModel.addRow(bienToSave.getTableRow());
+			addBien(bienToSave);
 		}
 	}
 
 	private void populateLocale() {
-		createNewOwn.setText("CrŽer un nouveau bien");
+		createNewOwn.setText("Créer un nouveau bien");
 		//defaultTableModel.addRow(new String [] {"1", "Maison", "Villa Etterbeek", "Grande villa ˆ vendre ˆ Etterbeek", "534"});
 		List<Bien> biens = App.em.find(Bien.class, "where owner_id = ? order by id", Session.getInstance().getAPerson().getId());
 		for (Bien bien : biens) {

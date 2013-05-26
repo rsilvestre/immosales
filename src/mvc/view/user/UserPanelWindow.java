@@ -8,13 +8,27 @@
 
 package mvc.view.user;
 
+import mvc.App;
+import mvc.controller.city.CityUserEvent;
+import mvc.controller.city.CpUserEvent;
 import mvc.model.DB.identity.APerson;
 import mvc.model.DB.identity.Address;
 import mvc.model.DB.identity.Person;
+import mvc.model.DB.product.address.City;
+import mvc.model.DB.product.address.Country;
+import mvc.model.DB.product.address.Region;
 import mvc.model.user.UserPanelModel;
+import mvc.view.city.CityWindow;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.GridLayout;
+import java.awt.BorderLayout;
+
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,19 +39,7 @@ import java.awt.*;
  */
 public class UserPanelWindow extends JPanel {
 	private final static String[] TITRES = {"Mr", "Mme", "Melle"};
-	private final static String[] LOCALITY = {
-			"Bruxelles Capital",
-			"Brabant Flamand",
-			"Brabant Wallon",
-			"Namur",
-			"Liège",
-			"Hainaut",
-			"Luxembourg",
-			"Flandre Occidentale",
-			"Flandre Orientale",
-			"Anvers",
-			"Limbourg",
-	};
+	private final static String [] comboBoxDefaultValue = {""};
 
 	private JComboBox saisieTitre = new JComboBox(TITRES);
 	private JTextField saisieNom = new JTextField(10);
@@ -47,22 +49,37 @@ public class UserPanelWindow extends JPanel {
 	private JTextField saisieAddressStreetName = new JTextField(20);
 	private JTextField saisieAddressStreetNumber = new JTextField(10);
 	private JTextField saisieAddressStreetBox = new JTextField(10);
-	private JTextField saisieAddressPosteCode = new JTextField(10);
-	private JTextField saisieAddressCity = new JTextField(20);
-	private JComboBox saisieAddressLocality = new JComboBox(LOCALITY);
-	private JTextField saisieAddressCountry = new JTextField(20);
+	private JComboBox saisieAddressPosteCode = new JComboBox(comboBoxDefaultValue);
+	private JComboBox saisieAddressCity = new JComboBox(comboBoxDefaultValue);
+	private JComboBox saisieAddressLocality = new JComboBox(comboBoxDefaultValue);
+	private JComboBox saisieAddressCountry = new JComboBox();
+
+	private Boolean stopListener = false;
 
 	private UserPanelModel userPanelModel;
 
 	public UserPanelWindow(UserPanelModel userPanelModel) {
 		this.userPanelModel = userPanelModel;
 		initComponents();
+		linkModel();
+		addListener();
+		populateLocal();
 	}
 
 	public UserPanelWindow(UserPanelModel userPanelModel, APerson aPerson) {
 		this.userPanelModel = userPanelModel;
+		initComponents();
+		linkModel();
+		populateLocal();
 		setComponents(aPerson);
-		this.initComponents();
+		addListener();
+	}
+
+	private void initSubComponents() {
+		initComponents();
+		linkModel();
+		addListener();
+		populateLocal();
 	}
 
 	private void initComponents() {
@@ -103,6 +120,10 @@ public class UserPanelWindow extends JPanel {
 	private void setComponents(APerson aPerson) {
 		Person person = aPerson.getPerson();
 		Address address = person.getAddresses().get(0);
+
+		userPanelModel.setDefaultCity(address.getCity().getCity());
+		userPanelModel.setDefaultCpValue(address.getCity().getPosteCode());
+
 		this.setSaisieTitre(person.getTitre());
 		this.setSaisiePrenom(person.getFirstName());
 		this.setSaisieNom(person.getLastName());
@@ -111,10 +132,74 @@ public class UserPanelWindow extends JPanel {
 		this.setSaisieAddressStreetName(address.getStreetName());
 		this.setSaisieAddressStreetNumber(address.getStreetNumber());
 		this.setSaisieAddressStreetBox(address.getStreetBox());
-		this.setSaisieAddressCity(address.getCity());
-		this.setSaisieAddressLocality(address.getLocality());
-		this.setSaisieAddressPosteCode(address.getPosteCode());
-		this.setSaisieAddressCountry(address.getCountry());
+		this.setSaisieAddressCity(address.getCity().getCity());
+		this.setSaisieAddressLocality(address.getCity().getLocality().getRegion().getRegion());
+		this.setSaisieAddressPosteCode(address.getCity().getPosteCode());
+		this.setSaisieAddressCountry(address.getCity().getLocality().getRegion().getCountry().getLabelFr());
+	}
+
+	private void linkModel() {
+		userPanelModel.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				String name = evt.getPropertyName();
+				stopListener = true;
+				if (name.equals("newCity") && !evt.getNewValue().equals("")) {
+
+					City city = App.em.findUnique(City.class,"where city = ?", evt.getNewValue());
+					Region region = city.getLocality().getRegion();
+					saisieAddressPosteCode.setSelectedItem(city.getPosteCode());
+					saisieAddressLocality.setSelectedItem(region.getRegion());
+					saisieAddressCountry.setSelectedItem(region.getCountry().getLabelFr());
+					stopListener = false;
+				} else if (name.equals("newCp") && !evt.getNewValue().equals("")) {
+					List<City> cities = App.em.find(City.class, "where poste_code = ?", evt.getNewValue());
+
+					City city = null;
+
+					if (cities.size()  < 1) {
+						stopListener = false;
+						return;
+					} else if (cities.size() > 1) {
+						CityWindow cityWindow = new CityWindow((String)evt.getNewValue(), cities);
+						cityWindow.pack();
+						cityWindow.setVisible(true);
+						city = cityWindow.getCity();
+						if (city == null) {
+							stopListener = false;
+							return;
+						}
+					} else {
+						city = cities.get(0);
+					}
+					Region region = city.getLocality().getRegion();
+					saisieAddressCity.setSelectedItem(city.getCity());
+					saisieAddressLocality.setSelectedItem(region.getRegion());
+					saisieAddressCountry.setSelectedItem(region.getCountry().getLabelFr());
+					stopListener = false;
+				}
+
+			}
+		});
+	}
+
+	private void addListener() {
+		saisieAddressCity.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent itemEvent) {
+				if (stopListener) return;
+				CityUserEvent event = new CityUserEvent((String)itemEvent.getItem(), userPanelModel);
+				event.dispatch();
+			}
+		});
+		saisieAddressPosteCode.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent itemEvent) {
+				if (stopListener) return;
+				CpUserEvent event = new CpUserEvent((String) itemEvent.getItem(), userPanelModel);
+				event.dispatch();
+			}
+		});
 	}
 
 	public String getTitre() {
@@ -150,11 +235,15 @@ public class UserPanelWindow extends JPanel {
 	}
 
 	public String getAddressPosteCode() {
-		return saisieAddressPosteCode.getText();
+		return (String)saisieAddressPosteCode.getSelectedItem();
 	}
 
 	public String getAddressCity() {
-		return saisieAddressCity.getText();
+		return (String)saisieAddressCity.getSelectedItem();
+	}
+
+	public City getCity() {
+		return App.em.findUnique(City.class, "where city = ?", getAddressCity());
 	}
 
 	public String getAddressLocality() {
@@ -162,7 +251,7 @@ public class UserPanelWindow extends JPanel {
 	}
 
 	public String getAddressCountry() {
-		return saisieAddressCountry.getText();
+		return (String)saisieAddressCountry.getSelectedItem();
 	}
 
 	public void setSaisieTitre(String saisieTitre) {
@@ -198,11 +287,11 @@ public class UserPanelWindow extends JPanel {
 	}
 
 	public void setSaisieAddressPosteCode(String saisieAddressPosteCode) {
-		this.saisieAddressPosteCode.setText(saisieAddressPosteCode);
+		this.saisieAddressPosteCode.setSelectedItem(saisieAddressPosteCode);
 	}
 
 	public void setSaisieAddressCity(String saisieAddressCity) {
-		this.saisieAddressCity.setText(saisieAddressCity);
+		this.saisieAddressCity.setSelectedItem(saisieAddressCity);
 	}
 
 	public void setSaisieAddressLocality(String saisieAddressLocality) {
@@ -210,8 +299,23 @@ public class UserPanelWindow extends JPanel {
 	}
 
 	public void setSaisieAddressCountry(String saisieAddressCountry) {
-		this.saisieAddressCountry.setText(saisieAddressCountry);
+		this.saisieAddressCountry.setSelectedItem(saisieAddressCountry);
 	}
 
 
+	private void populateLocal() {
+
+		for (Country country : App.em.find(Country.class, "select * from tcountry")) {
+			saisieAddressCountry.addItem(country.getLabelFr());
+		}
+		for (Region region : App.em.find(Region.class, "select * from tregion")) {
+			saisieAddressLocality.addItem(region.getRegion());
+		}
+		for (City city : App.em.find(City.class, "select * from tcity order by city")) {
+			saisieAddressCity.addItem(city.getCity());
+		}
+		for (City city : App.em.find(City.class, "select distinct poste_code from tcity order by poste_code")) {
+			saisieAddressPosteCode.addItem(city.getPosteCode());
+		}
+	}
 }

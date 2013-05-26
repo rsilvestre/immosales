@@ -1,6 +1,7 @@
 package mvc.model;
 
 import mvc.controller.buyer.BuyerController;
+import mvc.controller.city.CityController;
 import mvc.controller.main.MainController;
 import mvc.controller.owner.OwnerController;
 import mvc.controller.user.UserController;
@@ -24,6 +25,7 @@ public class FooModelLocator {
 	private UserController userController = new UserController();
 	private OwnerController ownerController = new OwnerController();
 	private BuyerController buyerController = new BuyerController();
+	private CityController cityController = new CityController();
 
 	private MainWindow mainWindow = null;
 

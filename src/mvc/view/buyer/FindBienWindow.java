@@ -75,7 +75,7 @@ public class FindBienWindow extends JDialog {
 			defaultTableModel.removeRow(index);
 		}
 		for (Bien bien : listBiens) {
-			defaultTableModel.addRow(new String[]{bien.getId().toString(), bien.getName(), bien.getCity(), bien.getPrice().toString(), "Detail"});
+			defaultTableModel.addRow(new String[]{bien.getId().toString(), bien.getName(), bien.getCity().getCity(), bien.getPrice().toString(), "Detail"});
 		}
 		table1.revalidate();
 		table1.repaint();
@@ -129,7 +129,7 @@ public class FindBienWindow extends JDialog {
 				if (evt.getClickCount() == 1) {
 					JTable target = (JTable) evt.getSource();
 					//setSelectedPerson(getAPersonSelected(target.getSelectedRow()));
-					if (target.getSelectedColumn()== 4) {
+					if (target.getSelectedColumn() == 4) {
 						editRow(target);
 					}
 				}

@@ -10,6 +10,7 @@ package mvc.view.user;
 
 import core.Session;
 import mvc.App;
+import mvc.model.DB.product.address.City;
 import mvc.model.FooModelLocator;
 import mvc.model.DB.identity.*;
 import mvc.model.user.UserModel;
@@ -172,10 +173,7 @@ public class UserWindow extends JPanel {
 			address.setStreetName(userPanelWindow.getAddressStreetName());
 			address.setStreetNumber(userPanelWindow.getAddressStreetNumber());
 			address.setStreetBox(userPanelWindow.getAddressStreetBox());
-			address.setCity(userPanelWindow.getAddressCity());
-			address.setLocality(userPanelWindow.getAddressLocality());
-			address.setPosteCode(userPanelWindow.getAddressPosteCode());
-			address.setCountry(userPanelWindow.getAddressCountry());
+			address.setCity(userPanelWindow.getCity());
 			App.em.update(address);
 
 			aPerson.setPhoneNumber(userPanelWindow.getTelephone());
@@ -237,10 +235,7 @@ public class UserWindow extends JPanel {
 				userPanelWindow.getAddressStreetName(),
 				userPanelWindow.getAddressStreetNumber(),
 				userPanelWindow.getAddressStreetBox(),
-				userPanelWindow.getAddressCity(),
-				userPanelWindow.getAddressLocality(),
-				userPanelWindow.getAddressPosteCode(),
-				userPanelWindow.getAddressCountry()
+				userPanelWindow.getCity()
 			);
 			App.em.insert(address);
 

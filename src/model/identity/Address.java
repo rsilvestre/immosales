@@ -22,6 +22,7 @@ public class Address {
 	private String city;
 	private String locality;
 	private String posteCode;
+	private String region;
 	private String country;
 
 	private Long personId;
@@ -114,6 +115,14 @@ public class Address {
 
 	public void setPosteCode(String posteCode) {
 		this.posteCode = posteCode;
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
 	}
 
 	public String getCountry() {

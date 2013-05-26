@@ -18,4 +18,10 @@ import com.dmurph.mvc.control.FrontController;
  * To change this template use File | Settings | File Templates.
  */
 public class UserController extends FrontController {
+	public static final String USER = "USER_CONTROLLER";
+
+	public UserController() {
+		//registerCommand(USER, CityCommand.class);
+	}
+
 }

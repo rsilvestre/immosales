@@ -6,24 +6,19 @@
  * Vestibulum commodo. Ut rhoncus gravida arcu.
  */
 
-package mvc.command.main;
+package mvc.command.city;
 
 import com.dmurph.mvc.MVCEvent;
 import com.dmurph.mvc.control.ICommand;
-import mvc.controller.main.ConnexionEvent;
+import mvc.controller.city.CityUserEvent;
 
 /**
- * Created with IntelliJ IDEA.
- * User: michaelsilvestre
- * Date: 4/05/13
- * Time: 17:48
- * To change this template use File | Settings | File Templates.
+ * Created by michaelsilvestre on 26/05/13.
  */
-public class ConnexionCommand implements ICommand {
-
+public class CityUserCommand implements ICommand {
 	@Override
 	public void execute(MVCEvent mvcEvent) {
-		ConnexionEvent event = (ConnexionEvent) mvcEvent;
-		event.model.setAPerson(event.aPerson);
+		CityUserEvent event = (CityUserEvent)mvcEvent;
+		event.model.setCity(event.cityName);
 	}
 }

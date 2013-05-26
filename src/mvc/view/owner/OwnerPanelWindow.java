@@ -11,16 +11,30 @@ package mvc.view.owner;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import mvc.App;
+import mvc.controller.city.CityOwnerEvent;
+import mvc.controller.city.CpOwnerEvent;
 import mvc.model.DB.product.Bien;
+import mvc.model.DB.product.address.City;
+import mvc.model.DB.product.address.Country;
+import mvc.model.DB.product.address.Region;
 import mvc.model.owner.OwnerPanelModel;
+import mvc.view.city.CityWindow;
 import util.Range;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Insets;
 import java.awt.event.*;
+import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 public class OwnerPanelWindow extends JDialog {
+
+	private final static String[] comboBoxDefaultValue = {""};
+
 	public Boolean validDialog = false;
 	public static Range YEAR_CONSTRUCTION_RANGE;
 	public static Range FACADE_NUMBER_RANGE;
@@ -35,10 +49,6 @@ public class OwnerPanelWindow extends JDialog {
 	private JTextField tStreetName;
 	private JTextField tStreetNumber;
 	private JTextField tStreetBox;
-	private JTextField tCity;
-	private JTextField tLocality;
-	private JTextField tPosteCode;
-	private JTextField tCountry;
 	private JTextField tPrice;
 	private JTextField tFaceWide;
 	private JComboBox cTypeProduct;
@@ -46,13 +56,86 @@ public class OwnerPanelWindow extends JDialog {
 	private JComboBox cNFrontage;
 	private JComboBox cNFloor;
 	private JComboBox cCpeb;
+	private JComboBox cCity;
+	private JComboBox cLocality;
+	private JComboBox cCountry;
+	private JComboBox cPosteCode;
 
 	private OwnerPanelModel ownerPanelModel;
+	private boolean stopListener = false;
 
 	public OwnerPanelWindow(OwnerPanelModel argOwnerPanelModel) {
+		stopListener = true;
 		this.ownerPanelModel = argOwnerPanelModel;
 		initComponents();
+		linkModel();
+		addListener();
 		populate();
+		stopListener = false;
+	}
+
+	private void linkModel() {
+		ownerPanelModel.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				String name = evt.getPropertyName();
+				stopListener = true;
+				if (name.equals("newCity") && !evt.getNewValue().equals("")) {
+
+					City city = App.em.findUnique(City.class, "where city = ?", evt.getNewValue());
+					Region region = city.getLocality().getRegion();
+					cPosteCode.setSelectedItem(city.getPosteCode());
+					cLocality.setSelectedItem(region.getRegion());
+					cCountry.setSelectedItem(region.getCountry().getLabelFr());
+					stopListener = false;
+				} else if (name.equals("newCp") && !evt.getNewValue().equals("")) {
+					List<City> cities = App.em.find(City.class, "where poste_code = ?", evt.getNewValue());
+
+					City city = null;
+
+					if (cities.size() < 1) {
+						stopListener = false;
+						return;
+					} else if (cities.size() > 1) {
+						CityWindow cityWindow = new CityWindow((String) evt.getNewValue(), cities);
+						cityWindow.pack();
+						cityWindow.setVisible(true);
+						city = cityWindow.getCity();
+						if (city == null) {
+							stopListener = false;
+							return;
+						}
+					} else {
+						city = cities.get(0);
+					}
+					Region region = city.getLocality().getRegion();
+					cCity.setSelectedItem(city.getCity());
+					cLocality.setSelectedItem(region.getRegion());
+					cCountry.setSelectedItem(region.getCountry().getLabelFr());
+					stopListener = false;
+				}
+
+			}
+		});
+	}
+
+	private void addListener() {
+		cCity.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent itemEvent) {
+				if (stopListener) return;
+				CityOwnerEvent event = new CityOwnerEvent((String) itemEvent.getItem(), ownerPanelModel);
+				event.dispatch();
+			}
+		});
+		cPosteCode.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent itemEvent) {
+				if (stopListener) return;
+				CpOwnerEvent event = new CpOwnerEvent((String) itemEvent.getItem(), ownerPanelModel);
+				event.dispatch();
+			}
+		});
 	}
 
 	private void populate() {
@@ -70,6 +153,18 @@ public class OwnerPanelWindow extends JDialog {
 		}
 		for (Bien.TypeProduct typeProduct : Bien.TypeProduct.values()) {
 			cTypeProduct.addItem(typeProduct.toString());
+		}
+		for (Country country : App.em.find(Country.class, "select * from tcountry")) {
+			cCountry.addItem(country.getLabelFr());
+		}
+		for (Region region : App.em.find(Region.class, "select * from tregion")) {
+			cLocality.addItem(region.getRegion());
+		}
+		for (City city : App.em.find(City.class, "select * from tcity order by city")) {
+			cCity.addItem(city.getCity());
+		}
+		for (City city : App.em.find(City.class, "select distinct poste_code from tcity order by poste_code")) {
+			cPosteCode.addItem(city.getPosteCode());
 		}
 	}
 
@@ -163,35 +258,37 @@ public class OwnerPanelWindow extends JDialog {
 	}
 
 	public String gettCity() {
-		return tCity.getText();
+		return (String) cCity.getSelectedItem();
 	}
 
 	public void settCity(String tCity) {
-		this.tCity.setText(tCity);
+		ownerPanelModel.setDefaultCity(tCity);
+		this.cCity.setSelectedItem(tCity);
 	}
 
 	public String gettLocality() {
-		return tLocality.getText();
+		return (String) cLocality.getSelectedItem();
 	}
 
 	public void settLocality(String tLocality) {
-		this.tLocality.setText(tLocality);
+		this.cLocality.setSelectedItem(tLocality);
 	}
 
 	public String gettPosteCode() {
-		return tPosteCode.getText();
+		return (String) cPosteCode.getSelectedItem();
 	}
 
 	public void settPosteCode(String tPosteCode) {
-		this.tPosteCode.setText(tPosteCode);
+		ownerPanelModel.setDefaultCpValue(tPosteCode);
+		this.cPosteCode.setSelectedItem(tPosteCode);
 	}
 
 	public String gettCountry() {
-		return tCountry.getText();
+		return (String) cCountry.getSelectedItem();
 	}
 
 	public void settCountry(String tCountry) {
-		this.tCountry.setText(tCountry);
+		this.cCountry.setSelectedItem(tCountry);
 	}
 
 	public Float gettPrice() {
@@ -216,8 +313,8 @@ public class OwnerPanelWindow extends JDialog {
 		return (String) this.cTypeProduct.getItemAt(this.cTypeProduct.getSelectedIndex());
 	}
 
-	public Bien.TypeProduct getcTypeProductEnum() {
-		return Bien.TypeProduct.valueOf((String) this.cTypeProduct.getItemAt(this.cTypeProduct.getSelectedIndex()));
+	public String getcTypeProductEnum() {
+		return (String) this.cTypeProduct.getSelectedItem();
 	}
 
 	public void setcTypeProduct(String cTypeProduct) {
@@ -294,7 +391,7 @@ public class OwnerPanelWindow extends JDialog {
 		panel4.setLayout(new GridLayoutManager(16, 1, new Insets(0, 0, 0, 0), -1, -1));
 		panel3.add(panel4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
 		final JLabel label1 = new JLabel();
-		label1.setText("LibellŽ");
+		label1.setText("Libellé");
 		panel4.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JLabel label2 = new JLabel();
 		label2.setText("Description");
@@ -306,41 +403,41 @@ public class OwnerPanelWindow extends JDialog {
 		label4.setText("Nom de la rue");
 		panel4.add(label4, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JLabel label5 = new JLabel();
-		label5.setText("NumŽro de l'habitation");
+		label5.setText("Numéro de l'habitation");
 		panel4.add(label5, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JLabel label6 = new JLabel();
-		label6.setText("Bo”te");
+		label6.setText("Boîte");
 		panel4.add(label6, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JLabel label7 = new JLabel();
 		label7.setText("Ville");
 		panel4.add(label7, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JLabel label8 = new JLabel();
-		label8.setText("LocalitŽ");
-		panel4.add(label8, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		label8.setText("Province");
+		panel4.add(label8, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JLabel label9 = new JLabel();
-		label9.setText("Code postal");
-		panel4.add(label9, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		label9.setText("Pays");
+		panel4.add(label9, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JLabel label10 = new JLabel();
-		label10.setText("Pays");
-		panel4.add(label10, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		label10.setText("Prix");
+		panel4.add(label10, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JLabel label11 = new JLabel();
-		label11.setText("Prix");
-		panel4.add(label11, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		label11.setText("Année de construction");
+		panel4.add(label11, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JLabel label12 = new JLabel();
-		label12.setText("AnnŽe de construction");
-		panel4.add(label12, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		label12.setText("Largeur de la facade principale");
+		panel4.add(label12, new GridConstraints(12, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JLabel label13 = new JLabel();
-		label13.setText("Largeur de la facade principale");
-		panel4.add(label13, new GridConstraints(12, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		label13.setText("Nombre de facade");
+		panel4.add(label13, new GridConstraints(13, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JLabel label14 = new JLabel();
-		label14.setText("Nombre de facade");
-		panel4.add(label14, new GridConstraints(13, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		label14.setText("Nombre d'étage");
+		panel4.add(label14, new GridConstraints(14, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JLabel label15 = new JLabel();
-		label15.setText("Nombre d'Žtage");
-		panel4.add(label15, new GridConstraints(14, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		label15.setText("CPEB");
+		panel4.add(label15, new GridConstraints(15, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JLabel label16 = new JLabel();
-		label16.setText("CPEB");
-		panel4.add(label16, new GridConstraints(15, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		label16.setText("Code postal");
+		panel4.add(label16, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JPanel panel5 = new JPanel();
 		panel5.setLayout(new GridLayoutManager(16, 1, new Insets(0, 0, 0, 0), -1, -1));
 		panel3.add(panel5, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -354,14 +451,6 @@ public class OwnerPanelWindow extends JDialog {
 		panel5.add(tStreetNumber, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
 		tStreetBox = new JTextField();
 		panel5.add(tStreetBox, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-		tCity = new JTextField();
-		panel5.add(tCity, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-		tLocality = new JTextField();
-		panel5.add(tLocality, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-		tPosteCode = new JTextField();
-		panel5.add(tPosteCode, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-		tCountry = new JTextField();
-		panel5.add(tCountry, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
 		tPrice = new JTextField();
 		panel5.add(tPrice, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
 		tFaceWide = new JTextField();
@@ -376,6 +465,14 @@ public class OwnerPanelWindow extends JDialog {
 		panel5.add(cNFloor, new GridConstraints(14, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		cCpeb = new JComboBox();
 		panel5.add(cCpeb, new GridConstraints(15, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		cCity = new JComboBox();
+		panel5.add(cCity, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		cCountry = new JComboBox();
+		panel5.add(cCountry, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		cPosteCode = new JComboBox();
+		panel5.add(cPosteCode, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+		cLocality = new JComboBox();
+		panel5.add(cLocality, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JPanel panel6 = new JPanel();
 		panel6.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
 		panel3.add(panel6, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));

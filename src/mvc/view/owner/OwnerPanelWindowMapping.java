@@ -1,6 +1,8 @@
 package mvc.view.owner;
 
 import core.Session;
+import mvc.model.DB.product.address.City;
+import mvc.App;
 import mvc.model.DB.identity.Owner;
 import mvc.model.DB.product.Bien;
 import mvc.model.owner.OwnerPanelModel;
@@ -28,7 +30,14 @@ public class OwnerPanelWindowMapping {
 	}
 
 	public Bien getBienMapping() {
-		return getBienMappingDetail(new Bien((Owner)Session.getInstance().getAPerson(),getOwnerPanelWindow().gettName(), getOwnerPanelWindow().getcTypeProductEnum()));
+		return getBienMappingDetail(
+			new Bien(
+				(Owner)Session.getInstance().getAPerson(),
+				getOwnerPanelWindow().gettName(),
+				Bien.TypeProduct.fromString(getOwnerPanelWindow().getcTypeProductEnum()),
+				App.em.findUnique(City.class, "where city = ?", getOwnerPanelWindow().gettCity()).getId()
+			)
+		);
 	}
 
 	public Bien getBienMapping(Bien bienResult) {
@@ -42,10 +51,7 @@ public class OwnerPanelWindowMapping {
 		bienResult.setStreetName(getOwnerPanelWindow().gettStreetName());
 		bienResult.setStreetNumber(getOwnerPanelWindow().gettStreetNumber());
 		bienResult.setStreetBox(getOwnerPanelWindow().gettStreetBox());
-		bienResult.setCity(getOwnerPanelWindow().gettCity());
-		bienResult.setLocality(getOwnerPanelWindow().gettLocality());
-		bienResult.setPosteCode(getOwnerPanelWindow().gettPosteCode());
-		bienResult.setCountry(getOwnerPanelWindow().gettCountry());
+		//bienResult.setCity();
 		bienResult.setPrice(getOwnerPanelWindow().gettPrice());
 		bienResult.setYearConstruction(getOwnerPanelWindow().getcYearConstruction());
 		bienResult.setFaceWide(getOwnerPanelWindow().gettFaceWide());
@@ -65,10 +71,10 @@ public class OwnerPanelWindowMapping {
 		ownerPanelWindowResult.settStreetName(getBien().getStreetName());
 		ownerPanelWindowResult.settStreetNumber(getBien().getStreetNumber());
 		ownerPanelWindowResult.settStreetBox(getBien().getStreetBox());
-		ownerPanelWindowResult.settCity(getBien().getCity());
-		ownerPanelWindowResult.settLocality(getBien().getLocality());
-		ownerPanelWindowResult.settPosteCode(getBien().getPosteCode());
-		ownerPanelWindowResult.settCountry(getBien().getCountry());
+		ownerPanelWindowResult.settCity(getBien().getCity().getCity());
+		ownerPanelWindowResult.settLocality(getBien().getCity().getLocality().getRegion().getRegion());
+		ownerPanelWindowResult.settPosteCode(getBien().getCity().getPosteCode());
+		ownerPanelWindowResult.settCountry(getBien().getCity().getLocality().getRegion().getCountry().getLabelFr());
 		ownerPanelWindowResult.settPrice(getBien().getPrice());
 		ownerPanelWindowResult.setcYearConstruction(getBien().getYearConstruction());
 		ownerPanelWindowResult.settFaceWide(getBien().getFaceWide());

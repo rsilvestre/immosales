@@ -1,5 +1,6 @@
 package mvc.model.DB.product;
 
+import mvc.model.DB.product.address.City;
 import mvc.model.DB.identity.Owner;
 import mvc.model.DB.immo.Offer;
 import net.sf.jeasyorm.EntityManager;
@@ -53,10 +54,7 @@ public class Bien {
 	private String streetName;
 	private String streetNumber;
 	private String streetBox;
-	private String city;
-	private String locality;
-	private String posteCode;
-	private String country;
+	private Long cityId;
 
 	private Float price;
 
@@ -78,6 +76,8 @@ public class Bien {
 	private Owner owner;
 	@Transient
 	private List<Offer> offers;
+	@Transient
+	private City city;
 
 	public Bien() {
 		roomes = new ArrayList<Room>();
@@ -89,11 +89,12 @@ public class Bien {
 		this.em = em;
 	}
 
-	public Bien(Owner owner, String name, TypeProduct typeProduct) {
+	public Bien(Owner owner, String name, TypeProduct typeProduct, Long cityId) {
 		this.owner = owner;
 		this.ownerId = owner.getId();
 		this.name = name;
 		this.typeProduct = typeProduct.toString();
+		this.cityId = cityId;
 	}
 
 	public Long getId() {
@@ -160,36 +161,27 @@ public class Bien {
 		this.streetBox = streetBox;
 	}
 
-	public String getCity() {
-		return city;
+	public Long getCityId() {
+		return cityId;
 	}
 
-	public void setCity(String city) {
+	public void setCityId(Long cityId) {
+		this.cityId = cityId;
+	}
+
+	public City getCity() {
+		if (cityId == null) {
+			return (city = null);
+		} else if (city == null || !cityId.equals(city.getId())) {
+			return (city = em.load(City.class, cityId));
+		} else {
+			return city;
+		}
+	}
+
+	public void setCity(City city) {
 		this.city = city;
-	}
-
-	public String getLocality() {
-		return locality;
-	}
-
-	public void setLocality(String locality) {
-		this.locality = locality;
-	}
-
-	public String getPosteCode() {
-		return posteCode;
-	}
-
-	public void setPosteCode(String posteCode) {
-		this.posteCode = posteCode;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
+		cityId = city != null ? city.getId() : null;
 	}
 
 	public Float getPrice() {
