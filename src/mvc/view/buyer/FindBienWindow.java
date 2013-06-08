@@ -12,12 +12,17 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import mvc.App;
 import mvc.controller.buyer.FindBienDbEvent;
+import mvc.controller.city.CityFindBienEvent;
+import mvc.controller.city.CpFindBienEvent;
 import mvc.model.DB.product.Bien;
+import mvc.model.DB.product.address.City;
+import mvc.model.DB.product.address.Region;
+import mvc.model.FooModelLocator;
 import mvc.model.buyer.FindBienModel;
+import mvc.view.bien.BienWindow;
+import mvc.view.city.CityWindow;
 
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
@@ -25,23 +30,31 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 
 /**
- * Created by michaelsilvestre on 20/05/13.
+ * Created by michaelsilvestre on 4/06/13.
  */
 public class FindBienWindow extends JDialog {
 	private JPanel panel1;
-	private JTextField villeTextField;
-	private JTextField CPTextField1;
-	private JTextField textField3;
-	private JButton button1;
-	private JComboBox typeComboBox;
+	private JComboBox cVille;
+	private JComboBox cType;
+	private JButton followButton;
+	private JComboBox cCP;
+	private JComboBox cProvince;
 	private JTable table1;
+	private JComboBox cPriceMoreThan;
+	private JComboBox cPriceLessThan;
+	private JButton offerButton;
 
 	private String[] colomnHead = {"Ref", "Nom", "Ville", "Prix", "Détail"};
 	private DefaultTableModel defaultTableModel;
 
 	private FindBienModel findBienModel;
+	private boolean stopListener = false;
+
+	private FindBienWindow findBienWindow = this;
 
 	public FindBienWindow(FindBienModel findBienModel) {
+		setModal(true);
+		stopListener = true;
 		this.findBienModel = findBienModel;
 		this.add(panel1);
 
@@ -49,6 +62,7 @@ public class FindBienWindow extends JDialog {
 		linkModel();
 		addListener();
 		populateLocal();
+		stopListener = false;
 	}
 
 	private void initComponents() {
@@ -63,8 +77,42 @@ public class FindBienWindow extends JDialog {
 			public void propertyChange(PropertyChangeEvent evt) {
 				String name = evt.getPropertyName();
 
+				stopListener = true;
+
 				if (name.contains("listBiens")) {
 					rebuildTableModel((List<Bien>) evt.getNewValue());
+					stopListener = false;
+				} else if (name.equals("newCity") && !evt.getNewValue().equals("")) {
+					City city = App.em.findUnique(City.class, "where city = ?", evt.getNewValue());
+					Region region = city.getLocality().getRegion();
+					cCP.setSelectedItem(city.getPosteCode());
+					cProvince.setSelectedItem(region.getRegion());
+					stopListener = false;
+
+				} else if (name.equals("newCp") && !evt.getNewValue().equals("")) {
+					List<City> cities = App.em.find(City.class, "where poste_code = ?", evt.getNewValue());
+
+					City city = null;
+
+					if (cities.size() < 1) {
+						stopListener = false;
+						return;
+					} else if (cities.size() > 1) {
+						CityWindow cityWindow = new CityWindow((String) evt.getNewValue(), cities);
+						cityWindow.pack();
+						cityWindow.setVisible(true);
+						city = cityWindow.getCity();
+						if (city == null) {
+							stopListener = false;
+							return;
+						}
+					} else {
+						city = cities.get(0);
+					}
+					Region region = city.getLocality().getRegion();
+					cVille.setSelectedItem(city.getCity());
+					cProvince.setSelectedItem(region.getRegion());
+					stopListener = false;
 				}
 			}
 		});
@@ -82,44 +130,67 @@ public class FindBienWindow extends JDialog {
 	}
 
 	private void addListener() {
-		villeTextField.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent keyEvent) {
-			}
+		table1.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent evt) {
+				if (evt.getClickCount() == 1) {
+					JTable target = (JTable) evt.getSource();
+					//setSelectedPerson(getAPersonSelected(target.getSelectedRow()));
 
-			@Override
-			public void keyPressed(KeyEvent keyEvent) {
-
-			}
-
-			@Override
-			public void keyReleased(KeyEvent keyEvent) {
-				FindBienDbEvent event = new FindBienDbEvent(villeTextField.getText(), CPTextField1.getText(), (String) typeComboBox.getItemAt(typeComboBox.getSelectedIndex()), findBienModel);
-				event.dispatch();
-
-			}
-		});
-		CPTextField1.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent keyEvent) {
-
-			}
-
-			@Override
-			public void keyPressed(KeyEvent keyEvent) {
-
-			}
-
-			@Override
-			public void keyReleased(KeyEvent keyEvent) {
-				FindBienDbEvent event = new FindBienDbEvent(villeTextField.getText(), CPTextField1.getText(), (String) typeComboBox.getItemAt(typeComboBox.getSelectedIndex()), findBienModel);
-				event.dispatch();
+					if (target.getSelectedColumn() == 4) {
+						String idBien = target.getValueAt(target.getSelectedRow(), 0).toString();
+						Bien bien = App.em.load(Bien.class, Long.parseLong(idBien));
+						FooModelLocator locator = FooModelLocator.getInstance();
+						BienWindow bienWindow = new BienWindow(bien);
+						locator.setBienWindow(bienWindow);
+						bienWindow.setModal(true);
+						bienWindow.pack();
+						bienWindow.setVisible(true);
+					}
+				}
 			}
 		});
-		typeComboBox.addItemListener(new ItemListener() {
+		cVille.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent itemEvent) {
-				FindBienDbEvent event = new FindBienDbEvent(villeTextField.getText(), CPTextField1.getText(), (String) typeComboBox.getItemAt(typeComboBox.getSelectedIndex()), findBienModel);
+				if (stopListener) return;
+				CityFindBienEvent event = new CityFindBienEvent((String) itemEvent.getItem(), findBienModel);
+				event.dispatch();
+			}
+		});
+		cCP.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent itemEvent) {
+				if (stopListener) return;
+				CpFindBienEvent event = new CpFindBienEvent((String) itemEvent.getItem(), findBienModel);
+				event.dispatch();
+			}
+		});
+		cVille.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent itemEvent) {
+				FindBienDbEvent event = new FindBienDbEvent((String) cVille.getSelectedItem(), (String) cCP.getSelectedItem(), (String) cType.getSelectedItem(), (String) cProvince.getSelectedItem(), findBienModel);
+				event.dispatch();
+			}
+		});
+
+		cCP.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent itemEvent) {
+				FindBienDbEvent event = new FindBienDbEvent((String) cVille.getSelectedItem(), (String) cCP.getSelectedItem(), (String) cType.getSelectedItem(), (String) cProvince.getSelectedItem(), findBienModel);
+				event.dispatch();
+			}
+		});
+		cType.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent itemEvent) {
+				FindBienDbEvent event = new FindBienDbEvent((String) cVille.getSelectedItem(), (String) cCP.getSelectedItem(), (String) cType.getSelectedItem(), (String) cProvince.getSelectedItem(), findBienModel);
+				event.dispatch();
+			}
+		});
+		cProvince.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent itemEvent) {
+				FindBienDbEvent event = new FindBienDbEvent((String) cVille.getSelectedItem(), (String) cCP.getSelectedItem(), (String) cType.getSelectedItem(), (String) cProvince.getSelectedItem(), findBienModel);
 				event.dispatch();
 			}
 		});
@@ -142,8 +213,25 @@ public class FindBienWindow extends JDialog {
 	}
 
 	private void populateLocal() {
+		cType.addItem("");
+		cProvince.addItem("");
+		cVille.addItem("");
+		cCP.addItem("");
 		for (Bien.TypeProduct typeProduct : Bien.TypeProduct.values()) {
-			typeComboBox.addItem(typeProduct.toString());
+			cType.addItem(typeProduct.toString());
+		}
+		for (Region region : App.em.find(Region.class, "select * from tregion")) {
+			cProvince.addItem(region.getRegion());
+		}
+		for (City city : App.em.find(City.class, "select * from tcity order by city")) {
+			cVille.addItem(city.getCity());
+		}
+		for (City city : App.em.find(City.class, "select distinct poste_code from tcity order by poste_code")) {
+			cCP.addItem(city.getPosteCode());
+		}
+		for (int value = 0; value < 1000000; value += 10000) {
+			cPriceMoreThan.addItem(value);
+			cPriceLessThan.addItem(1000000 - value);
 		}
 	}
 
@@ -163,67 +251,73 @@ public class FindBienWindow extends JDialog {
 	 */
 	private void $$$setupUI$$$() {
 		panel1 = new JPanel();
-		panel1.setLayout(new FormLayout("fill:d:noGrow", "center:max(d;4px):noGrow"));
+		panel1.setLayout(new FormLayout("fill:d:grow", "center:d:noGrow,top:3dlu:noGrow,center:336px:noGrow"));
+		panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLoweredBevelBorder(), null));
 		final JPanel panel2 = new JPanel();
-		panel2.setLayout(new FormLayout("fill:d:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:d:grow"));
+		panel2.setLayout(new FormLayout("fill:d:grow", "center:d:grow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
 		CellConstraints cc = new CellConstraints();
 		panel1.add(panel2, cc.xy(1, 1));
-		panel2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null));
 		final JPanel panel3 = new JPanel();
-		panel3.setLayout(new FormLayout("fill:450px:noGrow", "center:d:noGrow"));
-		panel2.add(panel3, cc.xy(1, 1));
+		panel3.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:d:noGrow"));
+		panel2.add(panel3, cc.xy(1, 3));
 		final JPanel panel4 = new JPanel();
-		panel4.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:d:noGrow"));
+		panel4.setLayout(new FormLayout("fill:385px:noGrow", "center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
 		panel3.add(panel4, cc.xy(1, 1));
 		final JPanel panel5 = new JPanel();
-		panel5.setLayout(new FormLayout("fill:357px:noGrow", "center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
+		panel5.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:140px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:172px:noGrow", "center:d:noGrow"));
 		panel4.add(panel5, cc.xy(1, 1));
-		final JPanel panel6 = new JPanel();
-		panel6.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:153px:grow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:d:noGrow"));
-		panel5.add(panel6, cc.xy(1, 1));
 		final JLabel label1 = new JLabel();
 		label1.setText("Ville");
-		panel6.add(label1, cc.xy(1, 1));
-		villeTextField = new JTextField();
-		panel6.add(villeTextField, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
-		final JPanel panel7 = new JPanel();
-		panel7.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:122px:noGrow", "center:max(d;4px):noGrow"));
-		panel6.add(panel7, cc.xy(5, 1));
-		typeComboBox = new JComboBox();
-		panel7.add(typeComboBox, cc.xy(3, 1));
+		panel5.add(label1, cc.xy(1, 1));
+		cVille = new JComboBox();
+		panel5.add(cVille, cc.xy(3, 1));
 		final JLabel label2 = new JLabel();
-		label2.setText("Type");
-		panel7.add(label2, cc.xy(1, 1));
-		final JPanel panel8 = new JPanel();
-		panel8.setLayout(new FormLayout("fill:d:noGrow,left:9dlu:noGrow,fill:100px:grow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:d:noGrow"));
-		panel5.add(panel8, cc.xy(1, 3));
+		label2.setText("CP");
+		panel5.add(label2, cc.xy(5, 1));
+		cCP = new JComboBox();
+		panel5.add(cCP, cc.xy(7, 1));
+		final JPanel panel6 = new JPanel();
+		panel6.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:137px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:157px:noGrow", "center:d:noGrow"));
+		panel4.add(panel6, cc.xy(1, 3));
 		final JLabel label3 = new JLabel();
-		label3.setText("CP");
-		panel8.add(label3, cc.xy(1, 1));
-		CPTextField1 = new JTextField();
-		panel8.add(CPTextField1, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
-		final JPanel panel9 = new JPanel();
-		panel9.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:179px:grow", "center:d:noGrow"));
-		panel8.add(panel9, cc.xy(5, 1));
+		label3.setText("Type");
+		panel6.add(label3, cc.xy(1, 1));
+		cType = new JComboBox();
+		panel6.add(cType, cc.xy(3, 1));
 		final JLabel label4 = new JLabel();
-		label4.setText("Ville");
-		panel9.add(label4, cc.xy(1, 1));
-		textField3 = new JTextField();
-		panel9.add(textField3, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
-		final JPanel panel10 = new JPanel();
-		panel10.setLayout(new FormLayout("fill:d:grow", "center:d:grow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
-		panel4.add(panel10, cc.xy(3, 1));
-		button1 = new JButton();
-		button1.setText("Button");
-		panel10.add(button1, cc.xy(1, 3));
+		label4.setText("Prov.");
+		panel6.add(label4, cc.xy(5, 1));
+		cProvince = new JComboBox();
+		panel6.add(cProvince, cc.xy(7, 1));
+		final JPanel panel7 = new JPanel();
+		panel7.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:133px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:155px:noGrow", "center:d:noGrow"));
+		panel4.add(panel7, cc.xy(1, 5));
+		final JLabel label5 = new JLabel();
+		label5.setText("Prix>");
+		panel7.add(label5, cc.xy(1, 1));
+		cPriceMoreThan = new JComboBox();
+		panel7.add(cPriceMoreThan, cc.xy(3, 1));
+		final JLabel label6 = new JLabel();
+		label6.setText("Prix<");
+		panel7.add(label6, cc.xy(5, 1));
+		cPriceLessThan = new JComboBox();
+		panel7.add(cPriceLessThan, cc.xy(7, 1));
+		final JPanel panel8 = new JPanel();
+		panel8.setLayout(new FormLayout("fill:103px:grow", "center:d:grow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
+		panel3.add(panel8, cc.xy(3, 1));
+		followButton = new JButton();
+		followButton.setText("Suivre");
+		panel8.add(followButton, cc.xy(1, 3));
+		offerButton = new JButton();
+		offerButton.setText("Offre");
+		panel8.add(offerButton, cc.xy(1, 5));
+		final JPanel panel9 = new JPanel();
+		panel9.setLayout(new FormLayout("fill:d:grow", "center:d:grow,top:3dlu:noGrow,center:331px:grow"));
+		panel1.add(panel9, cc.xy(1, 3));
 		final JScrollPane scrollPane1 = new JScrollPane();
-		panel2.add(scrollPane1, cc.xy(1, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
+		panel9.add(scrollPane1, cc.xy(1, 3, CellConstraints.FILL, CellConstraints.FILL));
 		table1 = new JTable();
 		scrollPane1.setViewportView(table1);
-		label1.setLabelFor(villeTextField);
-		label2.setLabelFor(typeComboBox);
-		label3.setLabelFor(CPTextField1);
-		label4.setLabelFor(textField3);
 	}
 
 	/**
@@ -233,4 +327,3 @@ public class FindBienWindow extends JDialog {
 		return panel1;
 	}
 }
-

@@ -56,7 +56,7 @@ public class Bien {
 	private String streetBox;
 	private Long cityId;
 
-	private Float price;
+	private Integer price;
 
 	private Integer yearConstruction;
 	private Integer faceWide;
@@ -89,12 +89,13 @@ public class Bien {
 		this.em = em;
 	}
 
-	public Bien(Owner owner, String name, TypeProduct typeProduct, Long cityId) {
+	public Bien(Owner owner, String name, TypeProduct typeProduct, City city) {
 		this.owner = owner;
 		this.ownerId = owner.getId();
+		this.city = city;
+		this.cityId = city.getId();
 		this.name = name;
 		this.typeProduct = typeProduct.toString();
-		this.cityId = cityId;
 	}
 
 	public Long getId() {
@@ -184,11 +185,11 @@ public class Bien {
 		cityId = city != null ? city.getId() : null;
 	}
 
-	public Float getPrice() {
+	public Integer getPrice() {
 		return price;
 	}
 
-	public void setPrice(Float price) {
+	public void setPrice(Integer price) {
 		this.price = price;
 	}
 
@@ -316,5 +317,12 @@ public class Bien {
 
 	public TypeProduct getTypeProductEnum() {
 		return TypeProduct.valueOf(this.getTypeProduct());
+	}
+
+	public String getAddress() {
+		return this.getStreetName() + " " +
+				"n° " + this.getStreetNumber() + " " +
+				(this.getStreetBox() != null && this.getStreetBox() != "" ? "/" + this.getStreetBox() : "") + "\n" +
+				this.getCity().toString();
 	}
 }

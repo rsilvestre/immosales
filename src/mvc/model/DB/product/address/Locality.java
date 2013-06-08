@@ -37,6 +37,7 @@ public class Locality {
 
 	public Locality(Region region, String locality) {
 		this.region = region;
+		this.regionId = region.getId();
 		this.locality = locality;
 	}
 

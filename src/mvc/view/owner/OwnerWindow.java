@@ -122,7 +122,6 @@ public class OwnerWindow extends JPanel {
 	}
 
 	private void createOwn() {
-		//To change body of created methods use File | Settings | File Templates.
 		FooModelLocator locator = FooModelLocator.getInstance();
 		OwnerPanelModel ownerPanelModel = new OwnerPanelModel();
 		OwnerPanelWindow ownerPanelWindow = new OwnerPanelWindow(ownerPanelModel);

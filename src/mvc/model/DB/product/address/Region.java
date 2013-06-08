@@ -37,6 +37,7 @@ public class Region {
 
 	public Region(Country country, String region) {
 		this.country = country;
+		this.countryId = country.getId();
 		this.region = region;
 	}
 

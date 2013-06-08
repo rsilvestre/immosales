@@ -22,12 +22,13 @@ public class FindBienDbEvent extends MVCEvent {
 	public final HashMap<String,String> requestFieldDatas;
 	public final FindBienModel model;
 
-	public FindBienDbEvent(String cityField, String cpField, String typeField, FindBienModel findBienModel) {
+	public FindBienDbEvent(String cityField, String cpField, String typeField, String provinceField, FindBienModel findBienModel) {
 		super(BuyerController.FIND);
 		requestFieldDatas = new HashMap<String, String>();
 		requestFieldDatas.put("cityField", cityField);
 		requestFieldDatas.put("cpField", cpField);
 		requestFieldDatas.put("typeField", typeField);
+		requestFieldDatas.put("provinceField", provinceField);
 		this.model = findBienModel;
 	}
 }

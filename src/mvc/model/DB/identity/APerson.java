@@ -113,4 +113,9 @@ public abstract class APerson {
 			(argSession.getAPerson() != null && this.getId() == argSession.getAPerson().getId()) ? "Connected":""
 		};
 	}
+
+	@Override
+	public String toString() {
+		return this.getPerson().toString();
+	}
 }

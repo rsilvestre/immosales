@@ -115,10 +115,15 @@ public class Person extends AbstractModel {
 	}
 
 	public void setAddresses(List<Address> argAddresses) {
-		List<Address> oldAddresses = addresses;
 		this.addresses = argAddresses;
 		for (Address address : addresses) address.setPerson(this);
-		firePropertyChange("addresses", oldAddresses, addresses);
+	}
+
+	public void addAddresses(Address argAddresses) {
+		if (addresses == null) {
+			this.addresses = new ArrayList<Address>();
+		}
+		this.addresses.add(argAddresses);
 	}
 
 	public Customer getCustomer() {
@@ -129,10 +134,8 @@ public class Person extends AbstractModel {
 	}
 
 	public void setCustomer(Customer argCustomer) {
-		Customer oldCustomer = customer;
 		this.customer = argCustomer;
 		this.customer.setPerson(this);
-		firePropertyChange("customer", oldCustomer, customer);
 	}
 
 	public Saler getSaler() {
@@ -143,10 +146,8 @@ public class Person extends AbstractModel {
 	}
 
 	public void setSaler(Saler argSaler) {
-		Saler oldSaler = saler;
 		this.saler = argSaler;
 		this.saler.setPerson(this);
-		firePropertyChange("saler", oldSaler, saler);
 	}
 
 	public Owner getOwner() {
@@ -157,10 +158,8 @@ public class Person extends AbstractModel {
 	}
 
 	public void setOwner(Owner argOwner) {
-		Owner oldOwner = owner;
 		this.owner = argOwner;
 		this.owner.setPerson(this);
-		firePropertyChange("owner", oldOwner, owner);
 	}
 
 	public Buyer getBuyer() {
@@ -171,9 +170,12 @@ public class Person extends AbstractModel {
 	}
 
 	public void setBuyer(Buyer argBuyer) {
-		Buyer oldBuyer = buyer;
 		this.buyer = argBuyer;
 		this.buyer.setPerson(this);
-		firePropertyChange("buyer", oldBuyer, buyer);
+	}
+
+	@Override
+	public String toString() {
+		return this.getFirstName() + " " + this.getLastName();
 	}
 }

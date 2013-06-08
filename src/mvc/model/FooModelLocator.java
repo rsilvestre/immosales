@@ -5,6 +5,7 @@ import mvc.controller.city.CityController;
 import mvc.controller.main.MainController;
 import mvc.controller.owner.OwnerController;
 import mvc.controller.user.UserController;
+import mvc.view.bien.BienWindow;
 import mvc.view.buyer.FindBienWindow;
 import mvc.view.main.MainWindow;
 import mvc.view.owner.OwnerPanelWindow;
@@ -34,6 +35,7 @@ public class FooModelLocator {
 
 	private OwnerPanelWindow ownerPanelWindow = null;
 	private FindBienWindow findBienWindow;
+	private BienWindow bienWindow;
 
 	private FooModelLocator() {}
 
@@ -71,6 +73,10 @@ public class FooModelLocator {
 
 	public void setFindBienWindow(FindBienWindow findBienWindow) {
 		this.findBienWindow = findBienWindow;
+	}
+
+	public void setBienWindow(BienWindow bienWindow) {
+		this.bienWindow = bienWindow;
 	}
 
 	public FindBienWindow getFindBienWindow() {

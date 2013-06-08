@@ -238,6 +238,7 @@ public class UserWindow extends JPanel {
 				userPanelWindow.getCity()
 			);
 			App.em.insert(address);
+			person.addAddresses(address);
 
 			String typeUtilisateur = (getCurrentUserType());
 			if (APerson.userTypeEnum.fromString(typeUtilisateur) == APerson.userTypeEnum.Buyer) {

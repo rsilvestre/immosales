@@ -9,10 +9,7 @@
 package mvc.controller.city;
 
 import com.dmurph.mvc.control.FrontController;
-import mvc.command.city.CityOwnerCommand;
-import mvc.command.city.CityUserCommand;
-import mvc.command.city.CpOwnerCommand;
-import mvc.command.city.CpUserCommand;
+import mvc.command.city.*;
 
 /**
  * Created by michaelsilvestre on 26/05/13.
@@ -22,11 +19,15 @@ public class CityController extends FrontController {
 	public static final String USER_CITY_CP = "USER_CITY_CP_CONTROLLER";
 	public static final String OWNER_CITY_CITY = "OWNER_CITY_CITY_CONTROLLER";
 	public static final String OWNER_CITY_CP = "OWNER_CITY_CP_CONTROLLER";
+	public static final String FIND_BIEN_CITY_CITY = "FIND_BIEN_CITY_CITY_CONTROLLER";
+	public static final String FIND_BIEN_CITY_CP = "FIND_BIEN_CITY_CP_CONTROLLER";
 
 	public CityController() {
 		registerCommand(USER_CITY_CITY, CityUserCommand.class);
 		registerCommand(USER_CITY_CP, CpUserCommand.class);
 		registerCommand(OWNER_CITY_CITY, CityOwnerCommand.class);
 		registerCommand(OWNER_CITY_CP, CpOwnerCommand.class);
+		registerCommand(FIND_BIEN_CITY_CITY, CityFindBienCommand.class);
+		registerCommand(FIND_BIEN_CITY_CP, CpFindBienCommand.class);
 	}
 }

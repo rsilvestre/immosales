@@ -35,7 +35,7 @@ public class OwnerPanelWindowMapping {
 				(Owner)Session.getInstance().getAPerson(),
 				getOwnerPanelWindow().gettName(),
 				Bien.TypeProduct.fromString(getOwnerPanelWindow().getcTypeProductEnum()),
-				App.em.findUnique(City.class, "where city = ?", getOwnerPanelWindow().gettCity()).getId()
+				App.em.findUnique(City.class, "where city = ?", getOwnerPanelWindow().gettCity())
 			)
 		);
 	}
@@ -51,7 +51,7 @@ public class OwnerPanelWindowMapping {
 		bienResult.setStreetName(getOwnerPanelWindow().gettStreetName());
 		bienResult.setStreetNumber(getOwnerPanelWindow().gettStreetNumber());
 		bienResult.setStreetBox(getOwnerPanelWindow().gettStreetBox());
-		//bienResult.setCity();
+		bienResult.setCity(App.em.findUnique(City.class, "where city = ?", getOwnerPanelWindow().gettCity()));
 		bienResult.setPrice(getOwnerPanelWindow().gettPrice());
 		bienResult.setYearConstruction(getOwnerPanelWindow().getcYearConstruction());
 		bienResult.setFaceWide(getOwnerPanelWindow().gettFaceWide());

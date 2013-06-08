@@ -40,8 +40,11 @@ public class City {
 		this.em = em;
 	}
 
-	public City(Locality locality, String city, String posteCode) {
+	public City(Locality locality, Lang lang, String city, String posteCode) {
 		this.locality = locality;
+		this.localityId = locality.getId();
+		this.lang = lang;
+		this.langId = lang.getId();
 		this.city = city;
 		this.posteCode = posteCode;
 	}
@@ -126,5 +129,14 @@ public class City {
 	public void setBiens(List<Bien> biens) {
 		this.biens = biens;
 		for (Bien bien : biens) bien.setCity(this);
+	}
+
+	@Override
+	public String toString() {
+		return this.getCity() + " " +
+				this.getPosteCode() + "\n" +
+				this.getLocality().getLocality() + " " +
+				this.getLocality().getRegion().getRegion() + "\n" +
+				this.getLocality().getRegion().getCountry().getLabelFr();
 	}
 }

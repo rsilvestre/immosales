@@ -33,6 +33,8 @@ public class BienRecorderAndOfferWindow extends JPanel {
 
 	private BienRecorderAndOfferModel bienRecorderAndOfferModel;
 
+	private BienRecorderAndOfferWindow bienRecorderAndOfferWindow = this;
+
 	public BienRecorderAndOfferWindow(BienRecorderAndOfferModel bienRecorderAndOfferModel) {
 		this.add(panel1);
 		addListener();
@@ -50,7 +52,6 @@ public class BienRecorderAndOfferWindow extends JPanel {
 				locator.setFindBienWindow(findBienWindow);
 				findBienWindow.pack();
 				findBienWindow.setVisible(true);
-
 
 			}
 		});
