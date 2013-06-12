@@ -187,17 +187,21 @@ public class UserPanelWindow extends JPanel {
 		saisieAddressCity.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent itemEvent) {
-				if (stopListener) return;
-				CityUserEvent event = new CityUserEvent((String)itemEvent.getItem(), userPanelModel);
-				event.dispatch();
+				if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+					if (stopListener) return;
+					CityUserEvent event = new CityUserEvent((String)itemEvent.getItem(), userPanelModel);
+					event.dispatch();
+				}
 			}
 		});
 		saisieAddressPosteCode.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent itemEvent) {
-				if (stopListener) return;
-				CpUserEvent event = new CpUserEvent((String) itemEvent.getItem(), userPanelModel);
-				event.dispatch();
+				if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+					if (stopListener) return;
+					CpUserEvent event = new CpUserEvent((String) itemEvent.getItem(), userPanelModel);
+					event.dispatch();
+				}
 			}
 		});
 	}

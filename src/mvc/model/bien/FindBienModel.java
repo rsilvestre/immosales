@@ -6,7 +6,7 @@
  * Vestibulum commodo. Ut rhoncus gravida arcu.
  */
 
-package mvc.model.buyer;
+package mvc.model.bien;
 
 import com.dmurph.mvc.model.AbstractModel;
 import mvc.App;

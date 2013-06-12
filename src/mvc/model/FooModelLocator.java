@@ -1,12 +1,12 @@
 package mvc.model;
 
-import mvc.controller.buyer.BuyerController;
+import mvc.controller.bien.BienController;
 import mvc.controller.city.CityController;
 import mvc.controller.main.MainController;
 import mvc.controller.owner.OwnerController;
 import mvc.controller.user.UserController;
 import mvc.view.bien.BienWindow;
-import mvc.view.buyer.FindBienWindow;
+import mvc.view.bien.FindBienWindow;
 import mvc.view.main.MainWindow;
 import mvc.view.owner.OwnerPanelWindow;
 import mvc.view.user.UserPanelWindow;
@@ -25,7 +25,7 @@ public class FooModelLocator {
 	private MainController mainController = new MainController();
 	private UserController userController = new UserController();
 	private OwnerController ownerController = new OwnerController();
-	private BuyerController buyerController = new BuyerController();
+	private BienController buyerController = new BienController();
 	private CityController cityController = new CityController();
 
 	private MainWindow mainWindow = null;
@@ -84,7 +84,7 @@ public class FooModelLocator {
 	}
 
 	public static FooModelLocator getInstance() {
-		if (instance == instance) {
+		if (instance == null) {
 			instance = new FooModelLocator();
 		}
 		return instance;

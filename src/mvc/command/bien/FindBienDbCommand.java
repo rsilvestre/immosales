@@ -6,22 +6,20 @@
  * Vestibulum commodo. Ut rhoncus gravida arcu.
  */
 
-package mvc.controller.city;
+package mvc.command.bien;
 
 import com.dmurph.mvc.MVCEvent;
-import mvc.model.bien.FindBienModel;
+import com.dmurph.mvc.control.ICommand;
+import mvc.controller.bien.FindBienDbEvent;
 
 /**
- * Created by michaelsilvestre on 26/05/13.
+ * Created by michaelsilvestre on 20/05/13.
  */
-public class CpFindBienEvent extends MVCEvent {
-
-	public final FindBienModel model;
-	public final String cpValue;
-
-	public CpFindBienEvent(String argCpValue, FindBienModel argModel) {
-		super(CityController.FIND_BIEN_CITY_CP);
-		this.model = argModel;
-		this.cpValue = argCpValue;
+public class FindBienDbCommand implements ICommand {
+	@Override
+	public void execute(MVCEvent mvcEvent) {
+		FindBienDbEvent event = (FindBienDbEvent) mvcEvent;
+		event.model.setRequestFieldDatas(event.requestFieldDatas);
+		event.model.launchSearch();
 	}
 }

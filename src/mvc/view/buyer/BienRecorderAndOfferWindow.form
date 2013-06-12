@@ -3,10 +3,8 @@
   <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="FormLayout">
     <rowspec value="center:max(d;4px):noGrow"/>
     <colspec value="fill:max(d;4px):noGrow"/>
-    <colspec value="left:4dlu:noGrow"/>
-    <colspec value="fill:73px:noGrow"/>
     <constraints>
-      <xy x="20" y="20" width="669" height="400"/>
+      <xy x="20" y="20" width="637" height="234"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -15,7 +13,7 @@
         <rowspec value="center:d:noGrow"/>
         <rowspec value="top:3dlu:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
-        <colspec value="fill:d:noGrow"/>
+        <colspec value="fill:636px:noGrow"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms/>
@@ -174,12 +172,16 @@
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                       <forms defaultalign-vert="false"/>
                     </constraints>
-                    <properties/>
+                    <properties>
+                      <minimumSize width="170" height="80"/>
+                    </properties>
                     <border type="none"/>
                     <children>
                       <component id="31086" class="javax.swing.JList" binding="intéresséList" default-binding="true">
                         <constraints/>
-                        <properties/>
+                        <properties>
+                          <minimumSize width="170" height="80"/>
+                        </properties>
                       </component>
                     </children>
                   </scrollpane>

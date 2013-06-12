@@ -11,13 +11,24 @@ package mvc.view.buyer;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import core.Session;
+import mvc.App;
+import mvc.model.DB.identity.Buyer;
+import mvc.model.DB.identity.Owner;
+import mvc.model.DB.immo.Interest;
+import mvc.model.DB.immo.Offer;
+import mvc.model.DB.product.Bien;
 import mvc.model.FooModelLocator;
 import mvc.model.buyer.BienRecorderAndOfferModel;
-import mvc.model.buyer.FindBienModel;
+import mvc.model.bien.FindBienModel;
+import mvc.view.InputDialog.FormatDialogWindow;
+import mvc.view.bien.FindBienWindow;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * Created by michaelsilvestre on 20/05/13.
@@ -26,6 +37,8 @@ public class BienRecorderAndOfferWindow extends JPanel {
 	private JPanel panel1;
 	private JList intéresséList;
 	private JList offreDAchatList;
+	private DefaultListModel interestModel;
+	private DefaultListModel offerModel;
 	private JButton button1;
 	private JButton button2;
 	private JButton button3;
@@ -37,27 +50,95 @@ public class BienRecorderAndOfferWindow extends JPanel {
 
 	public BienRecorderAndOfferWindow(BienRecorderAndOfferModel bienRecorderAndOfferModel) {
 		this.add(panel1);
+		initComponents();
 		addListener();
 		populateLocal();
+	}
+
+	private void initComponents() {
+		interestModel = new DefaultListModel();
+		intéresséList.setModel(interestModel);
+		intéresséList.setMinimumSize(new Dimension(200, 100));
+		intéresséList.setPrototypeCellValue("                                                            ");
+		offerModel = new DefaultListModel();
+		offreDAchatList.setModel(offerModel);
+		offreDAchatList.setMinimumSize(new Dimension(200, 100));
+		offreDAchatList.setPrototypeCellValue("                                                            ");
 	}
 
 	private void addListener() {
 		nouvelleRechercheButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				//JOptionPane.showMessageDialog(null, "alert");
-				FooModelLocator locator = FooModelLocator.getInstance();
-				FindBienModel findBienModel = new FindBienModel();
-				FindBienWindow findBienWindow = new FindBienWindow(findBienModel);
-				locator.setFindBienWindow(findBienWindow);
-				findBienWindow.pack();
-				findBienWindow.setVisible(true);
-
+				findAction((Buyer) Session.getInstance().getAPerson());
 			}
 		});
 	}
 
+	private void findAction(Buyer buyer) {
+		FindBienWindow findBienWindow = getFindBienWindow();
+		if (findBienWindow.getSearchResultType() == FindBienWindow.FindBienType.NULL) {
+			return;
+		}
+
+		if (findBienWindow.getSearchResultType() == FindBienWindow.FindBienType.INTEREST) {
+			saveInterest(findBienWindow, buyer);
+		}
+		if (findBienWindow.getSearchResultType() == FindBienWindow.FindBienType.OFFRE) {
+			FormatDialogWindow formatDialogWindow = new FormatDialogWindow("Montant de l'offre :");
+			formatDialogWindow.pack();
+			formatDialogWindow.setVisible(true);
+			if (formatDialogWindow.getValue() == "-1") {
+				return;
+			}
+			saveOffer(findBienWindow, Long.parseLong(formatDialogWindow.getValue()), buyer);
+		}
+	}
+
+	private void saveOffer(FindBienWindow findBienWindow, Long offerValue, Buyer buyer) {
+		Offer findOffer = App.em.findUnique(Offer.class, "where bien_id = ? and buyer_id = ?", findBienWindow.getSearchResultValue(), buyer.getId());
+		if (findOffer != null) {
+			JOptionPane.showMessageDialog(this, "Vous avez déjà sélectionné ce bien ultérieurement");
+			return;
+		}
+		Bien bien = App.em.load(Bien.class, findBienWindow.getSearchResultValue());
+		Offer offer = new Offer((Buyer) Session.getInstance().getAPerson(), bien, Offer.OfferStatus.SUBMIT, offerValue);
+		App.em.insert(offer);
+		offerModel.addElement(bien.getName());
+	}
+
+	private void saveInterest(FindBienWindow findBienWindow, Buyer buyer) {
+		Interest findInterest = App.em.findUnique(Interest.class, "where bien_id = ? and buyer_id = ?", findBienWindow.getSearchResultValue(), buyer.getId());
+		if (findInterest != null) {
+			JOptionPane.showMessageDialog(this, "Vous avez déjà sélectionné ce bien ultérieurement");
+			return;
+		}
+		Bien bien = App.em.load(Bien.class, findBienWindow.getSearchResultValue());
+		Interest interest = new Interest((Buyer) Session.getInstance().getAPerson(), bien);
+		App.em.insert(interest);
+		interestModel.addElement(bien.getName());
+	}
+
+	private FindBienWindow getFindBienWindow() {
+		//JOptionPane.showMessageDialog(null, "alert");
+		FooModelLocator locator = FooModelLocator.getInstance();
+		FindBienModel findBienModel = new FindBienModel();
+		FindBienWindow findBienWindow = new FindBienWindow(findBienModel);
+		locator.setFindBienWindow(findBienWindow);
+		findBienWindow.pack();
+		findBienWindow.setVisible(true);
+		return findBienWindow;
+	}
+
 	private void populateLocal() {
+		List<Interest> interestList = App.em.find(Interest.class, "where buyer_id = ?", Session.getInstance().getAPerson().getId());
+		List<Offer> offerList = App.em.find(Offer.class, "where buyer_id = ?", Session.getInstance().getAPerson().getId());
+		for (Interest interest : interestList) {
+			interestModel.addElement(interest.getBien().getName());
+		}
+		for (Offer offer : offerList) {
+			offerModel.addElement(offer.getBien().getName());
+		}
 	}
 
 	{
@@ -76,9 +157,9 @@ public class BienRecorderAndOfferWindow extends JPanel {
 	 */
 	private void $$$setupUI$$$() {
 		panel1 = new JPanel();
-		panel1.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:73px:noGrow", "center:max(d;4px):noGrow"));
+		panel1.setLayout(new FormLayout("fill:max(d;4px):noGrow", "center:max(d;4px):noGrow"));
 		final JPanel panel2 = new JPanel();
-		panel2.setLayout(new FormLayout("fill:d:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
+		panel2.setLayout(new FormLayout("fill:636px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
 		CellConstraints cc = new CellConstraints();
 		panel1.add(panel2, cc.xy(1, 1));
 		final JPanel panel3 = new JPanel();
@@ -122,8 +203,10 @@ public class BienRecorderAndOfferWindow extends JPanel {
 		label5.setText("Intéressé");
 		panel6.add(label5, cc.xy(1, 1));
 		final JScrollPane scrollPane2 = new JScrollPane();
+		scrollPane2.setMinimumSize(new Dimension(170, 80));
 		panel6.add(scrollPane2, cc.xy(1, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
 		intéresséList = new JList();
+		intéresséList.setMinimumSize(new Dimension(170, 80));
 		scrollPane2.setViewportView(intéresséList);
 		final JPanel panel7 = new JPanel();
 		panel7.setLayout(new FormLayout("fill:247px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:d:noGrow"));

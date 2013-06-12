@@ -126,35 +126,29 @@ public class OwnerPanelWindow extends JDialog {
 		cCity.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent itemEvent) {
-				if (stopListener) return;
-				CityOwnerEvent event = new CityOwnerEvent((String) itemEvent.getItem(), ownerPanelModel);
-				event.dispatch();
+				if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+					if (stopListener) return;
+					CityOwnerEvent event = new CityOwnerEvent((String) itemEvent.getItem(), ownerPanelModel);
+					event.dispatch();
+				}
 			}
 		});
 		cPosteCode.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent itemEvent) {
-				if (stopListener) return;
-				CpOwnerEvent event = new CpOwnerEvent((String) itemEvent.getItem(), ownerPanelModel);
-				event.dispatch();
+				if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+					if (stopListener) return;
+					CpOwnerEvent event = new CpOwnerEvent((String) itemEvent.getItem(), ownerPanelModel);
+					event.dispatch();
+				}
 			}
 		});
-		tPrice.addKeyListener(new KeyListener() {
+		tPrice.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent evt) {
 				if (evt.getKeyChar() < KeyEvent.VK_0 || evt.getKeyChar() > KeyEvent.VK_9) {//input<'0' or input>'9'?
-					evt.consume();//delete the typed char
+					evt.consume();
 				}
-			}
-
-			@Override
-			public void keyPressed(KeyEvent keyEvent) {
-
-			}
-
-			@Override
-			public void keyReleased(KeyEvent keyEvent) {
-
 			}
 		});
 	}

@@ -9,15 +9,9 @@
 package mvc.controller.buyer;
 
 import com.dmurph.mvc.control.FrontController;
-import mvc.command.buyer.FindBienDbCommand;
 
 /**
- * Created by michaelsilvestre on 20/05/13.
+ * Created by michaelsilvestre on 9/06/13.
  */
-public class BuyerController extends FrontController{
-	public static final String FIND = "FIND_BIEN_DB";
-
-		public BuyerController() {
-			registerCommand(FIND, FindBienDbCommand.class);
-		}
+public class BuyerController extends FrontController {
 }

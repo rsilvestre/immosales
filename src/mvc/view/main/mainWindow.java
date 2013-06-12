@@ -10,6 +10,7 @@ import mvc.model.main.MainModel;
 import mvc.model.owner.OwnerModel;
 import mvc.model.user.UserModel;
 import mvc.view.buyer.BienRecorderAndOfferWindow;
+import mvc.view.owner.OwnerUserControl;
 import mvc.view.owner.OwnerWindow;
 import mvc.view.user.UserWindow;
 
@@ -95,7 +96,7 @@ public class MainWindow extends JFrame {
 						Person person = ((APerson)evt.getNewValue()).getPerson();
 						textArea.append("Bienvenu " + person.getFirstName() + " " + person.getLastName() + "\n");
 
-						textArea.append("ConnectŽ en tant que : " + ((APerson) evt.getNewValue()).getUserType().toString());
+						textArea.append("Connecté en tant que : " + ((APerson) evt.getNewValue()).getUserType().toString());
 					}
 				}
 			}
@@ -106,7 +107,7 @@ public class MainWindow extends JFrame {
 		Person person = aPerson.getPerson();
 		JTextField connectionLabel = new JTextField(
 				"Bienvenu " + person.getTitre() + " " + person.getLastName() +
-				" ConnectŽ en tant que : " + aPerson.getUserType().toString()
+				" Connecté en tant que : " + aPerson.getUserType().toString()
 		);
 		createAdvertising = new JButton("Nouveau bien");
 
@@ -129,7 +130,8 @@ public class MainWindow extends JFrame {
 	private Component contentSelector() {
 		if (Session.getInstance().getAPerson() instanceof Owner) {
 			OwnerModel ownerModel = new OwnerModel();
-			return new OwnerWindow(ownerModel);
+			//return new OwnerWindow(ownerModel);
+			return new OwnerUserControl(ownerModel);
 		} else if (Session.getInstance().getAPerson() instanceof Buyer) {
 			BienRecorderAndOfferModel bienRecorderAndOfferModel = new BienRecorderAndOfferModel();
 			//return new BuyerWindow(buyerModel);

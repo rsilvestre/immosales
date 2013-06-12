@@ -6,10 +6,10 @@
  * Vestibulum commodo. Ut rhoncus gravida arcu.
  */
 
-package mvc.controller.buyer;
+package mvc.controller.bien;
 
 import com.dmurph.mvc.MVCEvent;
-import mvc.model.buyer.FindBienModel;
+import mvc.model.bien.FindBienModel;
 
 import java.util.HashMap;
 
@@ -22,13 +22,9 @@ public class FindBienDbEvent extends MVCEvent {
 	public final HashMap<String,String> requestFieldDatas;
 	public final FindBienModel model;
 
-	public FindBienDbEvent(String cityField, String cpField, String typeField, String provinceField, FindBienModel findBienModel) {
-		super(BuyerController.FIND);
-		requestFieldDatas = new HashMap<String, String>();
-		requestFieldDatas.put("cityField", cityField);
-		requestFieldDatas.put("cpField", cpField);
-		requestFieldDatas.put("typeField", typeField);
-		requestFieldDatas.put("provinceField", provinceField);
+	public FindBienDbEvent(HashMap<String, String> requestFieldDatasArgs, FindBienModel findBienModel) {
+		super(BienController.FIND);
+		requestFieldDatas = requestFieldDatasArgs;
 		this.model = findBienModel;
 	}
 }

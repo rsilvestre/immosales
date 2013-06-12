@@ -9,7 +9,7 @@
 package mvc.controller.city;
 
 import com.dmurph.mvc.MVCEvent;
-import mvc.model.buyer.FindBienModel;
+import mvc.model.bien.FindBienModel;
 
 /**
  * Created by michaelsilvestre on 26/05/13.

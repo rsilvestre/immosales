@@ -19,10 +19,7 @@ import mvc.model.user.UserPanelModel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
@@ -119,18 +116,18 @@ public class UserWindow extends JPanel {
 				if (evt.getClickCount() == 1) {
 					JTable target = (JTable) evt.getSource();
 					setSelectedPerson(getAPersonSelected(target.getSelectedRow()));
-					if (target.getSelectedColumn()== 4) {
+					if (target.getSelectedColumn() == 4) {
 						editRow(target);
 					}
 				}
 			}
 		});
-		userType.addActionListener(new ActionListener() {
+		userType.addItemListener(new ItemListener() {
 			@Override
-			public void actionPerformed(ActionEvent evt) {
-				//To change body of implemented methods use File | Settings | File Templates.
-
-				refreshTable();
+			public void itemStateChanged(ItemEvent evt) {
+				if (evt.getStateChange() == ItemEvent.SELECTED) {
+					refreshTable();
+				}
 			}
 		});
 	}

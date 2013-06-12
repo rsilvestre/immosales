@@ -6,20 +6,18 @@
  * Vestibulum commodo. Ut rhoncus gravida arcu.
  */
 
-package mvc.command.buyer;
+package mvc.controller.bien;
 
-import com.dmurph.mvc.MVCEvent;
-import com.dmurph.mvc.control.ICommand;
-import mvc.controller.buyer.FindBienDbEvent;
+import com.dmurph.mvc.control.FrontController;
+import mvc.command.bien.FindBienDbCommand;
 
 /**
  * Created by michaelsilvestre on 20/05/13.
  */
-public class FindBienDbCommand implements ICommand {
-	@Override
-	public void execute(MVCEvent mvcEvent) {
-		FindBienDbEvent event = (FindBienDbEvent) mvcEvent;
-		event.model.setRequestFieldDatas(event.requestFieldDatas);
-		event.model.launchSearch();
-	}
+public class BienController extends FrontController{
+	public static final String FIND = "FIND_BIEN_DB";
+
+		public BienController() {
+			registerCommand(FIND, FindBienDbCommand.class);
+		}
 }

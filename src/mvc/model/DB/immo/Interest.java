@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2013. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
 package mvc.model.DB.immo;
 
 import mvc.model.DB.identity.Buyer;
@@ -14,57 +22,28 @@ import java.sql.Timestamp;
  * Time: 22:33
  * To change this template use File | Settings | File Templates.
  */
-public class Offer {
+public class Interest {
 
 	private EntityManager em;
-
-	@Transient
-	public enum OfferStatus {
-		AVAILABLE("Disponnible"),
-		TOVISIT("Demande de visite"),
-		VISITED("Visité"),
-		SUBMIT("Offre envoyée"),
-		ACCEPTED("Offre acceptée"),
-		REFUSED("Offre refusée"),
-		SIGNED("Acte signé"),
-		SOLD("Vendu");
-
-		private String converter;
-
-		OfferStatus(String c) {
-			this.converter = c;
-		}
-		public String getValue() {
-			return converter;
-		}
-	}
 
 	private Long id;
 	private Long buyerId;
 	private Long bienId;
-	private String status;
-	private Long offer;
-	private Timestamp endDate;
-
-	private Timestamp created_at;
-	private Timestamp updated_at;
 
 	@Transient
 	private Bien bien;
 	@Transient
 	private Buyer buyer;
 
-	public Offer(EntityManager em) {
+	public Interest(EntityManager em) {
 		this.em = em;
 	}
 
-	public Offer(Buyer buyer, Bien bien, OfferStatus offerStatus, Long offer) {
+	public Interest(Buyer buyer, Bien bien) {
 		this.buyer = buyer;
 		this.buyerId = buyer.getId();
 		this.bien = bien;
 		this.bienId = bien.getId();
-		this.status = offerStatus.toString();
-		this.offer = offer;
 	}
 
 	public Long getId() {
@@ -90,47 +69,6 @@ public class Offer {
 	public void setBienId(Long bienId) {
 		this.bienId = bienId;
 	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public Long getOffer() {
-		return offer;
-	}
-
-	public void setOffer(Long offer) {
-		this.offer = offer;
-	}
-
-	public Timestamp getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Timestamp endDate) {
-		this.endDate = endDate;
-	}
-
-	public Timestamp getCreated_at() {
-		return created_at;
-	}
-
-	public void setCreated_at(Timestamp created_at) {
-		this.created_at = created_at;
-	}
-
-	public Timestamp getUpdated_at() {
-		return updated_at;
-	}
-
-	public void setUpdated_at(Timestamp updated_at) {
-		this.updated_at = updated_at;
-	}
-
 
 	public Buyer getBuyer() {
 		if (buyerId == null) {
