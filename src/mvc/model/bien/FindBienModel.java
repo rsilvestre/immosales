@@ -9,7 +9,9 @@
 package mvc.model.bien;
 
 import com.dmurph.mvc.model.AbstractModel;
+import core.Session;
 import mvc.App;
+import mvc.model.DB.identity.Buyer;
 import mvc.model.DB.product.Bien;
 import mvc.model.DB.product.address.City;
 import mvc.model.DB.product.address.Locality;
@@ -86,7 +88,8 @@ public class FindBienModel extends AbstractModel {
 		cityIdList = "("+cityIdList.substring(0,cityIdList.length()-1) + ")";
 
 		String typeProduct = (requestFieldDatas.get("typeField") != null && requestFieldDatas.get("typeField") != "") ? " and type_product like '%"+requestFieldDatas.get("typeField")+"%'" : "";
-		List<Bien> result = App.em.find(Bien.class, "where city_id in " + cityIdList + typeProduct);
+		String bienStatus = Session.getInstance().getAPerson() instanceof Buyer ? " and status like 'Complet'" : "";
+		List<Bien> result = App.em.find(Bien.class, "where city_id in " + cityIdList + typeProduct + bienStatus);
 		return result;
 	}
 

@@ -21,6 +21,31 @@ public class Bien {
 	private EntityManager em;
 
 	@Transient
+	public enum BienStatus {
+		UNFILL("Incomplet"),
+		FILL("Complet");
+
+		private String converter;
+
+		BienStatus(String c) {
+			this.converter = c;
+		}
+		public String toString() {
+			return converter;
+		}
+		public static BienStatus fromString(String text) {
+			if (text != null) {
+				for (BienStatus b : BienStatus.values()) {
+					if (text.equalsIgnoreCase(b.converter)) {
+						return b;
+					}
+				}
+			}
+			return null;
+		}
+	}
+
+	@Transient
 	public enum TypeProduct {
 		APPARTMENT("Appartement"), HOUSE("Maison");
 
@@ -65,6 +90,8 @@ public class Bien {
 
 	private String cpeb;
 
+	private String status;
+
 	private Timestamp createdAt;
 	private Timestamp updatedAt;
 
@@ -89,13 +116,14 @@ public class Bien {
 		this.em = em;
 	}
 
-	public Bien(Owner owner, String name, TypeProduct typeProduct, City city) {
+	public Bien(Owner owner, String name, TypeProduct typeProduct, City city, BienStatus bienStatus) {
 		this.owner = owner;
 		this.ownerId = owner.getId();
 		this.city = city;
 		this.cityId = city.getId();
 		this.name = name;
 		this.typeProduct = typeProduct.toString();
+		this.status = bienStatus.toString();
 	}
 
 	public Long getId() {
@@ -231,6 +259,14 @@ public class Bien {
 
 	public void setCpeb(String cpeb) {
 		this.cpeb = cpeb;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Timestamp getCreatedAt() {
