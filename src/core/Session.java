@@ -8,7 +8,7 @@
 
 package core;
 
-import mvc.model.DB.identity.APerson;
+import app.model.DB.identity.APerson;
 
 import java.util.UUID;
 
