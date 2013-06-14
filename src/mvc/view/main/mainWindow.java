@@ -4,11 +4,13 @@ import core.Session;
 import mvc.controller.main.ConnexionEvent;
 import mvc.model.FooModelLocator;
 import mvc.model.DB.identity.*;
+import mvc.model.Saler.SalerModel;
 import mvc.model.buyer.BienRecorderAndOfferModel;
 import mvc.model.buyer.BuyerModel;
 import mvc.model.main.MainModel;
 import mvc.model.owner.OwnerModel;
 import mvc.model.user.UserModel;
+import mvc.view.Saler.SalerUserControlWindow;
 import mvc.view.buyer.BienRecorderAndOfferWindow;
 import mvc.view.owner.OwnerUserControl;
 import mvc.view.owner.OwnerWindow;
@@ -136,6 +138,9 @@ public class MainWindow extends JFrame {
 			BienRecorderAndOfferModel bienRecorderAndOfferModel = new BienRecorderAndOfferModel();
 			//return new BuyerWindow(buyerModel);
 			return new BienRecorderAndOfferWindow(bienRecorderAndOfferModel);
+		} else if(Session.getInstance().getAPerson() instanceof Saler) {
+			SalerModel salerModel = new SalerModel();
+			return new SalerUserControlWindow(salerModel);
 		}
 		return new JLabel("No Frame for this userType now!!!");
 	}

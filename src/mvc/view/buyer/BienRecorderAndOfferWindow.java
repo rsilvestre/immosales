@@ -28,6 +28,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -49,6 +51,7 @@ public class BienRecorderAndOfferWindow extends JPanel {
 	private BienRecorderAndOfferWindow bienRecorderAndOfferWindow = this;
 
 	public BienRecorderAndOfferWindow(BienRecorderAndOfferModel bienRecorderAndOfferModel) {
+		this.bienRecorderAndOfferModel = bienRecorderAndOfferModel;
 		this.add(panel1);
 		initComponents();
 		addListener();
@@ -85,24 +88,36 @@ public class BienRecorderAndOfferWindow extends JPanel {
 			saveInterest(findBienWindow, buyer);
 		}
 		if (findBienWindow.getSearchResultType() == FindBienWindow.FindBienType.OFFRE) {
-			FormatDialogWindow formatDialogWindow = new FormatDialogWindow("Montant de l'offre :");
+			Long bienId = findBienWindow.getSearchResultValue();
+
+			if (!isNewOffer(bienId, buyer)) {
+				JOptionPane.showMessageDialog(this, "Vous avez déjà sélectionné ce bien ultérieurement");
+				return;
+			}
+
+			Bien bien = App.em.load(Bien.class, bienId);
+
+			FormatDialogWindow formatDialogWindow = new FormatDialogWindow("Montant de l'offre :", bien);
 			formatDialogWindow.pack();
 			formatDialogWindow.setVisible(true);
 			if (formatDialogWindow.getValue() == "-1") {
 				return;
 			}
-			saveOffer(findBienWindow, Long.parseLong(formatDialogWindow.getValue()), buyer);
+			saveOffer(bien, Long.parseLong(formatDialogWindow.getValue()), formatDialogWindow.getDateChooser());
 		}
 	}
 
-	private void saveOffer(FindBienWindow findBienWindow, Long offerValue, Buyer buyer) {
-		Offer findOffer = App.em.findUnique(Offer.class, "where bien_id = ? and buyer_id = ?", findBienWindow.getSearchResultValue(), buyer.getId());
+	private boolean isNewOffer(Long bienId, Buyer buyer) {
+		Offer findOffer = App.em.findUnique(Offer.class, "where bien_id = ? and buyer_id = ?", bienId, buyer.getId());
 		if (findOffer != null) {
-			JOptionPane.showMessageDialog(this, "Vous avez déjà sélectionné ce bien ultérieurement");
-			return;
+			return false;
 		}
-		Bien bien = App.em.load(Bien.class, findBienWindow.getSearchResultValue());
-		Offer offer = new Offer((Buyer) Session.getInstance().getAPerson(), bien, Offer.OfferStatus.SUBMIT, offerValue);
+		return true;
+	}
+
+	private void saveOffer(Bien bien, Long offerValue, Calendar calendar) {
+		Timestamp endDate =  new Timestamp(calendar.getTimeInMillis());
+		Offer offer = new Offer((Buyer) Session.getInstance().getAPerson(), bien, Offer.OfferStatus.SUBMIT, offerValue, endDate);
 		App.em.insert(offer);
 		offerModel.addElement(bien.getName());
 	}

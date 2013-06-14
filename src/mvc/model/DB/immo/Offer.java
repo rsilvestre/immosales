@@ -20,22 +20,30 @@ public class Offer {
 
 	@Transient
 	public enum OfferStatus {
-		AVAILABLE("Disponnible"),
 		TOVISIT("Demande de visite"),
 		VISITED("Visité"),
 		SUBMIT("Offre envoyée"),
 		ACCEPTED("Offre acceptée"),
 		REFUSED("Offre refusée"),
-		SIGNED("Acte signé"),
-		SOLD("Vendu");
+		SIGNED("Acte signé");
 
 		private String converter;
 
 		OfferStatus(String c) {
 			this.converter = c;
 		}
-		public String getValue() {
+		public String toString() {
 			return converter;
+		}
+		public static OfferStatus fromString(String text) {
+			if (text != null) {
+				for (OfferStatus b : OfferStatus.values()) {
+					if (text.equalsIgnoreCase(b.converter)) {
+						return b;
+					}
+				}
+			}
+			return null;
 		}
 	}
 
@@ -58,13 +66,14 @@ public class Offer {
 		this.em = em;
 	}
 
-	public Offer(Buyer buyer, Bien bien, OfferStatus offerStatus, Long offer) {
+	public Offer(Buyer buyer, Bien bien, OfferStatus offerStatus, Long offer, Timestamp endDate) {
 		this.buyer = buyer;
 		this.buyerId = buyer.getId();
 		this.bien = bien;
 		this.bienId = bien.getId();
 		this.status = offerStatus.toString();
 		this.offer = offer;
+		this.endDate = endDate;
 	}
 
 	public Long getId() {
@@ -131,7 +140,6 @@ public class Offer {
 		this.updated_at = updated_at;
 	}
 
-
 	public Buyer getBuyer() {
 		if (buyerId == null) {
 			return (buyer = null);
@@ -141,6 +149,7 @@ public class Offer {
 			return buyer;
 		}
 	}
+
 	public void setBuyer(Buyer buyer) {
 		this.buyer = buyer;
 		this.buyerId = buyer != null ? buyer.getId() : null;
@@ -155,6 +164,7 @@ public class Offer {
 			return bien;
 		}
 	}
+
 	public void setBien(Bien bien) {
 		this.bien = bien;
 		this.bienId = bien != null ? bien.getId() : null;

@@ -22,8 +22,9 @@ public class Bien {
 
 	@Transient
 	public enum BienStatus {
-		UNFILL("Incomplet"),
-		FILL("Complet");
+		WAITING("En attente"), // de validation par un revendeur
+		AVAILABLE("Disponnible"),
+		SOLD("Vendu");
 
 		private String converter;
 
@@ -318,6 +319,7 @@ public class Bien {
 			return owner;
 		}
 	}
+
 	public void setOwner(Owner owner) {
 		this.owner = owner;
 		this.ownerId = owner != null ? owner.getId() : null;
@@ -360,5 +362,14 @@ public class Bien {
 				"n° " + this.getStreetNumber() + " " +
 				(this.getStreetBox() != null && this.getStreetBox() != "" ? "/" + this.getStreetBox() : "") + "\n" +
 				this.getCity().toString();
+	}
+
+	@Override
+	public String toString() {
+		return  "Nom: " + getName() + "\n" +
+				"Description :\n" + getDescription() + "\n\n"+
+				"Adresse :\n" + getAddress() + "\n\n"+
+				"Prix: " + getPrice() + " €\n"+
+				"";
 	}
 }

@@ -36,7 +36,7 @@ public class OwnerPanelWindowMapping {
 				getOwnerPanelWindow().gettName(),
 				Bien.TypeProduct.fromString(getOwnerPanelWindow().getcTypeProductEnum()),
 				App.em.findUnique(City.class, "where city = ?", getOwnerPanelWindow().gettCity()),
-				Bien.BienStatus.UNFILL
+				Bien.BienStatus.WAITING
 			)
 		);
 	}

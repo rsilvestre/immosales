@@ -88,7 +88,7 @@ public class FindBienModel extends AbstractModel {
 		cityIdList = "("+cityIdList.substring(0,cityIdList.length()-1) + ")";
 
 		String typeProduct = (requestFieldDatas.get("typeField") != null && requestFieldDatas.get("typeField") != "") ? " and type_product like '%"+requestFieldDatas.get("typeField")+"%'" : "";
-		String bienStatus = Session.getInstance().getAPerson() instanceof Buyer ? " and status like 'Complet'" : "";
+		String bienStatus = Session.getInstance().getAPerson() instanceof Buyer ? " and status like 'Disponnible'" : "";
 		List<Bien> result = App.em.find(Bien.class, "where city_id in " + cityIdList + typeProduct + bienStatus);
 		return result;
 	}
