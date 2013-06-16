@@ -15,13 +15,16 @@ import app.view.owner.OwnerUserControl;
 import app.view.owner.OwnerWindow;
 import app.view.user.UserWindow;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -75,7 +78,15 @@ public class MainWindow extends JFrame {
 		//text.setText(model.getText());
 		//text.setForeground(model.getColor());
 		textArea.setText(mainModel.getText());
-		mainScreen.add(new JScrollPane(textArea));
+		//mainScreen.add(new JScrollPane(textArea));
+		//mainScreen.add(new WelcomeWindow());
+		try {
+			BufferedImage myPicture = ImageIO.read(getClass().getResource("/ressources/images/welcome.png"));
+			JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+			mainScreen.add(picLabel);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		JMenu fileMenu = new JMenu("Fichier");
 		jMenuBar.add(fileMenu);

@@ -166,7 +166,12 @@ public class FindBienWindow extends JDialog {
 	}
 
 	private void initComponents() {
-		defaultTableModel = new DefaultTableModel(colomnHead, 0);
+		defaultTableModel = new DefaultTableModel(colomnHead, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
 		table1.setModel(defaultTableModel);
 	}
 
@@ -250,11 +255,11 @@ public class FindBienWindow extends JDialog {
 		});
 		table1.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
-				if (evt.getClickCount() == 1) {
+				if (evt.getClickCount() == 1 || evt.getClickCount() == 2) {
 					JTable target = (JTable) evt.getSource();
 					//setSelectedPerson(getAPersonSelected(target.getSelectedRow()));
 
-					if (target.getSelectedColumn() == 4) {
+					if (target.getSelectedColumn() == 4 || evt.getClickCount() == 2) {
 						String idBien = target.getValueAt(target.getSelectedRow(), 0).toString();
 						Bien bien = App.em.load(Bien.class, Long.parseLong(idBien));
 						FooModelLocator locator = FooModelLocator.getInstance();
