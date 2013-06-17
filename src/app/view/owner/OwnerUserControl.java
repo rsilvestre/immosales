@@ -8,6 +8,7 @@
 
 package app.view.owner;
 
+import app.model.DB.product.Images;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -18,6 +19,8 @@ import app.model.DB.product.Bien;
 import app.model.FooModelLocator;
 import app.model.owner.OwnerModel;
 import app.model.owner.OwnerPanelModel;
+import util.CopyFile;
+import util.Util;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -25,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,11 +103,11 @@ public class OwnerUserControl extends JPanel {
 	private void editRow(JTable target) {
 		int row = target.getSelectedRow();
 
-		Bien bien = getBien(row);
+		Bien oldBien = getBien(row);
 
 		FooModelLocator locator = FooModelLocator.getInstance();
 		OwnerPanelModel ownerPanelModel = new OwnerPanelModel();
-		OwnerPanelWindowMapping ownerPanelWindowMapping = new OwnerPanelWindowMapping(ownerPanelModel, bien);
+		OwnerPanelWindowMapping ownerPanelWindowMapping = new OwnerPanelWindowMapping(ownerPanelModel, oldBien);
 		OwnerPanelWindow ownerPanelWindow = ownerPanelWindowMapping.getOwnerPanelWindowMapping();
 		locator.setOwnerPanelWindow(ownerPanelWindow);
 		ownerPanelWindow.pack();
@@ -111,18 +115,40 @@ public class OwnerUserControl extends JPanel {
 
 		if (ownerPanelWindow.validDialog) {
 			OwnerPanelWindowMapping ownerPanelWindowMappingUpdate = new OwnerPanelWindowMapping(ownerPanelWindow);
-			bien = ownerPanelWindowMappingUpdate.getBienMapping(bien);
+			Bien bienUpdated = ownerPanelWindowMappingUpdate.getBienMapping(oldBien);
 
-			App.em.update(bien);
+			App.em.update(bienUpdated);
 
 			//replaceBien(bien, bienToUpdate);
 
-			target.getModel().setValueAt(bien.getId(), row, 0);
-			target.getModel().setValueAt(bien.getTypeProduct(), row, 1);
-			target.getModel().setValueAt(bien.getName(), row, 2);
-			target.getModel().setValueAt(bien.getDescription(), row, 3);
-			target.getModel().setValueAt(bien.getPrice(), row, 4);
+			target.getModel().setValueAt(bienUpdated.getId(), row, 0);
+			target.getModel().setValueAt(bienUpdated.getTypeProduct(), row, 1);
+			target.getModel().setValueAt(bienUpdated.getName(), row, 2);
+			target.getModel().setValueAt(bienUpdated.getDescription(), row, 3);
+			target.getModel().setValueAt(bienUpdated.getPrice(), row, 4);
 			target.repaint();
+
+			// save image
+			if (ownerPanelWindow.getFile() == null || ownerPanelWindow.getFile().getName() == null) {
+				return;
+			}
+
+			saveFile(bienUpdated, ownerPanelWindow.getFile());
+
+			Images image = null;
+
+			for (Images oldImage : oldBien.getImages()) {
+				if (oldImage.getImageName() == ownerPanelWindow.getFile().getName()) {
+					return;
+				}
+				oldImage.setImageName(ownerPanelWindow.getFile().getName());
+				App.em.update(oldImage);
+				return;
+				//}
+			}
+
+			image = new Images(bienUpdated, ownerPanelWindow.getFile().getName());
+			App.em.insert(image);
 		}
 
 	}
@@ -139,8 +165,40 @@ public class OwnerUserControl extends JPanel {
 			OwnerPanelWindowMapping ownerPanelWindowMappingInsert = new OwnerPanelWindowMapping(ownerPanelWindow);
 			Bien bienToSave = ownerPanelWindowMappingInsert.getBienMapping();
 			App.em.insert(bienToSave);
+
+			// save image
+			Util.checkObject(bienToSave.getId());
+			saveFile(bienToSave, ownerPanelWindow.getFile());
+			// insert image in database
+			Images image = new Images(bienToSave, ownerPanelWindow.getFile().getName());
+			App.em.insert(image);
+
 			defaultTableModel.addRow(bienToSave.getTableRow());
 			addBien(bienToSave);
+		}
+	}
+
+	private void saveFile(Bien bien, File file) {
+		// create folder if not exist
+		createFolderIfNotExist(bien);
+		// copy image in folder
+		copyAndReplaceFile(bien, file);
+	}
+
+	private void copyAndReplaceFile(Bien bien, File file) {
+		File dest = new File("ressources/images/biens/" + bien.getId() + "/" + file.getName());
+		CopyFile.copyfile(file, dest);
+	}
+
+	private void createFolderIfNotExist(Bien bien) {
+		File theDir = new File("ressources/images/biens/" + bien.getId());
+		// if the directory does not exist, create it
+		if (!theDir.exists()) {
+			System.out.println("creating directory: " + bien.getId());
+			boolean result = theDir.mkdirs();
+			if (result) {
+				System.out.println("DIR created");
+			}
 		}
 	}
 

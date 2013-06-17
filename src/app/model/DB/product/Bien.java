@@ -101,6 +101,8 @@ public class Bien {
 	@Transient
 	private List<Options> optionses;
 	@Transient
+	private List<Images> images;
+	@Transient
 	private Owner owner;
 	@Transient
 	private List<Offer> offers;
@@ -111,6 +113,7 @@ public class Bien {
 		roomes = new ArrayList<Room>();
 		optionses = new ArrayList<Options>();
 		offers = new ArrayList<Offer>();
+		images = new ArrayList<Images>();
 	}
 
 	public Bien(EntityManager em) {
@@ -325,6 +328,17 @@ public class Bien {
 		this.ownerId = owner != null ? owner.getId() : null;
 	}
 
+	public List<Images> getImages() {
+		if (images == null && em != null) {
+			setImages(em.find(Images.class, "where bien_id = ?", id));
+		}
+		return images;
+	}
+
+	public void setImages(List<Images> images) {
+		this.images = images;
+		for (Images image : images) image.setBien(this);
+	}
 
 	public List<Offer> getOffers() {
 		if (offers == null && em != null) {

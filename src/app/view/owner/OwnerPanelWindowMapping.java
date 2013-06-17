@@ -66,6 +66,7 @@ public class OwnerPanelWindowMapping {
 	public OwnerPanelWindow getOwnerPanelWindowMapping() {
 		OwnerPanelWindow ownerPanelWindowResult = new OwnerPanelWindow(getArgOwnerPanelModel());
 
+		ownerPanelWindowResult.setId(getBien().getId());
 		ownerPanelWindowResult.settName(this.bien.getName());
 		ownerPanelWindowResult.settDescription(getBien().getDescription());
 		ownerPanelWindowResult.setcTypeProduct(getBien().getTypeProduct());
@@ -82,6 +83,7 @@ public class OwnerPanelWindowMapping {
 		ownerPanelWindowResult.setcNFrontage(getBien().getnFrontage());
 		ownerPanelWindowResult.setcNFloor(getBien().getnFloor());
 		ownerPanelWindowResult.setcCpeb(getBien().getCpeb());
+		ownerPanelWindowResult.setImages(this.bien.getImages());
 
 		return ownerPanelWindowResult;
 	}

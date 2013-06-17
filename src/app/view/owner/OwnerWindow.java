@@ -1,5 +1,6 @@
 package app.view.owner;
 
+import com.sun.tools.doclets.internal.toolkit.util.Util;
 import core.Session;
 import app.App;
 import app.model.DB.product.Bien;
@@ -14,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +28,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class OwnerWindow extends JPanel {
-	private String [] columns = {"Id", "Type", "Label", "Description", "Prix", "Edit"};
+	private String[] columns = {"Id", "Type", "Label", "Description", "Prix", "Edit"};
 	private JTable jtable;
 	private DefaultTableModel defaultTableModel;
 
@@ -49,7 +52,7 @@ public class OwnerWindow extends JPanel {
 
 		add(new JLabel("Liste de vos biens"), BorderLayout.NORTH);
 
-		defaultTableModel = new DefaultTableModel(columns,0) {
+		defaultTableModel = new DefaultTableModel(columns, 0) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -82,7 +85,7 @@ public class OwnerWindow extends JPanel {
 				if (evt.getClickCount() == 1) {
 					JTable target = (JTable) evt.getSource();
 					//setSelectedPerson(getAPerson(target.getSelectedRow()));
-					if (target.getSelectedColumn()== 5) {
+					if (target.getSelectedColumn() == 5) {
 						editRow(target);
 					}
 				}
@@ -135,6 +138,38 @@ public class OwnerWindow extends JPanel {
 			App.em.insert(bienToSave);
 			defaultTableModel.addRow(bienToSave.getTableRow());
 			addBien(bienToSave);
+			bienToSave.setId(24L);
+			saveFile(bienToSave, ownerPanelWindow.getFile());
+		}
+	}
+
+	private void saveFile(Bien bien, File file) {
+		// create folder if not exist
+		createFolderIfNotExist(bien);
+		// copy image in folder
+		copyAndReplaceFile(bien, file);
+		// insert image in database
+	}
+
+	private void copyAndReplaceFile(Bien bien, File file) {
+		File dest = new File("/ressources/images/biens/"+bien.getId()+"/"+file.getName());
+		try {
+			Util.copyFile(file, dest);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void createFolderIfNotExist(Bien bien) {
+		File theDir = new File("/ressources/images/biens/"+ bien.getId());
+
+		// if the directory does not exist, create it
+		if (!theDir.exists()) {
+			System.out.println("creating directory: " + bien.getId());
+			boolean result = theDir.mkdir();
+			if (result) {
+				System.out.println("DIR created");
+			}
 		}
 	}
 

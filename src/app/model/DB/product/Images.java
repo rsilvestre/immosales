@@ -9,20 +9,20 @@ import net.sf.jeasyorm.EntityManager;
  * Time: 20:32
  * To change this template use File | Settings | File Templates.
  */
-public class Image extends ABien {
+public class Images extends ABien {
 
 	private Long id;
 	private String imageName;
 
 	private Long bienId;
 
-	public Image() {}
+	public Images() {}
 
-	public Image(EntityManager em) {
+	public Images(EntityManager em) {
 		super (em);
 	}
 
-	public Image(Bien bien, String imageName) {
+	public Images(Bien bien, String imageName) {
 		super(bien);
 		this.bienId = bien.getId();
 		this.imageName = imageName;
