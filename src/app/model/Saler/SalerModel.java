@@ -8,10 +8,26 @@
 
 package app.model.Saler;
 
+import app.model.DB.immo.Offer;
+import app.model.DB.product.Bien;
 import com.dmurph.mvc.model.AbstractModel;
 
 /**
  * Created by michaelsilvestre on 12/06/13.
  */
 public class SalerModel extends AbstractModel {
+	private Bien.BienStatus filterBienType;
+	private Offer.OfferStatus filterOfferType;
+
+	public void setFilterBienType(Bien.BienStatus argFilterBienType) {
+		Bien.BienStatus oldBienStatus = filterBienType;
+		this.filterBienType = argFilterBienType;
+		firePropertyChange("bienFilter", oldBienStatus, filterBienType);
+	}
+
+	public void setFilterOfferType(Offer.OfferStatus argFilterOfferType) {
+		Offer.OfferStatus oldOfferStatus = filterOfferType;
+		this.filterOfferType = argFilterOfferType;
+		firePropertyChange("offerFilter", oldOfferStatus, filterOfferType);
+	}
 }

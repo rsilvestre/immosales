@@ -8,6 +8,7 @@
 
 package app.view.buyer;
 
+import app.view.base.AbstractListWindow;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -27,6 +28,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
@@ -34,12 +37,10 @@ import java.util.List;
 /**
  * Created by michaelsilvestre on 20/05/13.
  */
-public class BienRecorderAndOfferWindow extends JPanel {
+public class BienRecorderAndOfferWindow extends AbstractListWindow {
 	private JPanel panel1;
 	private JList intéresséList;
 	private JList offreDAchatList;
-	private DefaultListModel interestModel;
-	private DefaultListModel offerModel;
 	private JButton button1;
 	private JButton button2;
 	private JButton button3;
@@ -58,12 +59,10 @@ public class BienRecorderAndOfferWindow extends JPanel {
 	}
 
 	private void initComponents() {
-		interestModel = new DefaultListModel();
-		intéresséList.setModel(interestModel);
+		intéresséList.setModel(getInterestModel());
 		intéresséList.setMinimumSize(new Dimension(200, 100));
 		intéresséList.setPrototypeCellValue("                                                            ");
-		offerModel = new DefaultListModel();
-		offreDAchatList.setModel(offerModel);
+		offreDAchatList.setModel(getOfferModel());
 		offreDAchatList.setMinimumSize(new Dimension(200, 100));
 		offreDAchatList.setPrototypeCellValue("                                                            ");
 	}
@@ -73,6 +72,22 @@ public class BienRecorderAndOfferWindow extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				findAction((Buyer) Session.getInstance().getAPerson());
+			}
+		});
+		intéresséList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				if (evt.getClickCount() == 2) {
+					showDetails((ListObject) intéresséList.getSelectedValue());
+				}
+			}
+		});
+		offreDAchatList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				if (evt.getClickCount() == 2) {
+					showDetails((ListObject) offreDAchatList.getSelectedValue());
+				}
 			}
 		});
 	}
@@ -118,7 +133,7 @@ public class BienRecorderAndOfferWindow extends JPanel {
 		Timestamp endDate =  new Timestamp(calendar.getTimeInMillis());
 		Offer offer = new Offer((Buyer) Session.getInstance().getAPerson(), bien, Offer.OfferStatus.SUBMIT, offerValue, endDate);
 		App.em.insert(offer);
-		offerModel.addElement(bien.getName());
+		getOfferModel().addElement(bien.getName());
 	}
 
 	private void saveInterest(FindBienWindow findBienWindow, Buyer buyer) {
@@ -128,13 +143,12 @@ public class BienRecorderAndOfferWindow extends JPanel {
 			return;
 		}
 		Bien bien = App.em.load(Bien.class, findBienWindow.getSearchResultValue());
-		Interest interest = new Interest((Buyer) Session.getInstance().getAPerson(), bien);
+		Interest interest = new Interest((Buyer) Session.getInstance().getAPerson(), bien, Interest.InterestStatus.TOVISIT);
 		App.em.insert(interest);
-		interestModel.addElement(bien.getName());
+		getInterestModel().addElement(bien.getName());
 	}
 
 	private FindBienWindow getFindBienWindow() {
-		//JOptionPane.showMessageDialog(null, "alert");
 		FooModelLocator locator = FooModelLocator.getInstance();
 		FindBienModel findBienModel = new FindBienModel();
 		FindBienWindow findBienWindow = new FindBienWindow(findBienModel);
@@ -145,14 +159,11 @@ public class BienRecorderAndOfferWindow extends JPanel {
 	}
 
 	private void populateLocal() {
-		List<Interest> interestList = App.em.find(Interest.class, "where buyer_id = ?", Session.getInstance().getAPerson().getId());
-		List<Offer> offerList = App.em.find(Offer.class, "where buyer_id = ?", Session.getInstance().getAPerson().getId());
-		for (Interest interest : interestList) {
-			interestModel.addElement(interest.getBien().getName());
-		}
-		for (Offer offer : offerList) {
-			offerModel.addElement(offer.getBien().getName());
-		}
+		List<Interest> interests = App.em.find(Interest.class, "where buyer_id = ?", Session.getInstance().getAPerson().getId());
+		List<Offer> offers = App.em.find(Offer.class, "where buyer_id = ?", Session.getInstance().getAPerson().getId());
+
+		this.buildInterestModel(interests);
+		this.buildOfferModel(offers);
 	}
 
 	{

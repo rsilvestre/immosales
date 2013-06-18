@@ -20,12 +20,9 @@ public class Offer {
 
 	@Transient
 	public enum OfferStatus {
-		TOVISIT("Demande de visite"),
-		VISITED("Visité"),
 		SUBMIT("Offre envoyée"),
 		ACCEPTED("Offre acceptée"),
-		REFUSED("Offre refusée"),
-		SIGNED("Acte signé");
+		REFUSED("Offre refusée");
 
 		private String converter;
 

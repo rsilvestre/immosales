@@ -8,6 +8,9 @@
 
 package app.view.Saler;
 
+import app.controller.saler.FilterBienDbEvent;
+import app.controller.saler.FilterOfferDbEvent;
+import app.view.base.AbstractListWindow;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -15,24 +18,23 @@ import app.App;
 import app.model.DB.immo.Offer;
 import app.model.DB.product.Bien;
 import app.model.Saler.SalerModel;
-import app.view.bien.BienSalerWindow;
-import app.view.offer.OfferDialogWindow;
 
 import javax.swing.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 /**
  * Created by michaelsilvestre on 12/06/13.
  */
-public class SalerUserControlWindow extends JPanel {
+public class SalerUserControlWindow extends AbstractListWindow {
 	private JPanel panel1;
 	private JList bienList;
 	private JList offerList;
-
-	private DefaultListModel bienListModel;
-	private DefaultListModel offerListModel;
 
 	private JComboBox cOfferList;
 	private JComboBox cBienList;
@@ -45,17 +47,35 @@ public class SalerUserControlWindow extends JPanel {
 		this.salerModel = salerModel;
 		this.add(panel1);
 		initComponents();
+		linkModel();
 		addListener();
 		populateLocal();
 	}
 
 	private void initComponents() {
-		bienListModel = new DefaultListModel();
-		bienList.setModel(bienListModel);
+		bienList.setModel(getBienModel());
+		offerList.setModel(getOfferModel());
+	}
 
-		offerListModel = new DefaultListModel();
-		offerList.setModel(offerListModel);
+	private void linkModel() {
 
+		salerModel.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				String name = evt.getPropertyName();
+
+				if (name.equals("bienFilter")) {
+					String statusValue = (evt.getNewValue() != null && !evt.getNewValue().equals("")) ? " and status like '" + evt.getNewValue() + "'" : "";
+					List<Bien> biens = App.em.find(Bien.class, "where 1=1" + statusValue);
+					SalerUserControlWindow.this.buildBienModel(biens);
+				}
+				if (name.equals("offerFilter")) {
+					String statusValue = (evt.getNewValue() != null && !evt.getNewValue().equals("")) ? " and status like '" + evt.getNewValue() + "'" : "";
+					List<Offer> offers = App.em.find(Offer.class, "where 1=1" + statusValue);
+					SalerUserControlWindow.this.buildOfferModel(offers);
+				}
+			}
+		});
 	}
 
 	private void addListener() {
@@ -75,53 +95,33 @@ public class SalerUserControlWindow extends JPanel {
 				}
 			}
 		});
-	}
-
-	private void showDetails(ListObject selectedValue) {
-		if (selectedValue.getType() == ListObject.ListObjectType.BIEN) {
-			showBienDetail(selectedValue);
-			return;
-		} else if (selectedValue.getType() == ListObject.ListObjectType.OFFER) {
-			showOfferDetail(selectedValue);
-			return;
-		}
-		JOptionPane.showMessageDialog(salerUserControlWindow, "Pas d'action sur : " + selectedValue.getId() + " | " + selectedValue.toString());
-	}
-
-	private void showBienDetail(ListObject selectedValue) {
-		Bien bien = App.em.load(Bien.class, selectedValue.getId());
-		BienSalerWindow bienSalerWindow = new BienSalerWindow(bien);
-		bienSalerWindow.pack();
-		bienSalerWindow.setVisible(true);
-		if (bienSalerWindow.getValidate() && !bien.getStatus().equals(bienSalerWindow.getBienStatus().toString())) {
-			bien.setStatus(bienSalerWindow.getBienStatus().toString());
-			App.em.update(bien);
-			bienListModel.setElementAt(getBienList(bien), bienListModel.indexOf(selectedValue));
-		}
-
-	}
-
-	private void showOfferDetail(ListObject selectedValue) {
-		Offer offer = App.em.load(Offer.class, selectedValue.getId());
-		OfferDialogWindow offerDialogWindow = new OfferDialogWindow(offer);
-		offerDialogWindow.pack();
-		offerDialogWindow.setVisible(true);
-		if (offerDialogWindow.getValidate() && !offer.getStatus().equals(offerDialogWindow.getOfferStatus().toString())) {
-			offer.setStatus(offerDialogWindow.getOfferStatus().toString());
-			App.em.update(offer);
-			offerListModel.setElementAt(getOfferList(offer), offerListModel.indexOf(selectedValue));
-		}
+		cBienList.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent itemEvent) {
+				if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+					FilterBienDbEvent event = new FilterBienDbEvent(Bien.BienStatus.fromString((String) cBienList.getSelectedItem()), salerModel);
+					event.dispatch();
+				}
+			}
+		});
+		cOfferList.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent itemEvent) {
+				if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
+					FilterOfferDbEvent event = new FilterOfferDbEvent(Offer.OfferStatus.fromString((String) cOfferList.getSelectedItem()), salerModel);
+					event.dispatch();
+				}
+			}
+		});
 	}
 
 	private void populateLocal() {
 		List<Bien> biens = App.em.find(Bien.class, "where 1=1");
 		List<Offer> offers = App.em.find(Offer.class, "where 1=1");
-		for (Bien bien : biens) {
-			bienListModel.addElement(getBienList(bien));
-		}
-		for (Offer offer : offers) {
-			offerListModel.addElement(getOfferList(offer));
-		}
+
+		// this.buildBienModel(biens);
+		// this.buildOfferModel(offers);
+
 		cBienList.addItem("");
 		for (Bien.BienStatus bienStatus : Bien.BienStatus.values()) {
 			cBienList.addItem(bienStatus.toString());
@@ -130,14 +130,6 @@ public class SalerUserControlWindow extends JPanel {
 		for (Offer.OfferStatus offerStatus : Offer.OfferStatus.values()) {
 			cOfferList.addItem(offerStatus.toString());
 		}
-	}
-
-	private ListObject getBienList(Bien bien) {
-		return new ListObject(ListObject.ListObjectType.BIEN, bien.getId(), bien.getName() + " " + bien.getPrice() + " " + bien.getStatus());
-	}
-
-	private ListObject getOfferList(Offer offer) {
-		return new ListObject(ListObject.ListObjectType.OFFER, offer.getId(), offer.getBien().getName() + " " + offer.getOffer() + " " + offer.getStatus());
 	}
 
 	{
@@ -210,35 +202,4 @@ public class SalerUserControlWindow extends JPanel {
 	public JComponent $$$getRootComponent$$$() {
 		return panel1;
 	}
-
-	private static class ListObject {
-
-		public enum ListObjectType {BIEN, OFFER}
-
-		private Long id;
-		private String row;
-		private ListObjectType type;
-
-		public ListObject(ListObjectType type, Long id, String row) {
-			this.type = type;
-			this.id = id;
-			this.row = row;
-		}
-
-		public ListObjectType getType() {
-			return type;
-		}
-
-		public Long getId() {
-			return id;
-		}
-
-		@Override
-		public String toString() {
-			return row;
-		}
-
-	}
-
-
 }

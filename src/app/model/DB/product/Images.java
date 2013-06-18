@@ -13,7 +13,6 @@ public class Images extends ABien {
 
 	private Long id;
 	private String imageName;
-
 	private Long bienId;
 
 	public Images() {}

@@ -24,9 +24,35 @@ public class Interest {
 
 	private EntityManager em;
 
+	@Transient
+	public enum InterestStatus {
+		TOVISIT("Demande de visite"),
+		VISITED("Visite faite");
+
+		private String converter;
+
+		InterestStatus(String c) {
+			this.converter = c;
+		}
+		public String toString() {
+			return converter;
+		}
+		public static InterestStatus fromString(String text) {
+			if (text != null) {
+				for (InterestStatus b : InterestStatus.values()) {
+					if (text.equalsIgnoreCase(b.converter)) {
+						return b;
+					}
+				}
+			}
+			return null;
+		}
+	}
+
 	private Long id;
 	private Long buyerId;
 	private Long bienId;
+	private String status;
 
 	@Transient
 	private Bien bien;
@@ -37,11 +63,12 @@ public class Interest {
 		this.em = em;
 	}
 
-	public Interest(Buyer buyer, Bien bien) {
+	public Interest(Buyer buyer, Bien bien, InterestStatus interestStatus) {
 		this.buyer = buyer;
 		this.buyerId = buyer.getId();
 		this.bien = bien;
 		this.bienId = bien.getId();
+		this.status = interestStatus.toString();
 	}
 
 	public Long getId() {
@@ -66,6 +93,14 @@ public class Interest {
 
 	public void setBienId(Long bienId) {
 		this.bienId = bienId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Buyer getBuyer() {

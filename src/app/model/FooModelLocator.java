@@ -4,6 +4,7 @@ import app.controller.bien.BienController;
 import app.controller.city.CityController;
 import app.controller.main.MainController;
 import app.controller.owner.OwnerController;
+import app.controller.saler.SalerController;
 import app.controller.user.UserController;
 import app.view.bien.BienWindow;
 import app.view.bien.FindBienWindow;
@@ -27,6 +28,7 @@ public class FooModelLocator {
 	private OwnerController ownerController = new OwnerController();
 	private BienController buyerController = new BienController();
 	private CityController cityController = new CityController();
+	private SalerController salerController = new SalerController();
 
 	private MainWindow mainWindow = null;
 

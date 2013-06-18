@@ -8,10 +8,19 @@
 
 package app.controller.saler;
 
+import app.command.saler.FilterBienDbCommand;
+import app.command.saler.FilterOfferDbCommand;
 import com.dmurph.mvc.control.FrontController;
 
 /**
  * Created by michaelsilvestre on 12/06/13.
  */
 public class SalerController extends FrontController {
+	public static final String FILTER_BIEN_TYPE = "FILTER_BIEN_TYPE_CONTROLLER";
+	public static final String FILTER_OFFER_TYPE = "FILTER_OFFER_TYPE_CONTROLLER";
+
+	public SalerController() {
+		registerCommand(FILTER_BIEN_TYPE, FilterBienDbCommand.class);
+		registerCommand(FILTER_OFFER_TYPE, FilterOfferDbCommand.class);
+	}
 }

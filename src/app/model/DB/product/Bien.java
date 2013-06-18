@@ -24,6 +24,7 @@ public class Bien {
 	public enum BienStatus {
 		WAITING("En attente"), // de validation par un revendeur
 		AVAILABLE("Disponnible"),
+		SIGNED("Acte signé"),
 		SOLD("Vendu");
 
 		private String converter;
