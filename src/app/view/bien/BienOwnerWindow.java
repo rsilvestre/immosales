@@ -8,19 +8,19 @@
 
 package app.view.bien;
 
-import app.view.base.ISalerBusinessWindow;
+import app.model.DB.product.Bien;
+import app.view.base.IOwnerBusinessWindow;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import app.model.DB.product.Bien;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
+public class BienOwnerWindow extends JDialog implements IOwnerBusinessWindow {
 	private JPanel contentPane;
 	private JButton buttonOK;
 	private JButton buttonCancel;
@@ -42,11 +42,11 @@ public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
 
 	private boolean validate = false;
 
-	public BienSalerWindow() {
+	public BienOwnerWindow() {
 		initComponents();
 	}
 
-	public BienSalerWindow(Bien bien) {
+	public BienOwnerWindow(Bien bien) {
 		initComponents();
 		populateLocal();
 		setDefaultValue(bien);

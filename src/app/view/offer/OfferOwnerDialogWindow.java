@@ -8,19 +8,20 @@
 
 package app.view.offer;
 
-import app.view.base.ISalerBusinessWindow;
+import app.model.DB.immo.Offer;
+import app.view.InputDialog.DisabledItemsComboBox;
+import app.view.base.IOwnerBusinessWindow;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import app.model.DB.immo.Offer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class OfferSalerDialogWindow extends JDialog implements ISalerBusinessWindow {
+public class OfferOwnerDialogWindow extends JDialog implements IOwnerBusinessWindow {
 	private JPanel contentPane;
 	private JButton buttonOK;
 	private JButton buttonCancel;
@@ -29,17 +30,17 @@ public class OfferSalerDialogWindow extends JDialog implements ISalerBusinessWin
 	private JTextField tOffer;
 	private JTextField tOwner;
 
-	private JComboBox cStatus;
+	private DisabledItemsComboBox cStatus;
 
 	private boolean validate = false;
 
-	public OfferSalerDialogWindow() {
+	public OfferOwnerDialogWindow() {
 		initComponents();
 	}
 
-	public OfferSalerDialogWindow(Offer offer) {
+	public OfferOwnerDialogWindow(Offer offer) {
 		initComponents();
-		populateLocal();
+		populateLocal(offer);
 		setDefaultValue(offer);
 		setDefaultValueLocal(offer);
 	}
@@ -51,10 +52,11 @@ public class OfferSalerDialogWindow extends JDialog implements ISalerBusinessWin
 		}
 	}
 
-	private void populateLocal() {
-		for (Offer.Status offerStatus : Offer.Status.values()) {
-			cStatus.addItem(offerStatus.toString());
-		}
+	private void populateLocal(Offer offer) {
+		Offer.Status offreStatus = Offer.Status.fromString(offer.getStatus());
+		cStatus.addItem(Offer.Status.SUBMIT.toString(), offreStatus.equals(Offer.Status.SUBMIT));
+		cStatus.addItem(Offer.Status.ACCEPTED.toString(), true);
+		cStatus.addItem(Offer.Status.REFUSED.toString(), offreStatus.equals(Offer.Status.SUBMIT));
 	}
 
 	public Offer.Status getStatus() {
@@ -133,7 +135,7 @@ public class OfferSalerDialogWindow extends JDialog implements ISalerBusinessWin
 		contentPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLoweredBevelBorder(), null));
 		final JPanel panel1 = new JPanel();
 		panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-		contentPane.add(panel1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, 1, new Dimension(800, -1), null, null, 0, false));
+		contentPane.add(panel1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, 1, new Dimension(700, -1), null, null, 0, false));
 		final Spacer spacer1 = new Spacer();
 		panel1.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 		final JPanel panel2 = new JPanel();
@@ -147,7 +149,7 @@ public class OfferSalerDialogWindow extends JDialog implements ISalerBusinessWin
 		panel2.add(buttonCancel, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JPanel panel3 = new JPanel();
 		panel3.setLayout(new GridLayoutManager(9, 1, new Insets(0, 0, 0, 0), -1, -1));
-		contentPane.add(panel3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(800, -1), null, null, 0, false));
+		contentPane.add(panel3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(700, -1), null, null, 0, false));
 		final JPanel panel4 = new JPanel();
 		panel4.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
 		panel3.add(panel4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -159,7 +161,7 @@ public class OfferSalerDialogWindow extends JDialog implements ISalerBusinessWin
 		label1.setHorizontalAlignment(4);
 		label1.setText("Status : ");
 		panel5.add(label1, cc.xy(3, 1));
-		cStatus = new JComboBox();
+		cStatus = new DisabledItemsComboBox();
 		panel5.add(cStatus, cc.xy(5, 1));
 		final Spacer spacer2 = new Spacer();
 		panel5.add(spacer2, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));

@@ -37,6 +37,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -145,7 +148,11 @@ public class OwnerPanelWindow extends JDialog {
 
 	private void addImage(URL url) {
 		try {
-			picLabel.setIcon(getImageResized(new ImageIcon(ImageIO.read(url))));
+			BufferedImage image = ImageIO.read(url);
+			if (image == null) {
+				return;
+			}
+			picLabel.setIcon(getImageResized(new ImageIcon(image)));
 			imageContainer.repaint();
 			OwnerPanelWindow.this.repaint();
 		} catch (IOException e) {
@@ -308,6 +315,34 @@ public class OwnerPanelWindow extends JDialog {
 
 	private void onOK() {
 		// add your code here
+		for (Field field : OwnerPanelWindow.class.getDeclaredFields()) {
+			if (field.getType().isAssignableFrom(JTextField.class)) {
+				String result = "";
+				Method meth;
+				try {
+					meth = this.getClass().getMethod("get" + field.getName());
+					if (meth.getReturnType().isAssignableFrom(String.class)) {
+						result = (String) meth.invoke(this);
+					} else if (meth.getReturnType().isAssignableFrom(Integer.class) || meth.getReturnType().isAssignableFrom(Long.class)) {
+						result = meth.invoke(this).toString();
+					}
+
+					if (result.equals("") && !field.getName().equals("tStreetBox")) {
+						JOptionPane.showMessageDialog(this, "Tous les champs doivent être remplis: " + field.getName(), "Confirmation", JOptionPane.OK_OPTION);
+						return;
+					}
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+					return;
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+					return;
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+					return;
+				}
+			}
+		}
 		validDialog = true;
 		dispose();
 	}
@@ -479,6 +514,29 @@ public class OwnerPanelWindow extends JDialog {
 
 	private void createUIComponents() {
 		// TODO: place custom component creation code here
+	}
+
+	public void setCanChange(Bien bien) {
+		if (!Bien.Status.fromString(bien.getStatus()).equals(Bien.Status.WAITING)) {
+			tName.setEnabled(false);
+			tDescription.setEnabled(false);
+			tStreetName.setEnabled(false);
+			tStreetNumber.setEnabled(false);
+			tStreetBox.setEnabled(false);
+			tFaceWide.setEnabled(false);
+			cTypeProduct.setEnabled(false);
+			cYearConstruction.setEnabled(false);
+			cNFrontage.setEnabled(false);
+			cNFloor.setEnabled(false);
+			cCpeb.setEnabled(false);
+			cCity.setEnabled(false);
+			cLocality.setEnabled(false);
+			cCountry.setEnabled(false);
+			cPosteCode.setEnabled(false);
+			tPrice.setEnabled(false);
+
+			bAddImage.setEnabled(false);
+		}
 	}
 
 	/**

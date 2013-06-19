@@ -89,11 +89,11 @@ public class UserWindow extends JPanel {
 		add(new JScrollPane(jTable), BorderLayout.CENTER);
 
 		Box box = Box.createHorizontalBox();
-		box.add(login);
+		//box.add(login);
 		box.add(create);
 		box.add(Box.createRigidArea(new Dimension(30,1)));
 		box.add(Box.createHorizontalGlue());
-		box.add(logout);
+		//box.add(logout);
 
 		add(box, BorderLayout.SOUTH);
 

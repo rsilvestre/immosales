@@ -12,7 +12,6 @@ import app.model.user.UserModel;
 import app.view.Saler.SalerUserControlWindow;
 import app.view.buyer.BienRecorderAndOfferWindow;
 import app.view.owner.OwnerUserControl;
-import app.view.owner.OwnerWindow;
 import app.view.user.UserWindow;
 
 import javax.imageio.ImageIO;
@@ -41,7 +40,6 @@ public class MainWindow extends JFrame {
 	private JMenuItem menuLeave;
 	private JTextArea textArea;
 	private JButton createAdvertising;
-	private OwnerWindow ownerWindow;
 
 	private final MainWindow fenetre = this;
 

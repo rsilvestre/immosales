@@ -11,7 +11,7 @@ package app.view.base;
 /**
  * Created by michaelsilvestre on 19/06/13.
  */
-public interface ISalerBusinessWindow {
+public interface IOwnerBusinessWindow {
 
 	public boolean getValidate();
 

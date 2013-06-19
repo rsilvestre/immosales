@@ -9,6 +9,8 @@
 package app.view.owner;
 
 import app.model.DB.product.Images;
+import app.view.base.AbstractListWindow;
+import app.view.bien.BienOwnerWindow;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -35,10 +37,9 @@ import java.util.List;
 /**
  * Created by michaelsilvestre on 9/06/13.
  */
-public class OwnerUserControl extends JPanel {
+public class OwnerUserControl extends AbstractListWindow {
 	private JPanel panel1;
 	private JList listOffer;
-	private DefaultListModel listOfferModel;
 	private JButton createNewOwn;
 	private JTable table1;
 	private String[] columns = {"Id", "Type", "Label", "Description", "Prix", "Edit"};
@@ -69,8 +70,7 @@ public class OwnerUserControl extends JPanel {
 		};
 		table1.setModel(defaultTableModel);
 
-		listOfferModel = new DefaultListModel();
-		listOffer.setModel(listOfferModel);
+		listOffer.setModel(getOfferModel());
 
 	}
 
@@ -88,7 +88,6 @@ public class OwnerUserControl extends JPanel {
 		table1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
-				//super.mouseClicked(mouseEvent);    //To change body of overridden methods use File | Settings | File Templates.
 				if (evt.getClickCount() == 1) {
 					JTable target = (JTable) evt.getSource();
 					//setSelectedPerson(getAPerson(target.getSelectedRow()));
@@ -96,14 +95,36 @@ public class OwnerUserControl extends JPanel {
 						editRow(target);
 					}
 				}
+				if (evt.getClickCount() == 2) {
+					JTable target = (JTable) evt.getSource();
+					showBien(target);
+				}
 			}
 		});
+		listOffer.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				if (evt.getClickCount() == 2) {
+					showDetails((ListObject) listOffer.getSelectedValue());
+				}
+			}
+		});
+	}
+
+	private void showBien(JTable target) {
+		int row = target.getSelectedRow();
+
+		Bien bien = getBien(row);
+		BienOwnerWindow bienOwnerWindow = new BienOwnerWindow(bien);
+		bienOwnerWindow.pack();
+		bienOwnerWindow.setVisible(true);
+
 	}
 
 	private void editRow(JTable target) {
 		int row = target.getSelectedRow();
 
-		Bien oldBien = getBien(row);
+		Bien oldBien = App.em.load(Bien.class, getBien(row).getId());
 
 		FooModelLocator locator = FooModelLocator.getInstance();
 		OwnerPanelModel ownerPanelModel = new OwnerPanelModel();
@@ -117,38 +138,41 @@ public class OwnerUserControl extends JPanel {
 			OwnerPanelWindowMapping ownerPanelWindowMappingUpdate = new OwnerPanelWindowMapping(ownerPanelWindow);
 			Bien bienUpdated = ownerPanelWindowMappingUpdate.getBienMapping(oldBien);
 
-			App.em.update(bienUpdated);
+			if (!bienUpdated.equals(oldBien)) {
+				App.em.update(bienUpdated);
+				replaceBien(oldBien, bienUpdated);
 
-			//replaceBien(bien, bienToUpdate);
-
-			target.getModel().setValueAt(bienUpdated.getId(), row, 0);
-			target.getModel().setValueAt(bienUpdated.getTypeProduct(), row, 1);
-			target.getModel().setValueAt(bienUpdated.getName(), row, 2);
-			target.getModel().setValueAt(bienUpdated.getDescription(), row, 3);
-			target.getModel().setValueAt(bienUpdated.getPrice(), row, 4);
-			target.repaint();
+				target.getModel().setValueAt(bienUpdated.getId(), row, 0);
+				target.getModel().setValueAt(bienUpdated.getTypeProduct(), row, 1);
+				target.getModel().setValueAt(bienUpdated.getName(), row, 2);
+				target.getModel().setValueAt(bienUpdated.getDescription(), row, 3);
+				target.getModel().setValueAt(bienUpdated.getPrice(), row, 4);
+				target.repaint();
+			}
 
 			// save image
 			if (ownerPanelWindow.getFile() == null || ownerPanelWindow.getFile().getName() == null) {
 				return;
 			}
-
-			saveFile(bienUpdated, ownerPanelWindow.getFile());
-
-			Images image = null;
-
-			for (Images oldImage : oldBien.getImages()) {
-				if (oldImage.getImageName() == ownerPanelWindow.getFile().getName()) {
+			List<Images> imagesList = oldBien.getImages();
+			if (imagesList.size() > 0) {
+				for (Images oldImage : imagesList) {
+					String oldImageName = oldImage.getImageName(), newImageName = ownerPanelWindow.getFile().getName();
+					if (oldImageName.equals(newImageName)) {
+						return;
+					}
+					saveFile(bienUpdated, ownerPanelWindow.getFile());
+					oldImage.setImageName(ownerPanelWindow.getFile().getName());
+					App.em.update(oldImage);
 					return;
+					//}ressources/images/biens/56/Capture d’écran 2013-06-19 à 16.11.48.png Capture d’écran 2013-06-19 à 16.11.48.png
 				}
-				oldImage.setImageName(ownerPanelWindow.getFile().getName());
-				App.em.update(oldImage);
-				return;
-				//}
+			} else {
+				saveFile(bienUpdated, ownerPanelWindow.getFile());
+				Images image = new Images(bienUpdated, ownerPanelWindow.getFile().getName());
+				App.em.insert(image);
 			}
 
-			image = new Images(bienUpdated, ownerPanelWindow.getFile().getName());
-			App.em.insert(image);
 		}
 
 	}
@@ -213,9 +237,7 @@ public class OwnerUserControl extends JPanel {
 			addBien(bien);
 			tableAddRow(bien);
 		}
-		for (Offer offer : offerList) {
-			listOfferModel.addElement(offer.getBien().getName() + ": " + offer.getBuyer().toString() + " - " + offer.getOffer().toString() + "€");
-		}
+		buildOfferOwnerModel(offerList);
 	}
 
 	private void tableAddRow(Bien argBien) {
@@ -236,6 +258,9 @@ public class OwnerUserControl extends JPanel {
 
 	private void replaceBien(Bien oldBien, Bien newBien) {
 		int indexOldBien = this.biens.indexOf(oldBien);
+		if (indexOldBien == -1) {
+			return;
+		}
 		this.biens.add(indexOldBien, newBien);
 	}
 

@@ -19,7 +19,9 @@ import app.view.buyer.BienRecorderAndOfferWindow;
 import app.view.interet.InterestBuyerWindow;
 import app.view.interet.InterestSalerWindow;
 import app.view.offer.OfferBuyerDialogWindow;
+import app.view.offer.OfferOwnerDialogWindow;
 import app.view.offer.OfferSalerDialogWindow;
+import app.view.owner.OwnerUserControl;
 
 import javax.swing.*;
 import java.util.Enumeration;
@@ -54,6 +56,15 @@ abstract public class AbstractListWindow extends JPanel {
 		}
 		for (Offer offer : listOffers) {
 			offerModel.addElement(getOfferList(offer));
+		}
+	}
+
+	protected void buildOfferOwnerModel(List<Offer> listOffers) {
+		for (int index = offerModel.getSize() - 1; index >= 0; --index) {
+			offerModel.removeElementAt(index);
+		}
+		for (Offer offer : listOffers) {
+			offerModel.addElement(getOfferOwnerList(offer));
 		}
 	}
 
@@ -115,6 +126,9 @@ abstract public class AbstractListWindow extends JPanel {
 		if (this instanceof SalerUserControlWindow) {
 			showOfferSalerDetail(selectedValue);
 		}
+		if (this instanceof OwnerUserControl) {
+			showOfferOwnerDetail(selectedValue);
+		}
 	}
 
 	private void showOfferBuyerDetail(ListObject selectedValue) {
@@ -154,6 +168,18 @@ abstract public class AbstractListWindow extends JPanel {
 		}
 	}
 
+	private void showOfferOwnerDetail(ListObject selectedValue) {
+		Offer offer = App.em.load(Offer.class, selectedValue.getId());
+		OfferOwnerDialogWindow offerOwnerDialogWindow = new OfferOwnerDialogWindow(offer);
+		offerOwnerDialogWindow.pack();
+		offerOwnerDialogWindow.setVisible(true);
+		if (offerOwnerDialogWindow.getValidate() && !offer.getStatus().equals(offerOwnerDialogWindow.getStatus().toString())) {
+			offer.setStatus(offerOwnerDialogWindow.getStatus().toString());
+			App.em.update(offer);
+			offerModel.setElementAt(getOfferOwnerList(offer), offerModel.indexOf(selectedValue));
+		}
+	}
+
 	private void showInterestDetail(ListObject selectedValue) {
 		if (this instanceof BienRecorderAndOfferWindow) {
 			showInterestBuyerDetail(selectedValue);
@@ -188,6 +214,10 @@ abstract public class AbstractListWindow extends JPanel {
 
 	protected ListObject getOfferList(Offer offer) {
 		return new ListObject(ListObject.ListObjectType.OFFER, offer.getId(), offer.getBien().getName() + " " + offer.getOffer() + "€ " + offer.getStatus());
+	}
+
+	protected ListObject getOfferOwnerList(Offer offer) {
+		return new ListObject(ListObject.ListObjectType.OFFER, offer.getId(), offer.getBuyer().toString() + ": " + offer.getOffer() + "€ " + offer.getStatus());
 	}
 
 	protected ListObject getInterestList(Interest interest) {

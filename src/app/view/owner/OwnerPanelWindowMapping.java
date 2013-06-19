@@ -35,7 +35,7 @@ public class OwnerPanelWindowMapping {
 				(Owner)Session.getInstance().getAPerson(),
 				getOwnerPanelWindow().gettName(),
 				Bien.TypeProduct.fromString(getOwnerPanelWindow().getcTypeProductEnum()),
-				App.em.findUnique(City.class, "where city = ?", getOwnerPanelWindow().gettCity()),
+				App.em.findUnique(City.class, "where city = ? and poste_code = ?", getOwnerPanelWindow().gettCity(), getOwnerPanelWindow().gettPosteCode()),
 				Bien.Status.WAITING
 			)
 		);
@@ -52,7 +52,7 @@ public class OwnerPanelWindowMapping {
 		bienResult.setStreetName(getOwnerPanelWindow().gettStreetName());
 		bienResult.setStreetNumber(getOwnerPanelWindow().gettStreetNumber());
 		bienResult.setStreetBox(getOwnerPanelWindow().gettStreetBox());
-		bienResult.setCity(App.em.findUnique(City.class, "where city = ?", getOwnerPanelWindow().gettCity()));
+		bienResult.setCity(App.em.findUnique(City.class, "where city = ? and poste_code = ?", getOwnerPanelWindow().gettCity(), getOwnerPanelWindow().gettPosteCode()));
 		bienResult.setPrice(getOwnerPanelWindow().gettPrice());
 		bienResult.setYearConstruction(getOwnerPanelWindow().getcYearConstruction());
 		bienResult.setFaceWide(getOwnerPanelWindow().gettFaceWide());
@@ -67,7 +67,7 @@ public class OwnerPanelWindowMapping {
 		OwnerPanelWindow ownerPanelWindowResult = new OwnerPanelWindow(getArgOwnerPanelModel());
 
 		ownerPanelWindowResult.setId(getBien().getId());
-		ownerPanelWindowResult.settName(this.bien.getName());
+		ownerPanelWindowResult.settName(getBien().getName());
 		ownerPanelWindowResult.settDescription(getBien().getDescription());
 		ownerPanelWindowResult.setcTypeProduct(getBien().getTypeProduct());
 		ownerPanelWindowResult.settStreetName(getBien().getStreetName());
@@ -83,7 +83,9 @@ public class OwnerPanelWindowMapping {
 		ownerPanelWindowResult.setcNFrontage(getBien().getnFrontage());
 		ownerPanelWindowResult.setcNFloor(getBien().getnFloor());
 		ownerPanelWindowResult.setcCpeb(getBien().getCpeb());
-		ownerPanelWindowResult.setImages(this.bien.getImages());
+		ownerPanelWindowResult.setImages(getBien().getImages());
+
+		ownerPanelWindowResult.setCanChange(getBien());
 
 		return ownerPanelWindowResult;
 	}
