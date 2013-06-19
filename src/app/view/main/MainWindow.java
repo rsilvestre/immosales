@@ -81,7 +81,7 @@ public class MainWindow extends JFrame {
 		//mainScreen.add(new JScrollPane(textArea));
 		//mainScreen.add(new WelcomeWindow());
 		try {
-			BufferedImage myPicture = ImageIO.read(getClass().getResource("/ressources/images/welcome.png"));
+			BufferedImage myPicture = ImageIO.read(getClass().getResource("/ressources/images/welcome2.png"));
 			JLabel picLabel = new JLabel(new ImageIcon(myPicture));
 			mainScreen.add(picLabel);
 		} catch (IOException e) {

@@ -9,6 +9,7 @@
 package app.view.bien;
 
 import app.model.DB.product.Images;
+import app.view.base.IBuyerBusinessWindow;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -25,45 +26,47 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class BienWindow extends JDialog {
-	private JPanel contentPane;
-	private JButton buttonOK;
-	private JButton buttonCancel;
-	private JPanel panel1;
-	private JTextField tId;
-	private JTextField tOwner;
-	private JTextField tName;
-	private JTextArea tDescription;
-	private JTextArea tAddress;
-	private JTextField tPrice;
-	private JTextField tYearConstruction;
-	private JTextField tFaceWide;
-	private JTextField tFaceNumber;
-	private JTextField tFloorNumber;
-	private JTextField tCpeb;
+public class BienBuyerWindow extends JDialog implements IBuyerBusinessWindow {
+	protected JPanel contentPane;
+	protected JButton buttonOK;
+	protected JButton buttonCancel;
+	protected JPanel panel1;
+	protected JTextField tId;
+	protected JTextField tOwner;
+	protected JTextField tName;
+	protected JTextArea tDescription;
+	protected JTextArea tAddress;
+	protected JTextField tPrice;
+	protected JTextField tYearConstruction;
+	protected JTextField tFaceWide;
+	protected JTextField tFaceNumber;
+	protected JTextField tFloorNumber;
+	protected JTextField tCpeb;
+
 	private JPanel imageContainer;
+	private JTextField tBienType;
 
 	private JLabel picLabel;
 
-	public BienWindow() {
+	private boolean validate = false;
+
+	public BienBuyerWindow() {
 		initComponents();
 	}
 
-	public BienWindow(Bien bien) {
+	public BienBuyerWindow(Bien bien) {
 		initComponents();
-		tId.setText(bien.getId().toString());
-		tOwner.setText(bien.getOwner().toString());
-		tName.setText(bien.getName());
-		tAddress.setText(bien.getAddress());
-		tDescription.setText(bien.getDescription());
-		tPrice.setText(bien.getPrice().toString());
-		tYearConstruction.setText(bien.getYearConstruction().toString());
-		tFaceWide.setText(bien.getFaceWide().toString());
-		tFaceNumber.setText(bien.getFaceWide().toString());
-		tFloorNumber.setText(bien.getnFloor().toString());
-		tCpeb.setText(bien.getCpeb());
+		initComponentsLocal();
+		setDefaultValue(bien);
+		setDefaultValueLocal(bien);
+	}
 
+	private void initComponentsLocal() {
+		picLabel = new JLabel();
+		imageContainer.add(picLabel, BorderLayout.CENTER);
+	}
 
+	private void setDefaultValueLocal(Bien bien) {
 		for (Images image : bien.getImages()) {
 			if (image != null) {
 				File file = new File("ressources/images/biens/" + bien.getId() + "/" + image.getImageName());
@@ -75,6 +78,22 @@ public class BienWindow extends JDialog {
 				return;
 			}
 		}
+	}
+
+	private void addImage(URL url) {
+		try {
+			picLabel.setIcon(getImageResized(new ImageIcon(ImageIO.read(url))));
+			imageContainer.repaint();
+			BienBuyerWindow.this.repaint();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private Icon getImageResized(ImageIcon img) {
+		int width = img.getIconWidth() * (400) / img.getIconHeight();
+		int height = 400;
+		return new ImageIcon(img.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH));
 	}
 
 	private void initComponents() {
@@ -94,7 +113,6 @@ public class BienWindow extends JDialog {
 			}
 		});
 
-// call onCancel() when cross is clicked
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -102,41 +120,39 @@ public class BienWindow extends JDialog {
 			}
 		});
 
-// call onCancel() on ESCAPE
 		contentPane.registerKeyboardAction(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				onCancel();
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-
-		picLabel = new JLabel();
-		imageContainer.add(picLabel, BorderLayout.CENTER);
 	}
 
-	private void addImage(URL url) {
-		try {
-			picLabel.setIcon(getImageResized(new ImageIcon(ImageIO.read(url))));
-			imageContainer.repaint();
-			BienWindow.this.repaint();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private Icon getImageResized(ImageIcon img) {
-		int width = img.getIconWidth() * (400) / img.getIconHeight();
-		int height = 400;
-		return new ImageIcon(img.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH));
+	private void setDefaultValue(Bien bien) {
+		tId.setText(bien.getId().toString());
+		tBienType.setText(bien.getTypeProduct());
+		tOwner.setText(bien.getOwner().toString());
+		tName.setText(bien.getName());
+		tAddress.setText(bien.getAddress());
+		tDescription.setText(bien.getDescription());
+		tPrice.setText(bien.getPrice().toString());
+		tYearConstruction.setText(bien.getYearConstruction().toString());
+		tFaceWide.setText(bien.getFaceWide().toString());
+		tFaceNumber.setText(bien.getnFrontage().toString());
+		tFloorNumber.setText(bien.getnFloor().toString());
+		tCpeb.setText(bien.getCpeb());
 	}
 
 	private void onOK() {
-// add your code here
+		validate = true;
 		dispose();
 	}
 
 	private void onCancel() {
-// add your code here if necessary
 		dispose();
+	}
+
+	public boolean getValidate() {
+		return validate;
 	}
 
 	{
@@ -160,7 +176,7 @@ public class BienWindow extends JDialog {
 		panel2.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
 		contentPane.add(panel2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
 		panel1 = new JPanel();
-		panel1.setLayout(new FormLayout("fill:168px:grow,left:4dlu:noGrow,fill:325px:grow", "center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:72px:noGrow,top:3dlu:noGrow,center:94px:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
+		panel1.setLayout(new FormLayout("fill:168px:grow,left:4dlu:noGrow,fill:325px:grow", "center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:72px:noGrow,top:3dlu:noGrow,center:94px:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
 		panel2.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
 		final JLabel label1 = new JLabel();
 		label1.setText("Id");
@@ -177,17 +193,17 @@ public class BienWindow extends JDialog {
 		panel1.add(tOwner, cc.xy(3, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final JLabel label3 = new JLabel();
 		label3.setText("Nom du bien");
-		panel1.add(label3, cc.xy(1, 5));
+		panel1.add(label3, cc.xy(1, 7));
 		tName = new JTextField();
 		tName.setEditable(false);
-		panel1.add(tName, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel1.add(tName, cc.xy(3, 7, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final JLabel label4 = new JLabel();
 		label4.setText("Description");
-		panel1.add(label4, cc.xy(1, 7));
+		panel1.add(label4, cc.xy(1, 9));
 		final JScrollPane scrollPane1 = new JScrollPane();
 		scrollPane1.setHorizontalScrollBarPolicy(30);
 		scrollPane1.setVerticalScrollBarPolicy(20);
-		panel1.add(scrollPane1, cc.xy(3, 7, CellConstraints.FILL, CellConstraints.FILL));
+		panel1.add(scrollPane1, cc.xy(3, 9, CellConstraints.FILL, CellConstraints.FILL));
 		scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null));
 		tDescription = new JTextArea();
 		tDescription.setColumns(20);
@@ -197,9 +213,9 @@ public class BienWindow extends JDialog {
 		scrollPane1.setViewportView(tDescription);
 		final JLabel label5 = new JLabel();
 		label5.setText("Adresse");
-		panel1.add(label5, cc.xy(1, 9));
+		panel1.add(label5, cc.xy(1, 11));
 		final JScrollPane scrollPane2 = new JScrollPane();
-		panel1.add(scrollPane2, cc.xy(3, 9, CellConstraints.FILL, CellConstraints.FILL));
+		panel1.add(scrollPane2, cc.xy(3, 11, CellConstraints.FILL, CellConstraints.FILL));
 		scrollPane2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null));
 		tAddress = new JTextArea();
 		tAddress.setEditable(false);
@@ -208,40 +224,46 @@ public class BienWindow extends JDialog {
 		scrollPane2.setViewportView(tAddress);
 		final JLabel label6 = new JLabel();
 		label6.setText("Prix");
-		panel1.add(label6, cc.xy(1, 11));
+		panel1.add(label6, cc.xy(1, 13));
 		tPrice = new JTextField();
 		tPrice.setEditable(false);
-		panel1.add(tPrice, cc.xy(3, 11, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel1.add(tPrice, cc.xy(3, 13, CellConstraints.FILL, CellConstraints.DEFAULT));
 		final JLabel label7 = new JLabel();
 		label7.setText("Année de construction");
-		panel1.add(label7, cc.xy(1, 13));
+		panel1.add(label7, cc.xy(1, 15));
 		final JLabel label8 = new JLabel();
 		label8.setText("Taille de la façade");
-		panel1.add(label8, cc.xy(1, 15));
+		panel1.add(label8, cc.xy(1, 17));
 		final JLabel label9 = new JLabel();
-		label9.setText("Nombre de face");
-		panel1.add(label9, cc.xy(1, 17));
+		label9.setText("Nombre de façade");
+		panel1.add(label9, cc.xy(1, 19));
 		final JLabel label10 = new JLabel();
 		label10.setText("Nombre d'étage");
-		panel1.add(label10, cc.xy(1, 19));
+		panel1.add(label10, cc.xy(1, 21));
 		final JLabel label11 = new JLabel();
 		label11.setText("CPEB");
-		panel1.add(label11, cc.xy(1, 21));
+		panel1.add(label11, cc.xy(1, 23));
 		tYearConstruction = new JTextField();
 		tYearConstruction.setEditable(false);
-		panel1.add(tYearConstruction, cc.xy(3, 13, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel1.add(tYearConstruction, cc.xy(3, 15, CellConstraints.FILL, CellConstraints.DEFAULT));
 		tFaceWide = new JTextField();
 		tFaceWide.setEditable(false);
-		panel1.add(tFaceWide, cc.xy(3, 15, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel1.add(tFaceWide, cc.xy(3, 17, CellConstraints.FILL, CellConstraints.DEFAULT));
 		tFaceNumber = new JTextField();
 		tFaceNumber.setEditable(false);
-		panel1.add(tFaceNumber, cc.xy(3, 17, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel1.add(tFaceNumber, cc.xy(3, 19, CellConstraints.FILL, CellConstraints.DEFAULT));
 		tFloorNumber = new JTextField();
 		tFloorNumber.setEditable(false);
-		panel1.add(tFloorNumber, cc.xy(3, 19, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel1.add(tFloorNumber, cc.xy(3, 21, CellConstraints.FILL, CellConstraints.DEFAULT));
 		tCpeb = new JTextField();
 		tCpeb.setEditable(false);
-		panel1.add(tCpeb, cc.xy(3, 21, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel1.add(tCpeb, cc.xy(3, 23, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final JLabel label12 = new JLabel();
+		label12.setText("Type");
+		panel1.add(label12, cc.xy(1, 5));
+		tBienType = new JTextField();
+		tBienType.setEditable(false);
+		panel1.add(tBienType, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
 		imageContainer = new JPanel();
 		imageContainer.setLayout(new BorderLayout(0, 0));
 		panel2.add(imageContainer, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));

@@ -6,22 +6,19 @@
  * Vestibulum commodo. Ut rhoncus gravida arcu.
  */
 
-package app.controller.saler;
+package app.command.saler;
 
-import app.model.DB.immo.Offer;
-import app.model.Saler.SalerModel;
+import app.controller.saler.FilterInterestDbEvent;
 import com.dmurph.mvc.MVCEvent;
+import com.dmurph.mvc.control.ICommand;
 
 /**
  * Created by michaelsilvestre on 18/06/13.
  */
-public class FilterOfferDbEvent extends MVCEvent {
-	public final SalerModel model;
-	public final Offer.Status offerStatus;
-
-	public FilterOfferDbEvent(Offer.Status argOfferStatus, SalerModel salerModel) {
-		super(SalerController.FILTER_OFFER_TYPE);
-		offerStatus = argOfferStatus;
-		model = salerModel;
+public class FilterInterestDbCommand implements ICommand {
+	@Override
+	public void execute(MVCEvent argEvent) {
+		FilterInterestDbEvent event = (FilterInterestDbEvent)argEvent;
+		event.model.setFilterInterestType(event.interestStatus);
 	}
 }

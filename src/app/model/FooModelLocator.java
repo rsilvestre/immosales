@@ -6,7 +6,7 @@ import app.controller.main.MainController;
 import app.controller.owner.OwnerController;
 import app.controller.saler.SalerController;
 import app.controller.user.UserController;
-import app.view.bien.BienWindow;
+import app.view.bien.BienBuyerWindow;
 import app.view.bien.FindBienWindow;
 import app.view.main.MainWindow;
 import app.view.owner.OwnerPanelWindow;
@@ -37,7 +37,7 @@ public class FooModelLocator {
 
 	private OwnerPanelWindow ownerPanelWindow = null;
 	private FindBienWindow findBienWindow;
-	private BienWindow bienWindow;
+	private BienBuyerWindow bienBuyerWindow;
 
 	private FooModelLocator() {}
 
@@ -77,8 +77,8 @@ public class FooModelLocator {
 		this.findBienWindow = findBienWindow;
 	}
 
-	public void setBienWindow(BienWindow bienWindow) {
-		this.bienWindow = bienWindow;
+	public void setBienBuyerWindow(BienBuyerWindow bienBuyerWindow) {
+		this.bienBuyerWindow = bienBuyerWindow;
 	}
 
 	public FindBienWindow getFindBienWindow() {

@@ -9,6 +9,7 @@
 package app.controller.saler;
 
 import app.command.saler.FilterBienDbCommand;
+import app.command.saler.FilterInterestDbCommand;
 import app.command.saler.FilterOfferDbCommand;
 import com.dmurph.mvc.control.FrontController;
 
@@ -18,9 +19,11 @@ import com.dmurph.mvc.control.FrontController;
 public class SalerController extends FrontController {
 	public static final String FILTER_BIEN_TYPE = "FILTER_BIEN_TYPE_CONTROLLER";
 	public static final String FILTER_OFFER_TYPE = "FILTER_OFFER_TYPE_CONTROLLER";
+	public static final String FILTER_INTEREST_TYPE = "FILTER_INTEREST_TYPE_CONTROLLER";
 
 	public SalerController() {
 		registerCommand(FILTER_BIEN_TYPE, FilterBienDbCommand.class);
 		registerCommand(FILTER_OFFER_TYPE, FilterOfferDbCommand.class);
+		registerCommand(FILTER_INTEREST_TYPE, FilterInterestDbCommand.class);
 	}
 }

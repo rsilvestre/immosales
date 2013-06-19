@@ -8,20 +8,22 @@
 
 package app.controller.saler;
 
-import app.model.DB.immo.Offer;
+import app.model.DB.immo.Interest;
 import app.model.Saler.SalerModel;
+import com.dmurph.mvc.MVC;
 import com.dmurph.mvc.MVCEvent;
 
 /**
  * Created by michaelsilvestre on 18/06/13.
  */
-public class FilterOfferDbEvent extends MVCEvent {
-	public final SalerModel model;
-	public final Offer.Status offerStatus;
+public class FilterInterestDbEvent extends MVCEvent {
 
-	public FilterOfferDbEvent(Offer.Status argOfferStatus, SalerModel salerModel) {
-		super(SalerController.FILTER_OFFER_TYPE);
-		offerStatus = argOfferStatus;
-		model = salerModel;
+	public final SalerModel model;
+	public final Interest.Status interestStatus;
+
+	public FilterInterestDbEvent(Interest.Status interestStatus, SalerModel salerModel) {
+		super(SalerController.FILTER_INTEREST_TYPE);
+		this.interestStatus = interestStatus;
+		this.model = salerModel;
 	}
 }

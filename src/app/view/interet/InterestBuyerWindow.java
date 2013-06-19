@@ -6,21 +6,21 @@
  * Vestibulum commodo. Ut rhoncus gravida arcu.
  */
 
-package app.view.bien;
+package app.view.interet;
 
-import app.view.base.ISalerBusinessWindow;
+import app.model.DB.immo.Interest;
+import app.model.DB.product.Bien;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import app.model.DB.product.Bien;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
+public class InterestBuyerWindow extends JDialog {
 	protected JPanel contentPane;
 	protected JButton buttonOK;
 	protected JButton buttonCancel;
@@ -37,34 +37,17 @@ public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
 	protected JTextField tFloorNumber;
 	protected JTextField tCpeb;
 
-	private JComboBox cStatus;
 	private JTextField tBienType;
 
 	private boolean validate = false;
 
-	public BienSalerWindow() {
+	public InterestBuyerWindow() {
 		initComponents();
 	}
 
-	public BienSalerWindow(Bien bien) {
+	public InterestBuyerWindow(Interest interest) {
 		initComponents();
-		populateLocal();
-		setDefaultValue(bien);
-		setDefaultValueLocal(bien);
-	}
-
-	private void setDefaultValueLocal(Bien bien) {
-		cStatus.setSelectedItem(bien.getStatus());
-	}
-
-	private void populateLocal() {
-		for (Bien.Status bienStatus : Bien.Status.values()) {
-			cStatus.addItem(bienStatus.toString());
-		}
-	}
-
-	public Bien.Status getStatus() {
-		return Bien.Status.fromString((String) cStatus.getSelectedItem());
+		setDefaultValue(interest);
 	}
 
 	private void initComponents() {
@@ -98,7 +81,8 @@ public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	}
 
-	private void setDefaultValue(Bien bien) {
+	protected void setDefaultValue(Interest interest) {
+		Bien bien = interest.getBien();
 		tId.setText(bien.getId().toString());
 		tBienType.setText(bien.getTypeProduct());
 		tOwner.setText(bien.getOwner().toString());
@@ -158,11 +142,11 @@ public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
 		buttonCancel.setText("Cancel");
 		panel3.add(buttonCancel, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 		final JPanel panel4 = new JPanel();
-		panel4.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+		panel4.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
 		contentPane.add(panel4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
 		final JPanel panel5 = new JPanel();
 		panel5.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-		panel4.add(panel5, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+		panel4.add(panel5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(505, 506), null, 0, false));
 		panel1 = new JPanel();
 		panel1.setLayout(new FormLayout("fill:168px:grow,left:4dlu:noGrow,fill:325px:grow", "center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:72px:noGrow,top:3dlu:noGrow,center:94px:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
 		panel5.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -252,15 +236,6 @@ public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
 		tBienType = new JTextField();
 		tBienType.setEditable(false);
 		panel1.add(tBienType, cc.xy(3, 5, CellConstraints.FILL, CellConstraints.DEFAULT));
-		final JPanel panel6 = new JPanel();
-		panel6.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow", "center:d:grow"));
-		panel4.add(panel6, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-		cStatus = new JComboBox();
-		panel6.add(cStatus, cc.xy(3, 1));
-		final Spacer spacer2 = new Spacer();
-		panel6.add(spacer2, cc.xy(5, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
-		final Spacer spacer3 = new Spacer();
-		panel6.add(spacer3, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 	}
 
 	/**

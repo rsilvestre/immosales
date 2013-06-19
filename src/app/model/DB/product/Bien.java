@@ -1,5 +1,6 @@
 package app.model.DB.product;
 
+import app.model.DB.IBusinessModel;
 import app.model.DB.product.address.City;
 import app.model.DB.identity.Owner;
 import app.model.DB.immo.Offer;
@@ -17,27 +18,27 @@ import java.util.List;
  * Time: 19:54
  * To change this template use File | Settings | File Templates.
  */
-public class Bien {
+public class Bien implements IBusinessModel {
 	private EntityManager em;
 
 	@Transient
-	public enum BienStatus {
+	public enum Status {
 		WAITING("En attente"), // de validation par un revendeur
-		AVAILABLE("Disponnible"),
+		AVAILABLE("Disponible"),
 		SIGNED("Acte signé"),
 		SOLD("Vendu");
 
 		private String converter;
 
-		BienStatus(String c) {
+		Status(String c) {
 			this.converter = c;
 		}
 		public String toString() {
 			return converter;
 		}
-		public static BienStatus fromString(String text) {
+		public static Status fromString(String text) {
 			if (text != null) {
-				for (BienStatus b : BienStatus.values()) {
+				for (Status b : Status.values()) {
 					if (text.equalsIgnoreCase(b.converter)) {
 						return b;
 					}
@@ -121,7 +122,7 @@ public class Bien {
 		this.em = em;
 	}
 
-	public Bien(Owner owner, String name, TypeProduct typeProduct, City city, BienStatus bienStatus) {
+	public Bien(Owner owner, String name, TypeProduct typeProduct, City city, Status bienStatus) {
 		this.owner = owner;
 		this.ownerId = owner.getId();
 		this.city = city;

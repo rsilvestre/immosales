@@ -12,10 +12,17 @@ import app.App;
 import app.model.DB.immo.Interest;
 import app.model.DB.immo.Offer;
 import app.model.DB.product.Bien;
+import app.view.Saler.SalerUserControlWindow;
+import app.view.bien.BienBuyerWindow;
 import app.view.bien.BienSalerWindow;
-import app.view.offer.OfferDialogWindow;
+import app.view.buyer.BienRecorderAndOfferWindow;
+import app.view.interet.InterestBuyerWindow;
+import app.view.interet.InterestSalerWindow;
+import app.view.offer.OfferBuyerDialogWindow;
+import app.view.offer.OfferSalerDialogWindow;
 
 import javax.swing.*;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -74,51 +81,117 @@ abstract public class AbstractListWindow extends JPanel {
 	}
 
 	private void showBienDetail(ListObject selectedValue) {
+		if (this instanceof BienRecorderAndOfferWindow) {
+			showBienBuyerDetail(selectedValue);
+		}
+		if (this instanceof SalerUserControlWindow) {
+			showBienSalerDetail(selectedValue);
+		}
+	}
+
+	private void showBienBuyerDetail(ListObject selectedValue) {
+		Bien bien = App.em.load(Bien.class, selectedValue.getId());
+		BienBuyerWindow bienBuyerWindow = new BienBuyerWindow(bien);
+		bienBuyerWindow.pack();
+		bienBuyerWindow.setVisible(true);
+	}
+
+	private void showBienSalerDetail(ListObject selectedValue) {
 		Bien bien = App.em.load(Bien.class, selectedValue.getId());
 		BienSalerWindow bienSalerWindow = new BienSalerWindow(bien);
 		bienSalerWindow.pack();
 		bienSalerWindow.setVisible(true);
-		if (bienSalerWindow.getValidate() && !bien.getStatus().equals(bienSalerWindow.getBienStatus().toString())) {
-			bien.setStatus(bienSalerWindow.getBienStatus().toString());
+		if (bienSalerWindow.getValidate() && !bien.getStatus().equals(bienSalerWindow.getStatus().toString())) {
+			bien.setStatus(bienSalerWindow.getStatus().toString());
 			App.em.update(bien);
 			bienModel.setElementAt(getBienList(bien), bienModel.indexOf(selectedValue));
 		}
 	}
 
 	private void showOfferDetail(ListObject selectedValue) {
+		if (this instanceof BienRecorderAndOfferWindow) {
+			showOfferBuyerDetail(selectedValue);
+		}
+		if (this instanceof SalerUserControlWindow) {
+			showOfferSalerDetail(selectedValue);
+		}
+	}
+
+	private void showOfferBuyerDetail(ListObject selectedValue) {
 		Offer offer = App.em.load(Offer.class, selectedValue.getId());
-		OfferDialogWindow offerDialogWindow = new OfferDialogWindow(offer);
-		offerDialogWindow.pack();
-		offerDialogWindow.setVisible(true);
-		if (offerDialogWindow.getValidate() && !offer.getStatus().equals(offerDialogWindow.getOfferStatus().toString())) {
-			offer.setStatus(offerDialogWindow.getOfferStatus().toString());
+		OfferBuyerDialogWindow offerBuyerDialogWindow = new OfferBuyerDialogWindow(offer);
+		offerBuyerDialogWindow.pack();
+		offerBuyerDialogWindow.setVisible(true);
+	}
+
+	private void showOfferSalerDetail(ListObject selectedValue) {
+		Offer offer = App.em.load(Offer.class, selectedValue.getId());
+		OfferSalerDialogWindow offerSalerDialogWindow = new OfferSalerDialogWindow(offer);
+		offerSalerDialogWindow.pack();
+		offerSalerDialogWindow.setVisible(true);
+		if (offerSalerDialogWindow.getValidate() && !offer.getStatus().equals(offerSalerDialogWindow.getStatus().toString())) {
+			offerBusiness(offer, offerSalerDialogWindow.getStatus());
+			offer.setStatus(offerSalerDialogWindow.getStatus().toString());
 			App.em.update(offer);
 			offerModel.setElementAt(getOfferList(offer), offerModel.indexOf(selectedValue));
 		}
 	}
 
+	private void offerBusiness(Offer argOffer, Offer.Status status) {
+		if (!status.equals(Offer.Status.ACCEPTED)) {
+			return;
+		}
+		for (Offer offer : App.em.find(Offer.class, "where status like 'Offre envoyée' and bien_id  = ? and id != ?", argOffer.getBienId(), argOffer.getId())) {
+			offer.setStatus(Offer.Status.REFUSED.toString());
+			App.em.update(offer);
+			Enumeration<ListObject> listObjectEnumeration = (Enumeration<ListObject>) offerModel.elements();
+			while (listObjectEnumeration.hasMoreElements()) {
+				ListObject listObject = listObjectEnumeration.nextElement();
+				if (listObject.getId().equals(offer.getId())) {
+					offerModel.setElementAt(getOfferList(offer), offerModel.indexOf(listObject));
+				}
+			}
+		}
+	}
+
 	private void showInterestDetail(ListObject selectedValue) {
-		Bien bien = App.em.load(Interest.class, selectedValue.getId()).getBien();
-		BienSalerWindow bienSalerWindow = new BienSalerWindow(bien);
-		bienSalerWindow.pack();
-		bienSalerWindow.setVisible(true);
-		if (bienSalerWindow.getValidate() && !bien.getStatus().equals(bienSalerWindow.getBienStatus().toString())) {
-			bien.setStatus(bienSalerWindow.getBienStatus().toString());
-			App.em.update(bien);
-			bienModel.setElementAt(getBienList(bien), bienModel.indexOf(selectedValue));
+		if (this instanceof BienRecorderAndOfferWindow) {
+			showInterestBuyerDetail(selectedValue);
+		}
+		if (this instanceof SalerUserControlWindow) {
+			showInterestSalerDetail(selectedValue);
+		}
+	}
+
+	private void showInterestBuyerDetail(ListObject selectedValue) {
+		Interest interest = App.em.load(Interest.class, selectedValue.getId());
+		InterestBuyerWindow interestBuyerWindow = new InterestBuyerWindow(interest);
+		interestBuyerWindow.pack();
+		interestBuyerWindow.setVisible(true);
+	}
+
+	private void showInterestSalerDetail(ListObject selectedValue) {
+		Interest interest = App.em.load(Interest.class, selectedValue.getId());
+		InterestSalerWindow interestSalerWindow = new InterestSalerWindow(interest);
+		interestSalerWindow.pack();
+		interestSalerWindow.setVisible(true);
+		if (interestSalerWindow.getValidate() && !interest.getStatus().equals(interestSalerWindow.getStatus().toString())) {
+			interest.setStatus(interestSalerWindow.getStatus().toString());
+			App.em.update(interest);
+			interestModel.setElementAt(getInterestList(interest), interestModel.indexOf(selectedValue));
 		}
 	}
 
 	protected ListObject getBienList(Bien bien) {
-		return new ListObject(ListObject.ListObjectType.BIEN, bien.getId(), bien.getName() + " " + bien.getPrice() + " " + bien.getStatus());
+		return new ListObject(ListObject.ListObjectType.BIEN, bien.getId(), bien.getName() + " " + bien.getPrice() + "€ " + bien.getStatus());
 	}
 
 	protected ListObject getOfferList(Offer offer) {
-		return new ListObject(ListObject.ListObjectType.OFFER, offer.getId(), offer.getBien().getName() + " " + offer.getOffer() + " " + offer.getStatus());
+		return new ListObject(ListObject.ListObjectType.OFFER, offer.getId(), offer.getBien().getName() + " " + offer.getOffer() + "€ " + offer.getStatus());
 	}
 
 	protected ListObject getInterestList(Interest interest) {
-		return new ListObject(ListObject.ListObjectType.INTEREST, interest.getId(), interest.getBien().getName() + " " + interest.getBien().getPrice() + " " + interest.getBien().getStatus());
+		return new ListObject(ListObject.ListObjectType.INTEREST, interest.getId(), interest.getBien().getName() + " " + interest.getBien().getPrice() + "€ " + interest.getStatus());
 	}
 
 	protected DefaultListModel getInterestModel() {

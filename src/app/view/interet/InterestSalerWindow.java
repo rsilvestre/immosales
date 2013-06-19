@@ -6,21 +6,21 @@
  * Vestibulum commodo. Ut rhoncus gravida arcu.
  */
 
-package app.view.bien;
+package app.view.interet;
 
-import app.view.base.ISalerBusinessWindow;
+import app.model.DB.immo.Interest;
+import app.model.DB.product.Bien;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import app.model.DB.product.Bien;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
+public class InterestSalerWindow extends JDialog {
 	protected JPanel contentPane;
 	protected JButton buttonOK;
 	protected JButton buttonCancel;
@@ -42,29 +42,32 @@ public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
 
 	private boolean validate = false;
 
-	public BienSalerWindow() {
+	public InterestSalerWindow() {
 		initComponents();
 	}
 
-	public BienSalerWindow(Bien bien) {
+	public InterestSalerWindow(Interest interest) {
 		initComponents();
 		populateLocal();
-		setDefaultValue(bien);
-		setDefaultValueLocal(bien);
+		setDefaultValue(interest);
+		setDefaultValueLocal(interest);
 	}
 
-	private void setDefaultValueLocal(Bien bien) {
-		cStatus.setSelectedItem(bien.getStatus());
-	}
-
-	private void populateLocal() {
-		for (Bien.Status bienStatus : Bien.Status.values()) {
-			cStatus.addItem(bienStatus.toString());
+	private void setDefaultValueLocal(Interest interest) {
+		cStatus.setSelectedItem(interest.getStatus());
+		if (!Interest.Status.fromString(interest.getStatus()).equals(Interest.Status.TOVISIT)) {
+			cStatus.setEnabled(false);
 		}
 	}
 
-	public Bien.Status getStatus() {
-		return Bien.Status.fromString((String) cStatus.getSelectedItem());
+	private void populateLocal() {
+		for (Interest.Status interestStatus : Interest.Status.values()) {
+			cStatus.addItem(interestStatus.toString());
+		}
+	}
+
+	public Interest.Status getStatus() {
+		return Interest.Status.fromString((String) cStatus.getSelectedItem());
 	}
 
 	private void initComponents() {
@@ -98,7 +101,8 @@ public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 	}
 
-	private void setDefaultValue(Bien bien) {
+	protected void setDefaultValue(Interest interest) {
+		Bien bien = interest.getBien();
 		tId.setText(bien.getId().toString());
 		tBienType.setText(bien.getTypeProduct());
 		tOwner.setText(bien.getOwner().toString());

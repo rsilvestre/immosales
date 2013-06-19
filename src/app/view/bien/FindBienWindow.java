@@ -263,11 +263,11 @@ public class FindBienWindow extends JDialog {
 						String idBien = target.getValueAt(target.getSelectedRow(), 0).toString();
 						Bien bien = App.em.load(Bien.class, Long.parseLong(idBien));
 						FooModelLocator locator = FooModelLocator.getInstance();
-						BienWindow bienWindow = new BienWindow(bien);
-						locator.setBienWindow(bienWindow);
-						bienWindow.setModal(true);
-						bienWindow.pack();
-						bienWindow.setVisible(true);
+						BienBuyerWindow bienBuyerWindow = new BienBuyerWindow(bien);
+						locator.setBienBuyerWindow(bienBuyerWindow);
+						bienBuyerWindow.setModal(true);
+						bienBuyerWindow.pack();
+						bienBuyerWindow.setVisible(true);
 					}
 				}
 			}

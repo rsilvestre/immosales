@@ -1,5 +1,6 @@
 package app.model.DB.immo;
 
+import app.model.DB.IBusinessModel;
 import app.model.DB.identity.Buyer;
 import app.model.DB.product.Bien;
 import net.sf.jeasyorm.EntityManager;
@@ -14,27 +15,28 @@ import java.sql.Timestamp;
  * Time: 22:33
  * To change this template use File | Settings | File Templates.
  */
-public class Offer {
+public class Offer implements IBusinessModel {
 
 	private EntityManager em;
 
 	@Transient
-	public enum OfferStatus {
+	public enum Status {
 		SUBMIT("Offre envoyée"),
 		ACCEPTED("Offre acceptée"),
-		REFUSED("Offre refusée");
+		REFUSED("Offre refusée"),
+		CANCELED("Offre annulée");
 
 		private String converter;
 
-		OfferStatus(String c) {
+		Status(String c) {
 			this.converter = c;
 		}
 		public String toString() {
 			return converter;
 		}
-		public static OfferStatus fromString(String text) {
+		public static Status fromString(String text) {
 			if (text != null) {
-				for (OfferStatus b : OfferStatus.values()) {
+				for (Status b : Status.values()) {
 					if (text.equalsIgnoreCase(b.converter)) {
 						return b;
 					}
@@ -63,7 +65,7 @@ public class Offer {
 		this.em = em;
 	}
 
-	public Offer(Buyer buyer, Bien bien, OfferStatus offerStatus, Long offer, Timestamp endDate) {
+	public Offer(Buyer buyer, Bien bien, Status offerStatus, Long offer, Timestamp endDate) {
 		this.buyer = buyer;
 		this.buyerId = buyer.getId();
 		this.bien = bien;

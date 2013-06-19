@@ -8,6 +8,7 @@
 
 package app.model.DB.immo;
 
+import app.model.DB.IBusinessModel;
 import app.model.DB.identity.Buyer;
 import app.model.DB.product.Bien;
 import net.sf.jeasyorm.EntityManager;
@@ -20,26 +21,27 @@ import net.sf.jeasyorm.annotation.Transient;
  * Time: 22:33
  * To change this template use File | Settings | File Templates.
  */
-public class Interest {
+public class Interest implements IBusinessModel {
 
 	private EntityManager em;
 
 	@Transient
-	public enum InterestStatus {
+	public enum Status {
 		TOVISIT("Demande de visite"),
-		VISITED("Visite faite");
+		VISITED("Visite faite"),
+		CANCELED("Visite annullé");
 
 		private String converter;
 
-		InterestStatus(String c) {
+		Status(String c) {
 			this.converter = c;
 		}
 		public String toString() {
 			return converter;
 		}
-		public static InterestStatus fromString(String text) {
+		public static Status fromString(String text) {
 			if (text != null) {
-				for (InterestStatus b : InterestStatus.values()) {
+				for (Status b : Status.values()) {
 					if (text.equalsIgnoreCase(b.converter)) {
 						return b;
 					}
@@ -63,7 +65,7 @@ public class Interest {
 		this.em = em;
 	}
 
-	public Interest(Buyer buyer, Bien bien, InterestStatus interestStatus) {
+	public Interest(Buyer buyer, Bien bien, Status interestStatus) {
 		this.buyer = buyer;
 		this.buyerId = buyer.getId();
 		this.bien = bien;

@@ -25,6 +25,8 @@ import app.view.InputDialog.FormatDialogWindow;
 import app.view.bien.FindBienWindow;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,10 +43,10 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 	private JPanel panel1;
 	private JList intéresséList;
 	private JList offreDAchatList;
-	private JButton button1;
-	private JButton button2;
-	private JButton button3;
-	private JButton nouvelleRechercheButton;
+	private JButton bCreateOffer;
+	private JButton bRemoveOffer;
+	private JButton bRemoveInterest;
+	private JButton bRechercheButton;
 
 	private BienRecorderAndOfferModel bienRecorderAndOfferModel;
 
@@ -68,10 +70,32 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 	}
 
 	private void addListener() {
-		nouvelleRechercheButton.addActionListener(new ActionListener() {
+		bRechercheButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				findAction((Buyer) Session.getInstance().getAPerson());
+			}
+		});
+		intéresséList.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent evt) {
+				if (evt.getValueIsAdjusting() && getInterestModel().getSize() > 0) {
+					ListObject listObject = (ListObject) intéresséList.getSelectedValue();
+					Interest interest = App.em.load(Interest.class, listObject.getId());
+					if (Interest.Status.fromString(interest.getStatus()).equals(Interest.Status.VISITED)) {
+						bCreateOffer.setEnabled(true);
+						for (Offer offer : interest.getBien().getOffers()) {
+							if (offer.getBuyerId().equals(Session.getInstance().getAPerson().getId())) {
+								bCreateOffer.setEnabled(false);
+							}
+						}
+					}
+					if (Interest.Status.fromString(interest.getStatus()).equals(Interest.Status.TOVISIT)) {
+						bRemoveInterest.setEnabled(true);
+					} else {
+						bRemoveInterest.setEnabled(false);
+					}
+				}
 			}
 		});
 		intéresséList.addMouseListener(new MouseAdapter() {
@@ -82,11 +106,62 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 				}
 			}
 		});
+		offreDAchatList.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent evt) {
+				if (evt.getValueIsAdjusting() && getOfferModel().getSize() > 0) {
+					ListObject listObject = (ListObject) offreDAchatList.getSelectedValue();
+					Offer offer = App.em.load(Offer.class, listObject.getId());
+					if (Offer.Status.fromString(offer.getStatus()).equals(Offer.Status.SUBMIT)) {
+						bRemoveOffer.setEnabled(true);
+					}
+				}
+			}
+		});
 		offreDAchatList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
 				if (evt.getClickCount() == 2) {
 					showDetails((ListObject) offreDAchatList.getSelectedValue());
+				}
+			}
+		});
+		bCreateOffer.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				ListObject listObject = (ListObject) intéresséList.getSelectedValue();
+				Bien bien = App.em.load(Interest.class, listObject.getId()).getBien();
+
+				FormatDialogWindow formatDialogWindow = new FormatDialogWindow("Montant de l'offre: ", bien);
+				formatDialogWindow.pack();
+				formatDialogWindow.setVisible(true);
+				if (formatDialogWindow.getValue() == "-1") {
+					return;
+				}
+				saveOffer(bien, Long.parseLong(formatDialogWindow.getValue()), formatDialogWindow.getDateChooser());
+			}
+		});
+		bRemoveInterest.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				ListObject listObject = (ListObject) intéresséList.getSelectedValue();
+				Interest interest = App.em.load(Interest.class, listObject.getId());
+				if (Interest.Status.fromString(interest.getStatus()).equals(Interest.Status.TOVISIT)) {
+					interest.setStatus(Interest.Status.CANCELED.toString());
+					App.em.update(interest);
+					populateLocal();
+				}
+			}
+		});
+		bRemoveOffer.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				ListObject listObject = (ListObject) offreDAchatList.getSelectedValue();
+				Offer offer = App.em.load(Offer.class, listObject.getId());
+				if (Offer.Status.fromString(offer.getStatus()).equals(Offer.Status.SUBMIT)) {
+					offer.setStatus(Offer.Status.CANCELED.toString());
+					App.em.update(offer);
+					populateLocal();
 				}
 			}
 		});
@@ -130,10 +205,10 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 	}
 
 	private void saveOffer(Bien bien, Long offerValue, Calendar calendar) {
-		Timestamp endDate =  new Timestamp(calendar.getTimeInMillis());
-		Offer offer = new Offer((Buyer) Session.getInstance().getAPerson(), bien, Offer.OfferStatus.SUBMIT, offerValue, endDate);
+		Timestamp endDate = new Timestamp(calendar.getTimeInMillis());
+		Offer offer = new Offer((Buyer) Session.getInstance().getAPerson(), bien, Offer.Status.SUBMIT, offerValue, endDate);
 		App.em.insert(offer);
-		getOfferModel().addElement(bien.getName());
+		getOfferModel().addElement(getOfferList(offer));
 	}
 
 	private void saveInterest(FindBienWindow findBienWindow, Buyer buyer) {
@@ -143,9 +218,9 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 			return;
 		}
 		Bien bien = App.em.load(Bien.class, findBienWindow.getSearchResultValue());
-		Interest interest = new Interest((Buyer) Session.getInstance().getAPerson(), bien, Interest.InterestStatus.TOVISIT);
+		Interest interest = new Interest((Buyer) Session.getInstance().getAPerson(), bien, Interest.Status.TOVISIT);
 		App.em.insert(interest);
-		getInterestModel().addElement(bien.getName());
+		getInterestModel().addElement(getInterestList(interest));
 	}
 
 	private FindBienWindow getFindBienWindow() {
@@ -159,6 +234,9 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 	}
 
 	private void populateLocal() {
+		bRemoveInterest.setEnabled(false);
+		bRemoveOffer.setEnabled(false);
+		bCreateOffer.setEnabled(false);
 		List<Interest> interests = App.em.find(Interest.class, "where buyer_id = ?", Session.getInstance().getAPerson().getId());
 		List<Offer> offers = App.em.find(Offer.class, "where buyer_id = ?", Session.getInstance().getAPerson().getId());
 
@@ -184,49 +262,43 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 		panel1 = new JPanel();
 		panel1.setLayout(new FormLayout("fill:max(d;4px):noGrow", "center:max(d;4px):noGrow"));
 		final JPanel panel2 = new JPanel();
-		panel2.setLayout(new FormLayout("fill:636px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
+		panel2.setLayout(new FormLayout("fill:719px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
 		CellConstraints cc = new CellConstraints();
 		panel1.add(panel2, cc.xy(1, 1));
 		final JPanel panel3 = new JPanel();
 		panel3.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:max(d;4px):noGrow"));
 		panel2.add(panel3, cc.xy(1, 1));
 		final JPanel panel4 = new JPanel();
-		panel4.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:d:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
+		panel4.setLayout(new FormLayout("fill:143px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
 		panel3.add(panel4, cc.xy(3, 1));
-		final JLabel label1 = new JLabel();
-		label1.setText("Label");
-		panel4.add(label1, cc.xy(1, 1));
-		final JLabel label2 = new JLabel();
-		label2.setText("Label");
-		panel4.add(label2, cc.xy(1, 3));
-		final JLabel label3 = new JLabel();
-		label3.setText("Label");
-		panel4.add(label3, cc.xy(1, 5));
-		button1 = new JButton();
-		button1.setText("Button");
-		panel4.add(button1, cc.xy(3, 1));
-		button2 = new JButton();
-		button2.setText("Button");
-		panel4.add(button2, cc.xy(3, 3));
-		button3 = new JButton();
-		button3.setText("Button");
-		panel4.add(button3, cc.xy(3, 5));
+		bCreateOffer = new JButton();
+		bCreateOffer.setEnabled(false);
+		bCreateOffer.setText("Faire une offre");
+		panel4.add(bCreateOffer, cc.xy(1, 1));
+		bRemoveOffer = new JButton();
+		bRemoveOffer.setEnabled(false);
+		bRemoveOffer.setText("Retirer une offre");
+		panel4.add(bRemoveOffer, cc.xy(1, 3));
+		bRemoveInterest = new JButton();
+		bRemoveInterest.setEnabled(false);
+		bRemoveInterest.setText("Annuler une visite");
+		panel4.add(bRemoveInterest, cc.xy(1, 5));
 		final JPanel panel5 = new JPanel();
-		panel5.setLayout(new FormLayout("fill:d:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:d:grow"));
+		panel5.setLayout(new FormLayout("fill:278px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:d:grow"));
 		panel3.add(panel5, cc.xy(5, 1));
-		final JLabel label4 = new JLabel();
-		label4.setText("Offre d'achat");
-		panel5.add(label4, cc.xy(1, 1));
+		final JLabel label1 = new JLabel();
+		label1.setText("Offre d'achat");
+		panel5.add(label1, cc.xy(1, 1));
 		final JScrollPane scrollPane1 = new JScrollPane();
 		panel5.add(scrollPane1, cc.xy(1, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
 		offreDAchatList = new JList();
 		scrollPane1.setViewportView(offreDAchatList);
 		final JPanel panel6 = new JPanel();
-		panel6.setLayout(new FormLayout("fill:d:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:d:grow"));
+		panel6.setLayout(new FormLayout("fill:281px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:d:grow"));
 		panel3.add(panel6, cc.xy(1, 1));
-		final JLabel label5 = new JLabel();
-		label5.setText("Intéressé");
-		panel6.add(label5, cc.xy(1, 1));
+		final JLabel label2 = new JLabel();
+		label2.setText("Rendez-vous");
+		panel6.add(label2, cc.xy(1, 1));
 		final JScrollPane scrollPane2 = new JScrollPane();
 		scrollPane2.setMinimumSize(new Dimension(170, 80));
 		panel6.add(scrollPane2, cc.xy(1, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
@@ -234,18 +306,17 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 		intéresséList.setMinimumSize(new Dimension(170, 80));
 		scrollPane2.setViewportView(intéresséList);
 		final JPanel panel7 = new JPanel();
-		panel7.setLayout(new FormLayout("fill:247px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:d:noGrow"));
+		panel7.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow", "center:d:noGrow"));
 		panel2.add(panel7, cc.xy(1, 3));
-		final JPanel panel8 = new JPanel();
-		panel8.setLayout(new FormLayout("fill:254px:noGrow", "center:d:noGrow"));
-		panel7.add(panel8, cc.xy(1, 1));
+		bRechercheButton = new JButton();
+		bRechercheButton.setText("Nouvelle recherche");
+		panel7.add(bRechercheButton, cc.xy(3, 1));
 		final Spacer spacer1 = new Spacer();
-		panel8.add(spacer1, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
-		nouvelleRechercheButton = new JButton();
-		nouvelleRechercheButton.setText("Nouvelle recherche");
-		panel7.add(nouvelleRechercheButton, cc.xy(3, 1));
-		label4.setLabelFor(scrollPane1);
-		label5.setLabelFor(scrollPane2);
+		panel7.add(spacer1, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final Spacer spacer2 = new Spacer();
+		panel7.add(spacer2, cc.xy(5, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		label1.setLabelFor(scrollPane1);
+		label2.setLabelFor(scrollPane2);
 	}
 
 	/**

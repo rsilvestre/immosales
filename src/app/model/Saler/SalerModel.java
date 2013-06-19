@@ -8,6 +8,7 @@
 
 package app.model.Saler;
 
+import app.model.DB.immo.Interest;
 import app.model.DB.immo.Offer;
 import app.model.DB.product.Bien;
 import com.dmurph.mvc.model.AbstractModel;
@@ -16,18 +17,25 @@ import com.dmurph.mvc.model.AbstractModel;
  * Created by michaelsilvestre on 12/06/13.
  */
 public class SalerModel extends AbstractModel {
-	private Bien.BienStatus filterBienType;
-	private Offer.OfferStatus filterOfferType;
+	private Bien.Status filterBienType;
+	private Offer.Status filterOfferType;
+	private Interest.Status filterInterestType;
 
-	public void setFilterBienType(Bien.BienStatus argFilterBienType) {
-		Bien.BienStatus oldBienStatus = filterBienType;
+	public void setFilterBienType(Bien.Status argFilterBienType) {
+		Bien.Status oldBienStatus = filterBienType;
 		this.filterBienType = argFilterBienType;
 		firePropertyChange("bienFilter", oldBienStatus, filterBienType);
 	}
 
-	public void setFilterOfferType(Offer.OfferStatus argFilterOfferType) {
-		Offer.OfferStatus oldOfferStatus = filterOfferType;
+	public void setFilterOfferType(Offer.Status argFilterOfferType) {
+		Offer.Status oldOfferStatus = filterOfferType;
 		this.filterOfferType = argFilterOfferType;
 		firePropertyChange("offerFilter", oldOfferStatus, filterOfferType);
+	}
+
+	public void setFilterInterestType(Interest.Status argFilterInterestType) {
+		Interest.Status oldInterestStatus = filterInterestType;
+		this.filterInterestType = argFilterInterestType;
+		firePropertyChange("interestFilter", oldInterestStatus, filterInterestType);
 	}
 }
