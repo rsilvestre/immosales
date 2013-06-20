@@ -1,14 +1,11 @@
 *.class
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
 #ignore all image
-*.png
-*.gif
-*.jpg
+*.psd
 *.jpeg
 
 #ignore project data
