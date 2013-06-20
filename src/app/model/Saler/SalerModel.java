@@ -17,22 +17,46 @@ import com.dmurph.mvc.model.AbstractModel;
  * Created by michaelsilvestre on 12/06/13.
  */
 public class SalerModel extends AbstractModel {
+
+	/**
+	 * Filtrage des biens à afficher
+	 */
 	private Bien.Status filterBienType;
+
+	/**
+	 * Filtrage des offres à afficher
+	 */
 	private Offer.Status filterOfferType;
+
+	/**
+	 * Filtrage des visites à afficher
+	 */
 	private Interest.Status filterInterestType;
 
+	/**
+	 * Mise à feu du changement de filtrage des biens
+	 * @param argFilterBienType
+	 */
 	public void setFilterBienType(Bien.Status argFilterBienType) {
 		Bien.Status oldBienStatus = filterBienType;
 		this.filterBienType = argFilterBienType;
 		firePropertyChange("bienFilter", oldBienStatus, filterBienType);
 	}
 
+	/**
+	 * Mise à feu du changement de filtrage des offres
+	 * @param argFilterOfferType
+	 */
 	public void setFilterOfferType(Offer.Status argFilterOfferType) {
 		Offer.Status oldOfferStatus = filterOfferType;
 		this.filterOfferType = argFilterOfferType;
 		firePropertyChange("offerFilter", oldOfferStatus, filterOfferType);
 	}
 
+	/**
+	 * Mise à feu du changement de filtrage des visites
+	 * @param argFilterInterestType
+	 */
 	public void setFilterInterestType(Interest.Status argFilterInterestType) {
 		Interest.Status oldInterestStatus = filterInterestType;
 		this.filterInterestType = argFilterInterestType;

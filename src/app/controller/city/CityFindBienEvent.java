@@ -16,9 +16,21 @@ import app.model.bien.FindBienModel;
  */
 public class CityFindBienEvent extends MVCEvent {
 
+	/**
+	 * Model lié à l'événement
+	 */
 	public final FindBienModel model;
+
+	/**
+	 * Changement du nom de la ville
+	 */
 	public final String cityName;
 
+	/**
+	 * Constructeur
+	 * @param argCityName
+	 * @param argModel
+	 */
 	public CityFindBienEvent(String argCityName, FindBienModel argModel) {
 		super(CityController.FIND_BIEN_CITY_CITY);
 		this.model = argModel;

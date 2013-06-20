@@ -16,6 +16,11 @@ import app.controller.city.CpUserEvent;
  * Created by michaelsilvestre on 26/05/13.
  */
 public class CpUserCommand implements ICommand {
+
+	/**
+	 * Lance l'événement de recherche d'un bien coté utilisateur sur base du code postal
+	 * @param mvcEvent
+	 */
 	@Override
 	public void execute(MVCEvent mvcEvent) {
 		CpUserEvent event = (CpUserEvent)mvcEvent;

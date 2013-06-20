@@ -8,6 +8,8 @@
 
 package app.view.bien;
 
+import app.model.DB.immo.Offer;
+import app.view.InputDialog.DisabledItemsComboBox;
 import app.view.base.ISalerBusinessWindow;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -37,7 +39,7 @@ public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
 	private JTextField tFloorNumber;
 	private JTextField tCpeb;
 
-	private JComboBox cStatus;
+	private DisabledItemsComboBox cStatus;
 	private JTextField tBienType;
 
 	private boolean validate = false;
@@ -48,7 +50,7 @@ public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
 
 	public BienSalerWindow(Bien bien) {
 		initComponents();
-		populateLocal();
+		populateLocal(bien);
 		setDefaultValue(bien);
 		setDefaultValueLocal(bien);
 	}
@@ -57,10 +59,11 @@ public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
 		cStatus.setSelectedItem(bien.getStatus());
 	}
 
-	private void populateLocal() {
-		for (Bien.Status bienStatus : Bien.Status.values()) {
-			cStatus.addItem(bienStatus.toString());
-		}
+	private void populateLocal(Bien bien) {
+		cStatus.addItem(Bien.Status.WAITING.toString(), !Bien.Status.fromString(bien.getStatus()).equals(Bien.Status.WAITING));
+		cStatus.addItem(Bien.Status.AVAILABLE.toString(), !Bien.Status.fromString(bien.getStatus()).equals(Bien.Status.WAITING) && !Bien.Status.fromString(bien.getStatus()).equals(Bien.Status.AVAILABLE));
+		cStatus.addItem(Bien.Status.SIGNED.toString(), true);
+		cStatus.addItem(Bien.Status.SOLD.toString(), !Bien.Status.fromString(bien.getStatus()).equals(Bien.Status.SIGNED));
 	}
 
 	public Bien.Status getStatus() {
@@ -255,7 +258,7 @@ public class BienSalerWindow extends JDialog implements ISalerBusinessWindow {
 		final JPanel panel6 = new JPanel();
 		panel6.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow", "center:d:grow"));
 		panel4.add(panel6, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-		cStatus = new JComboBox();
+		cStatus = new DisabledItemsComboBox();
 		panel6.add(cStatus, cc.xy(3, 1));
 		final Spacer spacer2 = new Spacer();
 		panel6.add(spacer2, cc.xy(5, 1, CellConstraints.FILL, CellConstraints.DEFAULT));

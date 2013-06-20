@@ -19,7 +19,6 @@ import app.model.DB.immo.Interest;
 import app.model.DB.immo.Offer;
 import app.model.DB.product.Bien;
 import app.model.FooModelLocator;
-import app.model.buyer.BienRecorderAndOfferModel;
 import app.model.bien.FindBienModel;
 import app.view.InputDialog.FormatDialogWindow;
 import app.view.bien.FindBienWindow;
@@ -48,12 +47,9 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 	private JButton bRemoveInterest;
 	private JButton bRechercheButton;
 
-	private BienRecorderAndOfferModel bienRecorderAndOfferModel;
-
 	private BienRecorderAndOfferWindow bienRecorderAndOfferWindow = this;
 
-	public BienRecorderAndOfferWindow(BienRecorderAndOfferModel bienRecorderAndOfferModel) {
-		this.bienRecorderAndOfferModel = bienRecorderAndOfferModel;
+	public BienRecorderAndOfferWindow() {
 		this.add(panel1);
 		initComponents();
 		addListener();
@@ -89,6 +85,8 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 								bCreateOffer.setEnabled(false);
 							}
 						}
+					} else {
+						bCreateOffer.setEnabled(false);
 					}
 					if (Interest.Status.fromString(interest.getStatus()).equals(Interest.Status.TOVISIT)) {
 						bRemoveInterest.setEnabled(true);
@@ -114,6 +112,8 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 					Offer offer = App.em.load(Offer.class, listObject.getId());
 					if (Offer.Status.fromString(offer.getStatus()).equals(Offer.Status.SUBMIT)) {
 						bRemoveOffer.setEnabled(true);
+					} else {
+						bRemoveOffer.setEnabled(false);
 					}
 				}
 			}
@@ -168,32 +168,16 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 	}
 
 	private void findAction(Buyer buyer) {
-		FindBienWindow findBienWindow = getFindBienWindow();
-		if (findBienWindow.getSearchResultType() == FindBienWindow.FindBienType.NULL) {
+		FooModelLocator locator = FooModelLocator.getInstance();
+		FindBienModel findBienModel = new FindBienModel();
+		FindBienWindow findBienWindow = new FindBienWindow(findBienModel);
+		locator.setFindBienWindow(findBienWindow);
+		findBienWindow.pack();
+		findBienWindow.setVisible(true);
+		if (findBienWindow.getSearchResultValue() == null) {
 			return;
 		}
-
-		if (findBienWindow.getSearchResultType() == FindBienWindow.FindBienType.INTEREST) {
-			saveInterest(findBienWindow, buyer);
-		}
-		if (findBienWindow.getSearchResultType() == FindBienWindow.FindBienType.OFFRE) {
-			Long bienId = findBienWindow.getSearchResultValue();
-
-			if (!isNewOffer(bienId, buyer)) {
-				JOptionPane.showMessageDialog(this, "Vous avez déjà sélectionné ce bien ultérieurement");
-				return;
-			}
-
-			Bien bien = App.em.load(Bien.class, bienId);
-
-			FormatDialogWindow formatDialogWindow = new FormatDialogWindow("Montant de l'offre :", bien);
-			formatDialogWindow.pack();
-			formatDialogWindow.setVisible(true);
-			if (formatDialogWindow.getValue() == "-1") {
-				return;
-			}
-			saveOffer(bien, Long.parseLong(formatDialogWindow.getValue()), formatDialogWindow.getDateChooser());
-		}
+		saveInterest(findBienWindow, buyer);
 	}
 
 	private boolean isNewOffer(Long bienId, Buyer buyer) {
@@ -221,16 +205,6 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 		Interest interest = new Interest((Buyer) Session.getInstance().getAPerson(), bien, Interest.Status.TOVISIT);
 		App.em.insert(interest);
 		getInterestModel().addElement(getInterestList(interest));
-	}
-
-	private FindBienWindow getFindBienWindow() {
-		FooModelLocator locator = FooModelLocator.getInstance();
-		FindBienModel findBienModel = new FindBienModel();
-		FindBienWindow findBienWindow = new FindBienWindow(findBienModel);
-		locator.setFindBienWindow(findBienWindow);
-		findBienWindow.pack();
-		findBienWindow.setVisible(true);
-		return findBienWindow;
 	}
 
 	private void populateLocal() {
@@ -262,14 +236,14 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 		panel1 = new JPanel();
 		panel1.setLayout(new FormLayout("fill:max(d;4px):noGrow", "center:max(d;4px):noGrow"));
 		final JPanel panel2 = new JPanel();
-		panel2.setLayout(new FormLayout("fill:719px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
+		panel2.setLayout(new FormLayout("fill:795px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
 		CellConstraints cc = new CellConstraints();
 		panel1.add(panel2, cc.xy(1, 1));
 		final JPanel panel3 = new JPanel();
 		panel3.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow", "center:max(d;4px):noGrow"));
 		panel2.add(panel3, cc.xy(1, 1));
 		final JPanel panel4 = new JPanel();
-		panel4.setLayout(new FormLayout("fill:143px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
+		panel4.setLayout(new FormLayout("fill:144px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
 		panel3.add(panel4, cc.xy(3, 1));
 		bCreateOffer = new JButton();
 		bCreateOffer.setEnabled(false);
@@ -284,7 +258,7 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 		bRemoveInterest.setText("Annuler une visite");
 		panel4.add(bRemoveInterest, cc.xy(1, 5));
 		final JPanel panel5 = new JPanel();
-		panel5.setLayout(new FormLayout("fill:278px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:d:grow"));
+		panel5.setLayout(new FormLayout("fill:317px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:d:grow"));
 		panel3.add(panel5, cc.xy(5, 1));
 		final JLabel label1 = new JLabel();
 		label1.setText("Offre d'achat");
@@ -294,7 +268,7 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 		offreDAchatList = new JList();
 		scrollPane1.setViewportView(offreDAchatList);
 		final JPanel panel6 = new JPanel();
-		panel6.setLayout(new FormLayout("fill:281px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:d:grow"));
+		panel6.setLayout(new FormLayout("fill:318px:noGrow", "center:d:noGrow,top:3dlu:noGrow,center:d:grow"));
 		panel3.add(panel6, cc.xy(1, 1));
 		final JLabel label2 = new JLabel();
 		label2.setText("Rendez-vous");

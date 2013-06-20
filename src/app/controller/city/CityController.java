@@ -22,6 +22,9 @@ public class CityController extends FrontController {
 	public static final String FIND_BIEN_CITY_CITY = "FIND_BIEN_CITY_CITY_CONTROLLER";
 	public static final String FIND_BIEN_CITY_CP = "FIND_BIEN_CITY_CP_CONTROLLER";
 
+	/**
+	 * Enregistre l'événement de recherche d'une adresse
+	 */
 	public CityController() {
 		registerCommand(USER_CITY_CITY, CityUserCommand.class);
 		registerCommand(USER_CITY_CP, CpUserCommand.class);

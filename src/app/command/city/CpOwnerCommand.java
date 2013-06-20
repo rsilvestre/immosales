@@ -16,6 +16,11 @@ import app.controller.city.CpOwnerEvent;
  * Created by michaelsilvestre on 26/05/13.
  */
 public class CpOwnerCommand implements ICommand {
+
+	/**
+	 * Lance l'événement de recherche d'un bien coté propriétaire sur base du code postal
+	 * @param mvcEvent
+	 */
 	@Override
 	public void execute(MVCEvent mvcEvent) {
 		CpOwnerEvent event = (CpOwnerEvent)mvcEvent;

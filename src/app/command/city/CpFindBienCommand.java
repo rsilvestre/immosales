@@ -16,6 +16,11 @@ import app.controller.city.CpFindBienEvent;
  * Created by michaelsilvestre on 26/05/13.
  */
 public class CpFindBienCommand implements ICommand {
+
+	/**
+	 * Lance l'événement de recherche d'un bien sur base du code postal
+	 * @param mvcEvent
+	 */
 	@Override
 	public void execute(MVCEvent mvcEvent) {
 		CpFindBienEvent event = (CpFindBienEvent)mvcEvent;

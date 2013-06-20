@@ -21,6 +21,9 @@ import app.command.main.ConnexionCommand;
 public class MainController extends FrontController {
 	public static final String CONNEXION = "MAIN_CONNEXION";
 
+	/**
+	 * Enregistre l'événement de connexion d'un utilisateur à l'application
+	 */
 	public MainController() {
 		registerCommand(CONNEXION, ConnexionCommand.class);
 	}

@@ -22,43 +22,51 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
+ * Système de recherche au changement de combobox
  * Created by michaelsilvestre on 20/05/13.
  */
 public class FindBienModel extends AbstractModel {
+
+	/**
+	 * Liste de bien
+	 */
 	private List<Bien> listBiens;
-	private HashMap<String, String> requestFieldDatas = new HashMap<String, String>();
+
+	/**
+	 * Valeur de la ville stocké
+	 */
 	private String city;
+
+	/**
+	 * Valeur du code postal stocké
+	 */
 	private String cpValue;
 
-	public String getCity() {
-		return city;
-	}
-
+	/**
+	 * Alume le feu pour la recherche de villes sur base du nom de celle-ci
+	 * @param argCity
+	 */
 	public void setCity(String argCity) {
 		String oldCity = city;
 		city = argCity;
 		firePropertyChange("newCity", oldCity, city);
 	}
 
-	public void setDefaultCity(String argCity) {
-		city = argCity;
-	}
-
-	public String getCpValue() {
-		return cpValue;
-	}
-
+	/**
+	 * Alume le feu pour la recherche de ville sur base du code postal
+	 * @param argCpValue
+	 */
 	public void setCpValue(String argCpValue) {
 		String oldCpValue = cpValue;
 		cpValue = argCpValue;
 		firePropertyChange("newCp", oldCpValue, cpValue);
 	}
 
-	public void setDefaultCpValue(String argCpValue) {
-		cpValue = argCpValue;
-	}
-
-	public List<Bien> getSearchBien() {
+	/**
+	 * Système de recherche d'un bien suivant certain critères de sélection
+	 * @return une liste de ville
+	 */
+	private List<Bien> getSearchBien(HashMap<String, String> requestFieldDatas) {
 
 		String localityIdsList = "";
 
@@ -88,18 +96,17 @@ public class FindBienModel extends AbstractModel {
 		cityIdList = "("+cityIdList.substring(0,cityIdList.length()-1) + ")";
 
 		String typeProduct = (requestFieldDatas.get("typeField") != null && requestFieldDatas.get("typeField") != "") ? " and type_product like '%"+requestFieldDatas.get("typeField")+"%'" : "";
-		String bienStatus = Session.getInstance().getAPerson() instanceof Buyer ? " and status like 'Disponible'" : "";
+		String bienStatus = Session.getInstance().getAPerson() instanceof Buyer ? " and status like 'Disponible' or status like 'Acte signé'" : "";
 		List<Bien> result = App.em.find(Bien.class, "where city_id in " + cityIdList + typeProduct + bienStatus);
 		return result;
 	}
 
-	public void launchSearch() {
+	/**
+	 * Alume le feu pour une recherche à l'aide de combobox sur base de certains critères
+	 */
+	public void launchSearch(HashMap<String, String> requestFieldDatas) {
 		List<Bien> oldListBiens = listBiens;
-		listBiens = this.getSearchBien();
+		listBiens = this.getSearchBien(requestFieldDatas);
 		firePropertyChange("listBiens", oldListBiens, listBiens);
-	}
-
-	public void setRequestFieldDatas(HashMap<String, String> requestFieldDatas) {
-		this.requestFieldDatas = requestFieldDatas;
 	}
 }

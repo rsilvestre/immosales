@@ -4,7 +4,7 @@
     <rowspec value="center:max(d;4px):noGrow"/>
     <colspec value="fill:max(d;4px):noGrow"/>
     <constraints>
-      <xy x="20" y="20" width="719" height="213"/>
+      <xy x="20" y="20" width="795" height="213"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -13,7 +13,7 @@
         <rowspec value="center:d:noGrow"/>
         <rowspec value="top:3dlu:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
-        <colspec value="fill:719px:noGrow"/>
+        <colspec value="fill:795px:noGrow"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms/>
@@ -41,7 +41,7 @@
                 <rowspec value="center:max(d;4px):noGrow"/>
                 <rowspec value="top:3dlu:noGrow"/>
                 <rowspec value="center:max(d;4px):noGrow"/>
-                <colspec value="fill:143px:noGrow"/>
+                <colspec value="fill:144px:noGrow"/>
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms/>
@@ -85,7 +85,7 @@
                 <rowspec value="center:d:noGrow"/>
                 <rowspec value="top:3dlu:noGrow"/>
                 <rowspec value="center:d:grow"/>
-                <colspec value="fill:278px:noGrow"/>
+                <colspec value="fill:317px:noGrow"/>
                 <constraints>
                   <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms/>
@@ -123,7 +123,7 @@
                 <rowspec value="center:d:noGrow"/>
                 <rowspec value="top:3dlu:noGrow"/>
                 <rowspec value="center:d:grow"/>
-                <colspec value="fill:281px:noGrow"/>
+                <colspec value="fill:318px:noGrow"/>
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms/>

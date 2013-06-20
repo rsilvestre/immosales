@@ -21,21 +21,21 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class InterestBuyerWindow extends JDialog {
-	protected JPanel contentPane;
-	protected JButton buttonOK;
-	protected JButton buttonCancel;
-	protected JPanel panel1;
-	protected JTextField tId;
-	protected JTextField tOwner;
-	protected JTextField tName;
-	protected JTextArea tDescription;
-	protected JTextArea tAddress;
-	protected JTextField tPrice;
-	protected JTextField tYearConstruction;
-	protected JTextField tFaceWide;
-	protected JTextField tFaceNumber;
-	protected JTextField tFloorNumber;
-	protected JTextField tCpeb;
+	private JPanel contentPane;
+	private JButton buttonOK;
+	private JButton buttonCancel;
+	private JPanel panel1;
+	private JTextField tId;
+	private JTextField tOwner;
+	private JTextField tName;
+	private JTextArea tDescription;
+	private JTextArea tAddress;
+	private JTextField tPrice;
+	private JTextField tYearConstruction;
+	private JTextField tFaceWide;
+	private JTextField tFaceNumber;
+	private JTextField tFloorNumber;
+	private JTextField tCpeb;
 
 	private JTextField tBienType;
 

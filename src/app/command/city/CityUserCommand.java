@@ -16,6 +16,11 @@ import app.controller.city.CityUserEvent;
  * Created by michaelsilvestre on 26/05/13.
  */
 public class CityUserCommand implements ICommand {
+
+	/**
+	 * Lance l'événement de recherche d'un bien coté utilisateur sur base de la ville
+	 * @param mvcEvent
+	 */
 	@Override
 	public void execute(MVCEvent mvcEvent) {
 		CityUserEvent event = (CityUserEvent)mvcEvent;

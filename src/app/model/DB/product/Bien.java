@@ -354,6 +354,18 @@ public class Bien implements IBusinessModel {
 		for (Offer offer : offers) offer.setBien(this);
 	}
 
+	public Offer getOfferAccepted() {
+		List<Offer> offerList = getOffers();
+		if (offerList.size()>0) {
+			for (Offer offer : offerList) {
+				if (Offer.Status.fromString(offer.getStatus()).equals(Offer.Status.ACCEPTED)) {
+					return offer;
+				}
+			}
+		}
+		return null;
+	}
+
 	public String [] getTableRow() {
 		return new String [] {
 			this.getId().toString(),
@@ -361,7 +373,8 @@ public class Bien implements IBusinessModel {
 			this.getName(),
 			this.getDescription(),
 			this.getPrice().toString(),
-			"Edit"
+			"Edit",
+			this.getStatus()
 			};
 	}
 

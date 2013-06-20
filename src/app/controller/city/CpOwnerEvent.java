@@ -16,9 +16,21 @@ import app.model.owner.OwnerPanelModel;
  */
 public class CpOwnerEvent extends MVCEvent {
 
+	/**
+	 * Model lié à l'événement
+	 */
 	public final OwnerPanelModel model;
+
+	/**
+	 * Changement du code postal
+	 */
 	public final String cpValue;
 
+	/**
+	 * Constructeur
+	 * @param argCpValue
+	 * @param argModel
+	 */
 	public CpOwnerEvent(String argCpValue, OwnerPanelModel argModel) {
 		super(CityController.OWNER_CITY_CP);
 		this.model = argModel;

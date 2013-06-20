@@ -18,9 +18,21 @@ import com.dmurph.mvc.MVCEvent;
  */
 public class FilterInterestDbEvent extends MVCEvent {
 
+	/**
+	 * Model lié à l'événement
+	 */
 	public final SalerModel model;
+
+	/**
+	 * Changement du status de l'intérêt porté à un bien
+	 */
 	public final Interest.Status interestStatus;
 
+	/**
+	 * Constructeur
+	 * @param interestStatus
+	 * @param salerModel
+	 */
 	public FilterInterestDbEvent(Interest.Status interestStatus, SalerModel salerModel) {
 		super(SalerController.FILTER_INTEREST_TYPE);
 		this.interestStatus = interestStatus;

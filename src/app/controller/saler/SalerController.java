@@ -21,6 +21,9 @@ public class SalerController extends FrontController {
 	public static final String FILTER_OFFER_TYPE = "FILTER_OFFER_TYPE_CONTROLLER";
 	public static final String FILTER_INTEREST_TYPE = "FILTER_INTEREST_TYPE_CONTROLLER";
 
+	/**
+	 * Enregistre l'événement de filtrage de recherche
+	 */
 	public SalerController() {
 		registerCommand(FILTER_BIEN_TYPE, FilterBienDbCommand.class);
 		registerCommand(FILTER_OFFER_TYPE, FilterOfferDbCommand.class);

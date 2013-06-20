@@ -54,9 +54,9 @@ public class OfferOwnerDialogWindow extends JDialog implements IOwnerBusinessWin
 
 	private void populateLocal(Offer offer) {
 		Offer.Status offreStatus = Offer.Status.fromString(offer.getStatus());
-		cStatus.addItem(Offer.Status.SUBMIT.toString(), offreStatus.equals(Offer.Status.SUBMIT));
+		cStatus.addItem(Offer.Status.SUBMIT.toString(), !offreStatus.equals(Offer.Status.SUBMIT));
 		cStatus.addItem(Offer.Status.ACCEPTED.toString(), true);
-		cStatus.addItem(Offer.Status.REFUSED.toString(), offreStatus.equals(Offer.Status.SUBMIT));
+		cStatus.addItem(Offer.Status.REFUSED.toString(), !offreStatus.equals(Offer.Status.SUBMIT));
 	}
 
 	public Offer.Status getStatus() {

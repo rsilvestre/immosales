@@ -171,7 +171,7 @@ public class SalerUserControlWindow extends AbstractListWindow {
 	 */
 	private void $$$setupUI$$$() {
 		panel1 = new JPanel();
-		panel1.setLayout(new FormLayout("fill:640px:grow", "center:max(d;4px):noGrow,top:3dlu:noGrow,center:d:grow"));
+		panel1.setLayout(new FormLayout("fill:780px:grow", "center:max(d;4px):noGrow,top:3dlu:noGrow,center:d:grow"));
 		final JPanel panel2 = new JPanel();
 		panel2.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
 		CellConstraints cc = new CellConstraints();
@@ -210,7 +210,7 @@ public class SalerUserControlWindow extends AbstractListWindow {
 		panel8.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow", "center:d:grow"));
 		panel7.add(panel8, cc.xy(1, 1));
 		final JLabel label2 = new JLabel();
-		label2.setText("Intérêts");
+		label2.setText("Demande de visite");
 		panel8.add(label2, cc.xy(3, 1));
 		final Spacer spacer3 = new Spacer();
 		panel8.add(spacer3, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));

@@ -16,10 +16,14 @@ import app.controller.bien.FindBienDbEvent;
  * Created by michaelsilvestre on 20/05/13.
  */
 public class FindBienDbCommand implements ICommand {
+
+	/**
+	 * Lance l'événement de recherche d'un bien
+	 * @param mvcEvent
+	 */
 	@Override
 	public void execute(MVCEvent mvcEvent) {
 		FindBienDbEvent event = (FindBienDbEvent) mvcEvent;
-		event.model.setRequestFieldDatas(event.requestFieldDatas);
-		event.model.launchSearch();
+		event.model.launchSearch(event.requestFieldDatas);
 	}
 }

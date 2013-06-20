@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="app.view.owner.OwnerUserControl">
   <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="FormLayout">
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:3dlu:noGrow"/>
     <rowspec value="center:d:grow"/>
     <rowspec value="top:3dlu:noGrow"/>
     <rowspec value="center:d:grow"/>
@@ -8,7 +10,7 @@
     <rowspec value="center:max(d;4px):noGrow"/>
     <colspec value="fill:d:grow"/>
     <constraints>
-      <xy x="20" y="20" width="635" height="508"/>
+      <xy x="20" y="20" width="762" height="508"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -16,43 +18,130 @@
       <grid id="100a7" layout-manager="FormLayout">
         <rowspec value="center:100px:grow"/>
         <rowspec value="top:3dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
+        <rowspec value="top:3dlu:noGrow"/>
         <rowspec value="center:100px:grow"/>
-        <colspec value="fill:d:grow"/>
+        <colspec value="fill:762px:grow"/>
         <constraints>
-          <grid row="0" column="0" row-span="3" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="3" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
-          <scrollpane id="bc825">
+          <grid id="fa347" layout-manager="FormLayout">
+            <rowspec value="center:d:grow"/>
+            <colspec value="fill:d:grow"/>
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false" defaultalign-vert="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
             <children>
-              <component id="e8d9a" class="javax.swing.JTable" binding="table1" default-binding="true">
-                <constraints/>
+              <scrollpane id="bc825">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
                 <properties/>
-              </component>
+                <border type="none"/>
+                <children>
+                  <component id="e8d9a" class="javax.swing.JTable" binding="table1" default-binding="true">
+                    <constraints/>
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
             </children>
-          </scrollpane>
-          <scrollpane id="b4eb6">
+          </grid>
+          <grid id="2020e" layout-manager="FormLayout">
+            <rowspec value="center:d:grow"/>
+            <colspec value="fill:d:grow"/>
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-vert="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
             <children>
-              <component id="c55ae" class="javax.swing.JList" binding="listOffer">
-                <constraints/>
+              <scrollpane id="b4eb6">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
                 <properties/>
-              </component>
+                <border type="none"/>
+                <children>
+                  <component id="c55ae" class="javax.swing.JList" binding="listOffer">
+                    <constraints/>
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
             </children>
-          </scrollpane>
+          </grid>
+          <grid id="2353d" layout-manager="FormLayout">
+            <rowspec value="center:d:grow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:d:grow"/>
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="61fe6" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Offres reçues"/>
+                </properties>
+              </component>
+              <hspacer id="73bab">
+                <constraints>
+                  <grid row="0" column="10" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+              </hspacer>
+              <hspacer id="c687">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+              </hspacer>
+              <hspacer id="56e7">
+                <constraints>
+                  <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+              </hspacer>
+              <hspacer id="12d43">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+              </hspacer>
+              <hspacer id="2e7c1">
+                <constraints>
+                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+              </hspacer>
+            </children>
+          </grid>
         </children>
       </grid>
       <grid id="5d996" layout-manager="FormLayout">
@@ -63,7 +152,7 @@
         <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
         <properties/>
@@ -85,6 +174,67 @@
             </constraints>
           </hspacer>
           <hspacer id="e494d">
+            <constraints>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+          </hspacer>
+        </children>
+      </grid>
+      <grid id="6245b" layout-manager="FormLayout">
+        <rowspec value="center:d:grow"/>
+        <colspec value="fill:d:grow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:d:grow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:d:grow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:d:grow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:d:grow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:d:grow"/>
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="63b29" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Biens mis en vente"/>
+            </properties>
+          </component>
+          <hspacer id="e9e00">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+          </hspacer>
+          <hspacer id="a4a6b">
+            <constraints>
+              <grid row="0" column="10" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+          </hspacer>
+          <hspacer id="89945">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+          </hspacer>
+          <hspacer id="3dfbe">
+            <constraints>
+              <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+          </hspacer>
+          <hspacer id="9d316">
             <constraints>
               <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false"/>

@@ -5,10 +5,7 @@ import app.controller.main.ConnexionEvent;
 import app.model.FooModelLocator;
 import app.model.DB.identity.*;
 import app.model.Saler.SalerModel;
-import app.model.buyer.BienRecorderAndOfferModel;
 import app.model.main.MainModel;
-import app.model.owner.OwnerModel;
-import app.model.user.UserModel;
 import app.view.Saler.SalerUserControlWindow;
 import app.view.buyer.BienRecorderAndOfferWindow;
 import app.view.owner.OwnerUserControl;
@@ -39,12 +36,13 @@ public class MainWindow extends JFrame {
 	private JMenuItem menuConnexion;
 	private JMenuItem menuLeave;
 	private JTextArea textArea;
-	private JButton createAdvertising;
-
-	private final MainWindow fenetre = this;
 
 	private MainModel mainModel;
 
+	/**
+	 * Constructeur
+	 * @param mainModel
+	 */
 	public MainWindow(MainModel mainModel) {
 		this.mainModel = mainModel;
 		initComponents();
@@ -52,6 +50,9 @@ public class MainWindow extends JFrame {
 		addListeners();
 	}
 
+	/**
+	 * Initialisation des composants de base
+	 */
 	private void initComponents() {
 		this.setTitle("ImmoSales");
 		this.setMinimumSize(new Dimension(640, 480));
@@ -72,12 +73,12 @@ public class MainWindow extends JFrame {
 		setJMenuBar(jMenuBar);
 	}
 
+	/**
+	 * Liaison des écouteur avec les lanceurs dans les modèles
+	 * Setting des valeurs par défaut
+	 */
 	private void linkModel() {
-		//text.setText(model.getText());
-		//text.setForeground(model.getColor());
-		textArea.setText(mainModel.getText());
-		//mainScreen.add(new JScrollPane(textArea));
-		//mainScreen.add(new WelcomeWindow());
+		// set de l'image de démarrage
 		try {
 			BufferedImage myPicture = ImageIO.read(getClass().getResource("/ressources/images/welcome2.png"));
 			JLabel picLabel = new JLabel(new ImageIcon(myPicture));
@@ -86,20 +87,20 @@ public class MainWindow extends JFrame {
 			e.printStackTrace();
 		}
 
+		// Décore le menu principale
 		JMenu fileMenu = new JMenu("Fichier");
 		jMenuBar.add(fileMenu);
 		fileMenu.add(menuConnexion);
 		fileMenu.add(menuLeave);
 
+		// Ecouteur d'événement
 		mainModel.addPropertyChangeListener(new PropertyChangeListener() {
 
 			public void propertyChange(PropertyChangeEvent evt) {
 				String name = evt.getPropertyName();
 
-				if (name.equals("text")) {
-					String value = (String) evt.getNewValue();
-					textArea.setText(value);
-				} else if (name.equals("aPerson")) {
+				// Ecoute si on change d'utilisateur et adapte le contenu de la page en fonction
+				if (name.equals("aPerson")) {
 					if (Session.getInstance().isConnected()) {
 						connectionRespone((APerson)evt.getNewValue());
 						textArea.append(" Connected!\n");
@@ -113,17 +114,19 @@ public class MainWindow extends JFrame {
 		});
 	}
 
+	/**
+	 * Adapte le contenu de la page principale en fonction de l'utilisateur
+	 * @param aPerson
+	 */
 	private void connectionRespone(APerson aPerson) {
 		Person person = aPerson.getPerson();
 		JTextField connectionLabel = new JTextField(
 				"Bienvenu " + person.getTitre() + " " + person.getLastName() +
 				" Connecté en tant que : " + aPerson.getUserType().toString()
 		);
-		createAdvertising = new JButton("Nouveau bien");
 
 		remove(box);
 		box = Box.createHorizontalBox();
-		box.add(createAdvertising);
 		box.add(Box.createRigidArea(new Dimension(31,1)));
 		box.add(Box.createHorizontalGlue());
 		box.add(connectionLabel);
@@ -137,55 +140,67 @@ public class MainWindow extends JFrame {
 		this.repaint();
 	}
 
+	/**
+	 * Ajoute un control utilisateur à l'écran principale suivant le type d'utilisateur
+	 * @return
+	 */
 	private Component contentSelector() {
+		// Pour les propriétaires
 		if (Session.getInstance().getAPerson() instanceof Owner) {
-			OwnerModel ownerModel = new OwnerModel();
-			//return new OwnerWindow(ownerModel);
-			return new OwnerUserControl(ownerModel);
+			return new OwnerUserControl();
+		// Pour les acheteurs
 		} else if (Session.getInstance().getAPerson() instanceof Buyer) {
-			BienRecorderAndOfferModel bienRecorderAndOfferModel = new BienRecorderAndOfferModel();
-			//return new BuyerWindow(buyerModel);
-			return new BienRecorderAndOfferWindow(bienRecorderAndOfferModel);
+			return new BienRecorderAndOfferWindow();
+		// Pour les agent immobiliers
 		} else if(Session.getInstance().getAPerson() instanceof Saler) {
 			SalerModel salerModel = new SalerModel();
 			return new SalerUserControlWindow(salerModel);
 		}
+		// page d'erreur 404. Wink wink
 		return new JLabel("No Frame for this userType now!!!");
 	}
 
+	/**
+	 * Lanceur d'événement
+	 */
 	private void addListeners() {
+		// Touche de raccourci pour aller directement à l'écran de connexion
 		int toucheRaccourcis = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-
 		menuConnexion.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, toucheRaccourcis));
+
+		// Lancement d'un dialog pour inviter à se connecter à l'application
 		menuConnexion.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				//To change body of implemented methods use File | Settings | File Templates.
-
+				// Instanciation de l'optionpane de connexion
 				FooModelLocator locator = FooModelLocator.getInstance();
-				UserModel userModel = new UserModel();
-				UserWindow userWindow = new UserWindow(userModel);
+				UserWindow userWindow = new UserWindow();
 				locator.setUserWindow(userWindow);
 				userWindow.setSize(650, 300);
 
-				int connexionDialog = JOptionPane.showConfirmDialog(fenetre, userWindow, "Connexion", JOptionPane.OK_CANCEL_OPTION);
+				// Lancement d'un dialog
+				int connexionDialog = JOptionPane.showConfirmDialog(MainWindow.this, userWindow, "Connexion", JOptionPane.OK_CANCEL_OPTION);
 				if (connexionDialog == JOptionPane.OK_OPTION) {
+					// Conenxion à l'application si un utilisateur est selectionné et sauvegarde en session
 					if (userWindow.getSelectedPerson() != null) {
 						Session.getInstance().setConnected(true);
 						Session.getInstance().setAPerson(userWindow.getSelectedPerson());
 					}
 				}
+				// Adaptation du contenu de la page principale suivant l'utilisateur sélectionné
 				ConnexionEvent event = new ConnexionEvent(Session.getInstance().getAPerson(), mainModel);
 				event.dispatch();
 			}
 		});
 
+		// Touche de raccourci pour la fermeture de l'application
 		menuLeave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, toucheRaccourcis));
+		// Dialog à la fermeture de l'application
 		menuLeave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				//To change body of implemented methods use File | Settings | File Templates.
-				if (JOptionPane.showConfirmDialog(fenetre, "Voulez-vous vraiment quitter?", "Quitter", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+				if (JOptionPane.showConfirmDialog(MainWindow.this, "Voulez-vous vraiment quitter?", "Quitter", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					System.exit(0);
 				}
 			}

@@ -12,7 +12,6 @@ import core.Session;
 import app.App;
 import app.model.FooModelLocator;
 import app.model.DB.identity.*;
-import app.model.user.UserModel;
 import app.model.user.UserPanelModel;
 
 import javax.swing.*;
@@ -29,19 +28,12 @@ import java.util.List;
  * Time: 18:14
  * To change this template use File | Settings | File Templates.
  */
+
+/**
+ * Dialog de gestion des utilisateurs
+ */
 public class UserWindow extends JPanel {
-
-	private final UserWindow userWindow = this;
-	//private final static String[] USER_TYPE = {"Acheteur", "Vendeur", "Commercial"};
-	private final static String[] USER_TYPE = {
-		APerson.userTypeEnum.Buyer.toString(),
-		APerson.userTypeEnum.Owner.toString(),
-		APerson.userTypeEnum.Saler.toString()
-	};
-
 	private JComboBox userType;
-	private JButton login;
-	private JButton logout;
 	private JButton create;
 	private JTable jTable;
 	private DefaultTableModel tableModel;
@@ -49,10 +41,10 @@ public class UserWindow extends JPanel {
 	private APerson selectedPerson = null;
 	private List<APerson> aPersons = null;
 
-	private UserModel userModel;
-
-	public UserWindow(UserModel argUserModel) {
-		userModel = argUserModel;
+	/**
+	 * Constructeur
+	 */
+	public UserWindow() {
 		initComponents();
 		addListeners();
 
@@ -60,13 +52,11 @@ public class UserWindow extends JPanel {
 	}
 
 	/**
-	 * Initialisation des composants de base
+	 * Initialisation des composants de base fait à la main
 	 */
 	private void initComponents() {
 		//this.setTitle("Contact");
-		userType = new JComboBox(USER_TYPE);
-		login = new JButton();
-		logout = new JButton();
+		userType = new JComboBox(APerson.UserTypeEnum.getUserType());
 		create = new JButton();
 		aPersons = new ArrayList<APerson>();
 
@@ -103,6 +93,7 @@ public class UserWindow extends JPanel {
 	 * Ajout des écouteurs d'événement
 	 */
 	private void addListeners() {
+		// Lancement d'un fenêtre de création d'un nouvelle utilisateur
 		create.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -110,6 +101,7 @@ public class UserWindow extends JPanel {
 				createUser(Session.getInstance().getAPerson());
 			}
 		});
+		// Modification d'un utilisateur existant (pas de rôle actuellement)
 		jTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
 				if (evt.getClickCount() == 1) {
@@ -121,6 +113,7 @@ public class UserWindow extends JPanel {
 				}
 			}
 		});
+		// Changement de contexte utilisateur
 		userType.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent evt) {
@@ -131,23 +124,12 @@ public class UserWindow extends JPanel {
 		});
 	}
 
+	/**
+	 * Mapping de l'édition d'un utilisateur
+	 * @param target
+	 */
 	private void editRow(JTable target) {
 		int row = target.getSelectedRow();
-
-		/*String prenom = (String)target.getModel().getValueAt(row, 2);
-		String nom = (String)target.getModel().getValueAt(row, 1);
-		Person person1 = App.em.findUnique(Person.class, "where firstname = ? and lastname = ?", prenom, nom);
-		Address address = person1.getAddresses().get(0);
-
-		String test = getCurrentUserType();
-		APerson aPerson = null;
-		if (userTypeEnum.fromString(test) == userTypeEnum.Buyer) {
-			aPerson = person1.getBuyer();
-		} else if (userTypeEnum.fromString(test) == userTypeEnum.Owner) {
-			aPerson = person1.getOwner();
-		} else if (userTypeEnum.fromString(test) == userTypeEnum.Saler) {
-			aPerson = person1.getSaler();
-		}*/
 		APerson aPerson = getAPersonSelected(row);
 
 		FooModelLocator locator = FooModelLocator.getInstance();
@@ -155,7 +137,7 @@ public class UserWindow extends JPanel {
 		UserPanelWindow userPanelWindow = new UserPanelWindow(userPanelModel, aPerson);
 		locator.setUserPanelWindow(userPanelWindow);
 
-		int reponse = JOptionPane.showConfirmDialog(userWindow, userPanelWindow, "Nouveau contact", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		int reponse = JOptionPane.showConfirmDialog(UserWindow.this, userPanelWindow, "Nouveau contact", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
 		if (reponse == JOptionPane.OK_OPTION) {
 			//modele.addRow(new String [] {userPanelWindow.getTitre(), userPanelWindow.getNom(), userPanelWindow.getPrenom(), getAddress(userPanelWindow)});
@@ -175,11 +157,11 @@ public class UserWindow extends JPanel {
 			aPerson.setPhoneNumber(userPanelWindow.getTelephone());
 			aPerson.setEmail(userPanelWindow.getEmail());
 			String currentUserType = getCurrentUserType();
-			if (APerson.userTypeEnum.fromString(currentUserType) == APerson.userTypeEnum.Buyer) {
+			if (APerson.UserTypeEnum.fromString(currentUserType) == APerson.UserTypeEnum.Buyer) {
 				App.em.update((Buyer)aPerson);
-			} else if (APerson.userTypeEnum.fromString(currentUserType) == APerson.userTypeEnum.Owner) {
+			} else if (APerson.UserTypeEnum.fromString(currentUserType) == APerson.UserTypeEnum.Owner) {
 				App.em.update((Owner)aPerson);
-			} else if (APerson.userTypeEnum.fromString(currentUserType) == APerson.userTypeEnum.Saler) {
+			} else if (APerson.UserTypeEnum.fromString(currentUserType) == APerson.UserTypeEnum.Saler) {
 				App.em.update((Saler)aPerson);
 			}
 
@@ -191,13 +173,17 @@ public class UserWindow extends JPanel {
 		}
 	}
 
+	/**
+	 * mapping de création d'un utilisateur
+	 * @param aPerson
+	 */
 	private void createUser(APerson aPerson) {
 		FooModelLocator locator = FooModelLocator.getInstance();
 		UserPanelModel userPanelModel = new UserPanelModel();
 		UserPanelWindow userPanelWindow = null;
 		if (aPerson != null) {
 			if (Session.getInstance().getAPerson() != null) {
-				if (JOptionPane.showConfirmDialog(userWindow, "Voulez-vous utiliser les mêmes données que pour votre connexion actuelle ?", "Oui", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+				if (JOptionPane.showConfirmDialog(UserWindow.this, "Voulez-vous utiliser les mêmes données que pour votre connexion actuelle ?", "Oui", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					userPanelWindow = new UserPanelWindow(userPanelModel, aPerson);
 				} else {
 					userPanelWindow = new UserPanelWindow(userPanelModel);
@@ -211,7 +197,7 @@ public class UserWindow extends JPanel {
 
 		locator.setUserPanelWindow(userPanelWindow);
 
-		int response = JOptionPane.showConfirmDialog(userWindow, userPanelWindow, "Nouveau contact", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		int response = JOptionPane.showConfirmDialog(UserWindow.this, userPanelWindow, "Nouveau contact", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
 		if (response == JOptionPane.OK_OPTION) {
 			tableModel.addRow(new String[] {
@@ -237,15 +223,15 @@ public class UserWindow extends JPanel {
 			person.addAddresses(address);
 
 			String typeUtilisateur = (getCurrentUserType());
-			if (APerson.userTypeEnum.fromString(typeUtilisateur) == APerson.userTypeEnum.Buyer) {
+			if (APerson.UserTypeEnum.fromString(typeUtilisateur) == APerson.UserTypeEnum.Buyer) {
 				Buyer buyer = new Buyer(person, userPanelWindow.getTelephone(), userPanelWindow.getEmail());
 				App.em.insert(buyer);
 				addAPersons(buyer);
-			} else if (APerson.userTypeEnum.fromString(typeUtilisateur) == APerson.userTypeEnum.Owner) {
+			} else if (APerson.UserTypeEnum.fromString(typeUtilisateur) == APerson.UserTypeEnum.Owner) {
 				Owner owner = new Owner(person, userPanelWindow.getTelephone(), userPanelWindow.getEmail());
 				App.em.insert(owner);
 				addAPersons(owner);
-			} else if (APerson.userTypeEnum.fromString(typeUtilisateur) == APerson.userTypeEnum.Saler) {
+			} else if (APerson.UserTypeEnum.fromString(typeUtilisateur) == APerson.UserTypeEnum.Saler) {
 				Saler saler = new Saler(person, userPanelWindow.getTelephone(), userPanelWindow.getEmail());
 				App.em.insert(saler);
 				addAPersons(saler);
@@ -253,15 +239,19 @@ public class UserWindow extends JPanel {
 		}
 	}
 
+	/**
+	 * Ajout des textes sur les élements de la page
+	 */
 	private void populateLocale() {
-		login.setText("Connexion");
 		create.setText("Créer un utilisateur");
-		logout.setText("Déconnexion");
-
 		refreshTable();
 
 	}
 
+	/**
+	 * Rafraichissement du tableau contenant les utilisateurs disponnibles
+	 * Pourrait être réfactoré pour utiliser la reflection
+	 */
 	private void refreshTable() {
 		// Erase all previous row
 		for (int i = ((DefaultTableModel)jTable.getModel()).getRowCount()-1;i>=0;i--) {
@@ -274,21 +264,21 @@ public class UserWindow extends JPanel {
 		// Select new user type
 		String currentUserType = getCurrentUserType();
 
-		if (APerson.userTypeEnum.fromString(currentUserType) == APerson.userTypeEnum.Buyer) {
+		if (APerson.UserTypeEnum.fromString(currentUserType) == APerson.UserTypeEnum.Buyer) {
 			List<Buyer> buyers = App.em.find(Buyer.class, "order by id");
 			for (Buyer buyer : buyers) {
 				addAPersons(buyer);
 				tableAddRow(buyer);
 			}
 		}
-		if (APerson.userTypeEnum.fromString(currentUserType) == APerson.userTypeEnum.Owner) {
+		if (APerson.UserTypeEnum.fromString(currentUserType) == APerson.UserTypeEnum.Owner) {
 			List<Owner> owners = App.em.find(Owner.class, "order by id");
 			for (Owner owner : owners) {
 				addAPersons(owner);
 				tableAddRow(owner);
 			}
 		}
-		if (APerson.userTypeEnum.fromString(currentUserType) == APerson.userTypeEnum.Saler) {
+		if (APerson.UserTypeEnum.fromString(currentUserType) == APerson.UserTypeEnum.Saler) {
 			List<Saler> salers = App.em.find(Saler.class, "order by id");
 			for (Saler saler : salers) {
 				addAPersons(saler);
@@ -297,14 +287,27 @@ public class UserWindow extends JPanel {
 		}
 	}
 
+	/**
+	 * Ajout de row dans le tableau
+	 * @param aPersonRow
+	 */
 	private void tableAddRow(APerson aPersonRow) {
 		tableModel.addRow(aPersonRow.getTableRow(Session.getInstance()));
 	}
 
+	/**
+	 * Récupération de l'utilisateur courrant
+	 * @return
+	 */
 	private String getCurrentUserType() {
 		return (String) userType.getItemAt(userType.getSelectedIndex());
 	}
 
+	/**
+	 * toString sur l'adresse de l'utlisateur
+	 * @param userPanelWindow
+	 * @return
+	 */
 	private static String getAddress(UserPanelWindow userPanelWindow) {
 		return userPanelWindow.getAddressStreetName() + " " +
 			userPanelWindow.getAddressStreetNumber() + "/" +
@@ -315,36 +318,50 @@ public class UserWindow extends JPanel {
 			userPanelWindow.getAddressCountry();
 	}
 
-	private static String getAddressString(List<Address> addresses) {
-		String addressRow = "";
-
-		for(Address address : addresses) {
-			addressRow += address.getAddressString();
-		}
-
-		return addressRow.substring(0, addressRow.length()-1);
-	}
-
+	/**
+	 * Récuparation de l'utilisateur sélectionné
+	 * @return
+	 */
 	public APerson getSelectedPerson() {
 		return selectedPerson;
 	}
 
+	/**
+	 * Set de l'utilisateur sélectionné
+	 * @param selectedPerson
+	 */
 	private void setSelectedPerson(APerson selectedPerson) {
 		this.selectedPerson = selectedPerson;
 	}
 
+	/**
+	 * Getter de APerson
+	 * @return
+	 */
 	private List<APerson> getAPersons() {
 		return aPersons;
 	}
 
+	/**
+	 * Getter de l'APerson selectionné
+	 * @param index
+	 * @return
+	 */
 	private APerson getAPersonSelected(int index) {
 		return getAPersons().get(index);
 	}
 
+	/**
+	 * Ajout d'un APerson à la liste des APerson
+	 * @param aPerson
+	 */
 	private void addAPersons(APerson aPerson) {
 		this.aPersons.add(aPerson);
 	}
 
+	/**
+	 * Effacer toutes la liste des APerson
+	 */
 	private void clearAPersons() {
 		if (aPersons != null) {
 			aPersons.clear();

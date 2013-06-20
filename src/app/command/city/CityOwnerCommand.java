@@ -16,6 +16,11 @@ import app.controller.city.CityOwnerEvent;
  * Created by michaelsilvestre on 26/05/13.
  */
 public class CityOwnerCommand implements ICommand {
+
+	/**
+	 * Lance l'événement de recherche d'un bien coté propriétaire sur base de la ville
+	 * @param mvcEvent
+	 */
 	@Override
 	public void execute(MVCEvent mvcEvent) {
 		CityOwnerEvent event = (CityOwnerEvent)mvcEvent;

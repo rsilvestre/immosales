@@ -16,9 +16,21 @@ import app.model.user.UserPanelModel;
  */
 public class CityUserEvent extends MVCEvent {
 
+	/**
+	 * Model lié à l'événement
+	 */
 	public final UserPanelModel model;
+
+	/**
+	 * Changement du nom de la ville
+	 */
 	public final String cityName;
 
+	/**
+	 * Constructeur
+	 * @param argCityName
+	 * @param argModel
+	 */
 	public CityUserEvent(String argCityName, UserPanelModel argModel) {
 		super(CityController.USER_CITY_CITY);
 		this.model = argModel;

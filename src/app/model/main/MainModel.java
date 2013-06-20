@@ -11,24 +11,19 @@ import app.model.DB.identity.APerson;
  * To change this template use File | Settings | File Templates.
  */
 public class MainModel extends AbstractModel {
+
+	/**
+	 * Sauvegarde d'un type d'utilisateur
+	 */
 	private APerson aPerson;
-	private String text = "test";
 
-	public APerson getAPerson() {
-		return aPerson;
-	}
-
+	/**
+	 * Mise à feu du changement d'utilisateur
+	 * @param argAPerson
+	 */
 	public void setAPerson(APerson argAPerson) {
 		APerson oldAPerson = aPerson;
 		aPerson = argAPerson;
 		firePropertyChange("aPerson", oldAPerson, aPerson);
-	}
-
-	public String getText() {
-		return text;
-	}
-
-	public void setText(String text) {
-		this.text = text;
 	}
 }

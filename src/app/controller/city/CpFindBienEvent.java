@@ -16,7 +16,14 @@ import app.model.bien.FindBienModel;
  */
 public class CpFindBienEvent extends MVCEvent {
 
+	/**
+	 * Model lié à l'événement
+	 */
 	public final FindBienModel model;
+
+	/**
+	 * Changement du code postal
+	 */
 	public final String cpValue;
 
 	public CpFindBienEvent(String argCpValue, FindBienModel argModel) {

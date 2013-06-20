@@ -16,9 +16,21 @@ import app.model.user.UserPanelModel;
  */
 public class CpUserEvent extends MVCEvent {
 
+	/**
+	 * Model lié à l'événement
+	 */
 	public final UserPanelModel model;
+
+	/**
+	 * Changement du code postal
+	 */
 	public final String cpValue;
 
+	/**
+	 * Constructeur
+	 * @param argCpValue
+	 * @param argModel
+	 */
 	public CpUserEvent(String argCpValue, UserPanelModel argModel) {
 		super(CityController.USER_CITY_CP);
 		this.model = argModel;

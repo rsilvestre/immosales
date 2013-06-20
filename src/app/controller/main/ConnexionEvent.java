@@ -21,9 +21,21 @@ import app.model.main.MainModel;
  */
 public class ConnexionEvent extends MVCEvent {
 
-	public final APerson aPerson;
+	/**
+	 * Model lié à l'événement
+	 */
 	public final MainModel model;
 
+	/**
+	 * Changement d'utilisateur de l'application
+	 */
+	public final APerson aPerson;
+
+	/**
+	 * Constructeur
+	 * @param argAPerson
+	 * @param argModel
+	 */
 	public ConnexionEvent(APerson argAPerson, MainModel argModel) {
 		super(MainController.CONNEXION);
 		model = argModel;

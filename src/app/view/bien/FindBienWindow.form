@@ -205,8 +205,6 @@
                 <rowspec value="center:d:grow"/>
                 <rowspec value="top:3dlu:noGrow"/>
                 <rowspec value="center:max(d;4px):noGrow"/>
-                <rowspec value="top:3dlu:noGrow"/>
-                <rowspec value="center:max(d;4px):noGrow"/>
                 <colspec value="fill:103px:grow"/>
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -221,16 +219,7 @@
                       <forms/>
                     </constraints>
                     <properties>
-                      <text value="Suivre"/>
-                    </properties>
-                  </component>
-                  <component id="6c7fd" class="javax.swing.JButton" binding="offerButton">
-                    <constraints>
-                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <forms/>
-                    </constraints>
-                    <properties>
-                      <text value="Offre"/>
+                      <text value="Visite"/>
                     </properties>
                   </component>
                 </children>
@@ -251,20 +240,48 @@
         <properties/>
         <border type="none"/>
         <children>
-          <scrollpane id="62997">
+          <grid id="5ef3e" layout-manager="FormLayout">
+            <rowspec value="center:142px:grow"/>
+            <rowspec value="top:3dlu:noGrow"/>
+            <rowspec value="center:154px:grow"/>
+            <colspec value="fill:d:grow"/>
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false" defaultalign-vert="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
             <children>
-              <component id="45a1d" class="javax.swing.JTable" binding="table1" default-binding="true">
-                <constraints/>
+              <scrollpane id="62997">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false" defaultalign-vert="false"/>
+                </constraints>
                 <properties/>
-              </component>
+                <border type="none"/>
+                <children>
+                  <component id="45a1d" class="javax.swing.JTable" binding="table1" default-binding="true">
+                    <constraints/>
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
+              <scrollpane id="421dd">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-vert="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="f6721" class="javax.swing.JList" binding="lOffer">
+                    <constraints/>
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
             </children>
-          </scrollpane>
+          </grid>
         </children>
       </grid>
     </children>

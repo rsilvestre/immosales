@@ -16,9 +16,21 @@ import app.model.owner.OwnerPanelModel;
  */
 public class CityOwnerEvent extends MVCEvent {
 
+	/**
+	 * Model lié à l'événement
+	 */
 	public final OwnerPanelModel model;
+
+	/**
+	 * Changement du nom de la ville
+	 */
 	public final String cityName;
 
+	/**
+	 * Constructeur
+	 * @param argCityName
+	 * @param argModel
+	 */
 	public CityOwnerEvent(String argCityName, OwnerPanelModel argModel) {
 		super(CityController.OWNER_CITY_CITY);
 		this.model = argModel;

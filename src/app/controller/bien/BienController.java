@@ -14,10 +14,13 @@ import app.command.bien.FindBienDbCommand;
 /**
  * Created by michaelsilvestre on 20/05/13.
  */
-public class BienController extends FrontController{
+public class BienController extends FrontController {
 	public static final String FIND = "FIND_BIEN_DB";
 
-		public BienController() {
-			registerCommand(FIND, FindBienDbCommand.class);
-		}
+	/**
+	 * Enregistre l'événement de recherche d'un bien
+	 */
+	public BienController() {
+		registerCommand(FIND, FindBienDbCommand.class);
+	}
 }

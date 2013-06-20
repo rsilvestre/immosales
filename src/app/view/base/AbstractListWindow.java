@@ -166,6 +166,17 @@ abstract public class AbstractListWindow extends JPanel {
 				}
 			}
 		}
+		for (Interest interest : App.em.find(Interest.class, "where status like 'Demande de visite' and bien_id  = ?", argOffer.getBienId())) {
+			interest.setStatus(Interest.Status.CANCELED.toString());
+			App.em.update(interest);
+			Enumeration<ListObject> listObjectEnumeration = (Enumeration<ListObject>) interestModel.elements();
+			while (listObjectEnumeration.hasMoreElements()) {
+				ListObject listObject = listObjectEnumeration.nextElement();
+				if (listObject.getId().equals(interest.getId())) {
+					interestModel.setElementAt(getInterestList(interest), interestModel.indexOf(listObject));
+				}
+			}
+		}
 	}
 
 	private void showOfferOwnerDetail(ListObject selectedValue) {
@@ -209,19 +220,19 @@ abstract public class AbstractListWindow extends JPanel {
 	}
 
 	protected ListObject getBienList(Bien bien) {
-		return new ListObject(ListObject.ListObjectType.BIEN, bien.getId(), bien.getName() + " " + bien.getPrice() + "€ " + bien.getStatus());
+		return new ListObject(ListObject.ListObjectType.BIEN, bien.getId(), bien.getId() +": " + bien.getName() + " " + bien.getPrice() + "€ " + bien.getStatus());
 	}
 
 	protected ListObject getOfferList(Offer offer) {
-		return new ListObject(ListObject.ListObjectType.OFFER, offer.getId(), offer.getBien().getName() + " " + offer.getOffer() + "€ " + offer.getStatus());
+		return new ListObject(ListObject.ListObjectType.OFFER, offer.getId(), offer.getBienId() +": " + offer.getBien().getName() + " " + offer.getOffer() + "€ " + offer.getStatus());
 	}
 
 	protected ListObject getOfferOwnerList(Offer offer) {
-		return new ListObject(ListObject.ListObjectType.OFFER, offer.getId(), offer.getBuyer().toString() + ": " + offer.getOffer() + "€ " + offer.getStatus());
+		return new ListObject(ListObject.ListObjectType.OFFER, offer.getId(), offer.getBienId() +": " + offer.getBien().getName() + ": " + offer.getBuyer().toString() + ": " + offer.getOffer() + "€ " + offer.getStatus());
 	}
 
 	protected ListObject getInterestList(Interest interest) {
-		return new ListObject(ListObject.ListObjectType.INTEREST, interest.getId(), interest.getBien().getName() + " " + interest.getBien().getPrice() + "€ " + interest.getStatus());
+		return new ListObject(ListObject.ListObjectType.INTEREST, interest.getId(), interest.getBienId() +": " + interest.getBien().getName() + " " + interest.getBien().getPrice() + "€ " + interest.getStatus());
 	}
 
 	protected DefaultListModel getInterestModel() {

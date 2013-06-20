@@ -16,9 +16,22 @@ import com.dmurph.mvc.MVCEvent;
  * Created by michaelsilvestre on 18/06/13.
  */
 public class FilterOfferDbEvent extends MVCEvent {
+
+	/**
+	 * Model lié à l'événement
+	 */
 	public final SalerModel model;
+
+	/**
+	 * Changement de status de l'offre sur un bien
+	 */
 	public final Offer.Status offerStatus;
 
+	/**
+	 * Constructeur
+	 * @param argOfferStatus
+	 * @param salerModel
+	 */
 	public FilterOfferDbEvent(Offer.Status argOfferStatus, SalerModel salerModel) {
 		super(SalerController.FILTER_OFFER_TYPE);
 		offerStatus = argOfferStatus;

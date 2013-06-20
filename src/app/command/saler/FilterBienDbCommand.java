@@ -16,6 +16,11 @@ import com.dmurph.mvc.control.ICommand;
  * Created by michaelsilvestre on 18/06/13.
  */
 public class FilterBienDbCommand implements ICommand {
+
+	/**
+	 * Lance l'événement de filtrage des bien
+	 * @param argEvent
+	 */
 	@Override
 	public void execute(MVCEvent argEvent) {
 		FilterBienDbEvent event = (FilterBienDbEvent)argEvent;

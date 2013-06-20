@@ -18,10 +18,21 @@ import java.util.HashMap;
  */
 public class FindBienDbEvent extends MVCEvent {
 
-
+	/**
+	 * Field de data se référant à un bien recherchée
+	 */
 	public final HashMap<String,String> requestFieldDatas;
+
+	/**
+	 * Model rataché à cet événement
+	 */
 	public final FindBienModel model;
 
+	/**
+	 * Constructeur
+	 * @param requestFieldDatasArgs
+	 * @param findBienModel
+	 */
 	public FindBienDbEvent(HashMap<String, String> requestFieldDatasArgs, FindBienModel findBienModel) {
 		super(BienController.FIND);
 		requestFieldDatas = requestFieldDatasArgs;

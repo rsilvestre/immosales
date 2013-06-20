@@ -19,7 +19,6 @@ import app.App;
 import app.model.DB.immo.Offer;
 import app.model.DB.product.Bien;
 import app.model.FooModelLocator;
-import app.model.owner.OwnerModel;
 import app.model.owner.OwnerPanelModel;
 import util.CopyFile;
 import util.Util;
@@ -42,15 +41,12 @@ public class OwnerUserControl extends AbstractListWindow {
 	private JList listOffer;
 	private JButton createNewOwn;
 	private JTable table1;
-	private String[] columns = {"Id", "Type", "Label", "Description", "Prix", "Edit"};
+	private String[] columns = {"Id", "Type", "Label", "Description", "Prix", "Edit", "Status"};
 
 	private DefaultTableModel defaultTableModel;
-
-	private OwnerModel ownerModel;
 	private List<Bien> biens = null;
 
-	public OwnerUserControl(OwnerModel argOwnerModel) {
-		ownerModel = argOwnerModel;
+	public OwnerUserControl() {
 		initComponents();
 		linkModel();
 		addListeners();
@@ -118,6 +114,12 @@ public class OwnerUserControl extends AbstractListWindow {
 		BienOwnerWindow bienOwnerWindow = new BienOwnerWindow(bien);
 		bienOwnerWindow.pack();
 		bienOwnerWindow.setVisible(true);
+		if (bienOwnerWindow.getValidate() && !bien.getStatus().equals(bienOwnerWindow.getStatus().toString())) {
+			bien.setStatus(bienOwnerWindow.getStatus().toString());
+			App.em.update(bien);
+			target.setValueAt(bien.getStatus(), row, 6);
+			//defaultTableModel.row .setElementAt(getBienList(bien), bienModel.indexOf(selectedValue));
+		}
 
 	}
 
@@ -151,7 +153,7 @@ public class OwnerUserControl extends AbstractListWindow {
 			}
 
 			// save image
-			if (ownerPanelWindow.getFile() == null || ownerPanelWindow.getFile().getName() == null) {
+			if (ownerPanelWindow.getFile() == null || ownerPanelWindow.getFile().getName().equals("")) {
 				return;
 			}
 			List<Images> imagesList = oldBien.getImages();
@@ -286,29 +288,67 @@ public class OwnerUserControl extends AbstractListWindow {
 	 */
 	private void $$$setupUI$$$() {
 		panel1 = new JPanel();
-		panel1.setLayout(new FormLayout("fill:d:grow", "center:d:grow,top:3dlu:noGrow,center:d:grow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
+		panel1.setLayout(new FormLayout("fill:d:grow", "center:max(d;4px):noGrow,top:3dlu:noGrow,center:d:grow,top:3dlu:noGrow,center:d:grow,top:3dlu:noGrow,center:max(d;4px):noGrow"));
 		final JPanel panel2 = new JPanel();
-		panel2.setLayout(new FormLayout("fill:d:grow", "center:100px:grow,top:3dlu:noGrow,center:100px:grow"));
+		panel2.setLayout(new FormLayout("fill:762px:grow", "center:100px:grow,top:3dlu:noGrow,center:max(d;4px):noGrow,top:3dlu:noGrow,center:100px:grow"));
 		CellConstraints cc = new CellConstraints();
-		panel1.add(panel2, cc.xywh(1, 1, 1, 3));
+		panel1.add(panel2, cc.xywh(1, 3, 1, 3));
+		final JPanel panel3 = new JPanel();
+		panel3.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
+		panel2.add(panel3, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
 		final JScrollPane scrollPane1 = new JScrollPane();
-		panel2.add(scrollPane1, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
+		panel3.add(scrollPane1, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.FILL));
 		table1 = new JTable();
 		scrollPane1.setViewportView(table1);
+		final JPanel panel4 = new JPanel();
+		panel4.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
+		panel2.add(panel4, cc.xy(1, 5, CellConstraints.DEFAULT, CellConstraints.FILL));
 		final JScrollPane scrollPane2 = new JScrollPane();
-		panel2.add(scrollPane2, cc.xy(1, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
+		panel4.add(scrollPane2, cc.xy(1, 1, CellConstraints.DEFAULT, CellConstraints.FILL));
 		listOffer = new JList();
 		scrollPane2.setViewportView(listOffer);
-		final JPanel panel3 = new JPanel();
-		panel3.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow", "center:d:grow"));
-		panel1.add(panel3, cc.xy(1, 5));
+		final JPanel panel5 = new JPanel();
+		panel5.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow", "center:d:grow"));
+		panel2.add(panel5, cc.xy(1, 3));
+		final JLabel label1 = new JLabel();
+		label1.setText("Offres reçues");
+		panel5.add(label1, cc.xy(7, 1));
+		final Spacer spacer1 = new Spacer();
+		panel5.add(spacer1, cc.xy(11, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final Spacer spacer2 = new Spacer();
+		panel5.add(spacer2, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final Spacer spacer3 = new Spacer();
+		panel5.add(spacer3, cc.xy(9, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final Spacer spacer4 = new Spacer();
+		panel5.add(spacer4, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final Spacer spacer5 = new Spacer();
+		panel5.add(spacer5, cc.xy(5, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final JPanel panel6 = new JPanel();
+		panel6.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow", "center:d:grow"));
+		panel1.add(panel6, cc.xy(1, 7));
 		createNewOwn = new JButton();
 		createNewOwn.setText("Créer un nouveau bien");
-		panel3.add(createNewOwn, cc.xy(3, 1));
-		final Spacer spacer1 = new Spacer();
-		panel3.add(spacer1, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
-		final Spacer spacer2 = new Spacer();
-		panel3.add(spacer2, cc.xy(5, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		panel6.add(createNewOwn, cc.xy(3, 1));
+		final Spacer spacer6 = new Spacer();
+		panel6.add(spacer6, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final Spacer spacer7 = new Spacer();
+		panel6.add(spacer7, cc.xy(5, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final JPanel panel7 = new JPanel();
+		panel7.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:d:grow", "center:d:grow"));
+		panel1.add(panel7, cc.xy(1, 1));
+		final JLabel label2 = new JLabel();
+		label2.setText("Biens mis en vente");
+		panel7.add(label2, cc.xy(7, 1));
+		final Spacer spacer8 = new Spacer();
+		panel7.add(spacer8, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final Spacer spacer9 = new Spacer();
+		panel7.add(spacer9, cc.xy(11, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final Spacer spacer10 = new Spacer();
+		panel7.add(spacer10, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final Spacer spacer11 = new Spacer();
+		panel7.add(spacer11, cc.xy(9, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+		final Spacer spacer12 = new Spacer();
+		panel7.add(spacer12, cc.xy(5, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 	}
 
 	/**

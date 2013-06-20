@@ -21,6 +21,10 @@ import app.controller.main.ConnexionEvent;
  */
 public class ConnexionCommand implements ICommand {
 
+	/**
+	 * Lance l'événement de connexion d'un utilisateur à l'application
+	 * @param mvcEvent
+	 */
 	@Override
 	public void execute(MVCEvent mvcEvent) {
 		ConnexionEvent event = (ConnexionEvent) mvcEvent;

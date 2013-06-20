@@ -16,6 +16,10 @@ import app.controller.city.CityFindBienEvent;
  * Created by michaelsilvestre on 26/05/13.
  */
 public class CityFindBienCommand implements ICommand {
+	/**
+	 * Lance l'événement de sélection d'une ville
+	 * @param mvcEvent
+	 */
 	@Override
 	public void execute(MVCEvent mvcEvent) {
 		CityFindBienEvent event = (CityFindBienEvent)mvcEvent;

@@ -29,7 +29,7 @@ public class Interest implements IBusinessModel {
 	public enum Status {
 		TOVISIT("Demande de visite"),
 		VISITED("Visite faite"),
-		CANCELED("Visite annullé");
+		CANCELED("Visite annulée");
 
 		private String converter;
 

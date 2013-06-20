@@ -17,9 +17,21 @@ import com.dmurph.mvc.MVCEvent;
  */
 public class FilterBienDbEvent extends MVCEvent {
 
+	/**
+	 * Model lié à l'événement
+	 */
 	public final SalerModel model;
+
+	/**
+	 * Changement du filtrage sur les biens
+	 */
 	public final Bien.Status filterBienType;
 
+	/**
+	 * Constructeur
+	 * @param bienStatus
+	 * @param salerModel
+	 */
 	public FilterBienDbEvent(Bien.Status bienStatus, SalerModel salerModel) {
 		super(SalerController.FILTER_BIEN_TYPE);
 		filterBienType = bienStatus;
