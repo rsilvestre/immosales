@@ -8,6 +8,7 @@
 
 package app.view.owner;
 
+import app.model.DB.identity.Owner;
 import app.model.DB.product.Images;
 import app.view.base.AbstractListWindow;
 import app.view.bien.BienOwnerWindow;
@@ -90,6 +91,7 @@ public class OwnerUserControl extends AbstractListWindow {
 					if (target.getSelectedColumn() == 5) {
 						editRow(target);
 					}
+					buildOfferOwnerModel(getOffersByBiens(target));
 				}
 				if (evt.getClickCount() == 2) {
 					JTable target = (JTable) evt.getSource();
@@ -105,6 +107,23 @@ public class OwnerUserControl extends AbstractListWindow {
 				}
 			}
 		});
+	}
+
+	private List<Offer> getOffersByBiens(JTable target) {
+		List<Offer> offers;
+		if (target.getSelectedRow() > -1) {
+			Long toto = Long.parseLong(target.getValueAt(target.getSelectedRow(), 0).toString());
+			offers = App.em.load(Bien.class, toto).getOffers();
+		} else {
+			List<Bien> bienList = ((Owner) Session.getInstance().getAPerson()).getBiens();
+			offers = new ArrayList<Offer>();
+			for (Bien bien : bienList) {
+				for (Offer offer : bien.getOffers()) {
+					offers.add(offer);
+				}
+			}
+		}
+		return offers;
 	}
 
 	private void showBien(JTable target) {
@@ -166,8 +185,6 @@ public class OwnerUserControl extends AbstractListWindow {
 					saveFile(bienUpdated, ownerPanelWindow.getFile());
 					oldImage.setImageName(ownerPanelWindow.getFile().getName());
 					App.em.update(oldImage);
-					return;
-					//}ressources/images/biens/56/Capture d’écran 2013-06-19 à 16.11.48.png Capture d’écran 2013-06-19 à 16.11.48.png
 				}
 			} else {
 				saveFile(bienUpdated, ownerPanelWindow.getFile());
@@ -230,7 +247,8 @@ public class OwnerUserControl extends AbstractListWindow {
 
 	private void populateLocale() {
 		//defaultTableModel.addRow(new String [] {"1", "Maison", "Villa Etterbeek", "Grande villa ˆ vendre ˆ Etterbeek", "534"});
-		List<Bien> biens = App.em.find(Bien.class, "where owner_id = ? order by id", Session.getInstance().getAPerson().getId());
+		//List<Bien> biens = App.em.find(Bien.class, "where owner_id = ? order by id", Session.getInstance().getAPerson().getId());
+		List<Bien> biens = ((Owner) Session.getInstance().getAPerson()).getBiens();
 		List<Offer> offerList = new ArrayList<Offer>();
 		for (Bien bien : biens) {
 			for (Offer offer : bien.getOffers()) {

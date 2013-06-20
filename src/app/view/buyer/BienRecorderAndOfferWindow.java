@@ -132,7 +132,7 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 				ListObject listObject = (ListObject) intéresséList.getSelectedValue();
 				Bien bien = App.em.load(Interest.class, listObject.getId()).getBien();
 
-				FormatDialogWindow formatDialogWindow = new FormatDialogWindow("Montant de l'offre: ", bien);
+				FormatDialogWindow formatDialogWindow = new FormatDialogWindow("Montant de l'offre: ");
 				formatDialogWindow.pack();
 				formatDialogWindow.setVisible(true);
 				if (formatDialogWindow.getValue() == "-1") {
@@ -182,10 +182,7 @@ public class BienRecorderAndOfferWindow extends AbstractListWindow {
 
 	private boolean isNewOffer(Long bienId, Buyer buyer) {
 		Offer findOffer = App.em.findUnique(Offer.class, "where bien_id = ? and buyer_id = ?", bienId, buyer.getId());
-		if (findOffer != null) {
-			return false;
-		}
-		return true;
+		return findOffer != null;
 	}
 
 	private void saveOffer(Bien bien, Long offerValue, Calendar calendar) {

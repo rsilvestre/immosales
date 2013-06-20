@@ -32,16 +32,13 @@ public class FormatDialogWindow extends JDialog {
 	private String value = "-1";
 	private JDateChooser jDateChooser;
 
-	private Bien bien;
-
 	public FormatDialogWindow() {
 		$$$setupUI$$$();
 		initComponents();
 	}
 
-	public FormatDialogWindow(String title, Bien bien) {
+	public FormatDialogWindow(String title) {
 		$$$setupUI$$$();
-		this.bien = bien;
 		initComponents();
 		addEventListener();
 		populateLocal(title);
